@@ -105,6 +105,6 @@ All programs you submit should follow basic programming rules like the following
   - Use exceptions instead of asserts / aborts and smart pointers instead of raw pointers once the lecture has introduced them
 
 See [Google C++ Style Guide](http://google.github.io/styleguide/cppguide.html) for 
-more rules guidelines on the coding style. Also, see the 
+more rules and guidelines on the coding style. Also, see the 
 [C++ Core Guidelines](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md) 
-for a comprehensive list of best practice programming rule for C++.
+for a comprehensive list of best practice programming rules for C++.
