@@ -23,9 +23,9 @@ This ensures that you will get credit for your submissions.
 
 ## Project Name
 Please form groups of up to three members and exchange contact details so you can find
-each other on GitLab. One of you should create a **private** (!) project, and invite the rest
-of the group. The name of your project is `scprog-Name1Name2Name3`, where Name1
-is the last name of the first student, Name2 that of the second student, and so on. These
+each other on GitLab. One of you should create a *private* (!) project, and invite the rest
+of the group. The name of your project is `scprog-Name1Name2Name3`, where `Name1`
+is the last name of the first student, `Name2` that of the second student, and so on. These
 names should be sorted alphabetically. If your lineup changes for any reason during the
 course of the semester, please create a new project that reflects this and inform your
 tutors.
