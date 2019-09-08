@@ -89,7 +89,7 @@ All programs you submit should follow basic programming rules like the following
   - The name should reflect the purpose of the variable
   - Variable names start with a lowercase letter, types with an uppercase letter
   - The rest of the name format for identifiers is up to you
-  - Simple counting ints and similar variables are exempt
+  - Simple counting integers and similar variables are exempt
 - **Comments**
   - Comments allow others to understand your intentions
   - Tutors can only give you points if they understand what you were trying to do
@@ -102,3 +102,8 @@ All programs you submit should follow basic programming rules like the following
   - Declare variables and references as const where it is possible
   - Separate interface and implementation by correctly using public and private
   - Use exceptions instead of asserts / aborts and smart pointers instead of raw pointers once the lecture has introduced them
+
+See [Google C++ Style Guide](http://google.github.io/styleguide/cppguide.html) for 
+more rules guidelines on the coding style. Also, see the 
+[C++ Core Guidelines](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md) 
+for a comprehensive list of best practice programming rule for C++.
