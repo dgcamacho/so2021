@@ -60,7 +60,7 @@ should always be a file named `main.cc` that is a sample application of your imp
 classes. Often the content is given in the exercise, if it isn’t you are free to choose
 sensible test cases yourselves. Make sure that this file `main.cc` can be compiled with
 the command given in the lecture, or alternatively provide a [MakeFile](http://www.c-howto.de/tutorial/makefiles/) 
-that builds the exercise.
+or [CMakeLists.txt](https://cmake.org/cmake/help/latest/) that builds the exercise.
 
 The file `solution.txt` is meant for the output of your `main.cc` and for answering
 questions that appear in the exercises. If an exercise is of theoretical nature and doesn’t
