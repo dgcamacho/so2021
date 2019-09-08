@@ -108,3 +108,29 @@ See [Google C++ Style Guide](http://google.github.io/styleguide/cppguide.html) f
 more rules and guidelines on the coding style. Also, see the 
 [C++ Core Guidelines](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md) 
 for a comprehensive list of best practice programming rules for C++.
+
+# More reading
+Online references and literature useful for completing the exercises are listed below:
+
+- **Online-References:** 
+  - [cppreference.com](http://en.cppreference.com), [BLAS](http://www.netlib.org/blas), 
+    [LAPACK](http://www.netlib.org/lapack/), [DUNE](https://www.dune-project.org/doxygen/), 
+    [Git](https://git-scm.com/docs), [Boost](https://www.boost.org/doc/libs/1_71_0/), 
+    [CMake](https://cmake.org/cmake/help/latest/)
+- **Cheetsheets:** 
+  - [Divhints](https://devhints.io/), [Git](https://github.github.com/training-kit/downloads/github-git-cheat-sheet.pdf), 
+    [Linux Command Line](https://appletree.or.kr/quick_reference_cards/Unix-Linux/Linux%20Command%20Line%20Cheat%20Sheet.pdf)
+- **Tutorials:** 
+  - [MTL4](http://old.simunova.com/docs/mtl4/html/tutorial.html), [Git](https://git-scm.com/book/en/v2)
+- **Compiler:** 
+  - [GCC](https://gcc.gnu.org/), [Clang](http://clang.llvm.org/), [Intel Icc](https://software.intel.com/en-us/c-compilers)
+- **Books:** 
+  - Discovering Modern C++: An Intensive Course for Scientists, Engineers, and Programmers, Peter Gottschling, 2015: 
+    [slub](http://katalogbeta.slub-dresden.de/id/0017278767/#detail), [online](http://proquest.tech.safaribooksonline.de/9780134383682)
+  - *References:* Die C++ Programmiersprache (Bjarne Stroustrup), 
+    C++ Kurz & Gut (Kyle Loudon, Rainer Grimm): [slub](http://katalogbeta.slub-dresden.de/id/0012713756/#detail)
+  - *Beginners:* C++ Primer (Stanley Lippman, Josee Lajoie, Barbara E. Moo): [online](http://proquest.tech.safaribooksonline.de/9780133053043)
+  - *Intermediate level:* Effective Modern C++ (Scott Meyers): [slub](http://katalogbeta.slub-dresden.de/id/0013617247/#detail), [online](http://proquest.tech.safaribooksonline.de/9781491908419), 
+    C++ Templates: The Complete Guide (David Vandevoorde, Nicolai M. Josuttis): [online](http://proquest.tech.safaribooksonline.de/0201734842)
+  - *Experts:* Modern C++ Design (Andrei Alexandrescu): [online](http://proquest.tech.safaribooksonline.de/0201704315), 
+    C++ Template Metaprogramming (David Abrahams, Aleksey Gurovoy): [online](http://proquest.tech.safaribooksonline.de/0321227255)
