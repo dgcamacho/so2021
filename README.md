@@ -36,18 +36,22 @@ one for the individual exercises. This results in a tree structure like this:
 
 ```
 sheet1
- * exercise1
-    - main.cc
-    - solution.txt
-    - <header and source files>
- * exercise2
-    - <files as above>
- * ...
+ +-- exercise1
+ |    +-- main.cc
+ |    +-- solution.txt
+ |    \-- <header and source files>
+ |
+ +-- exercise2
+ |    \-- <files as above>
+ |
+ \-- (...)
+ 
 sheet2
- * exercise1
- * exercise2
- * ...
-...
+ +-- exercise1
+ +-- exercise2
+ \-- (...)
+ 
+(...)
 scratch
 ```
 
@@ -69,7 +73,7 @@ ignored by the tutors, and can neither increase nor decrease the number of point
 receive.
 
 ## Access to the Repository
-Please give your tutor write access to your project so that your submissions can be
+Please give your tutor @spraetor write access to your project so that your submissions can be
 graded. You also need to give read access to the repository to all tutors if there is
 more than one, regardless of the group you are in. This allows for flexible handling of
 unforeseen situations.
