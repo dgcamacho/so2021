@@ -1,4 +1,4 @@
-# Purpose of this Document
+# Scientific Programming with C++
 In this module SCPROG the exercises and projects will be submitted online into a version
 control system [Git](https://git-scm.com/) hosted at the MatNat [GitLab](https://gitlab.mn.tu-dresden.de)
 platform, which is a web-based Git repository manager similar to [GitHub](https://github.com) 
