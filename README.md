@@ -64,8 +64,9 @@ that builds the exercise.
 
 The file `solution.txt` is meant for the output of your `main.cc` and for answering
 questions that appear in the exercises. If an exercise is of theoretical nature and doesn’t
-include actual coding, this is the only file you have to submit. In the case 
-optionally a LaTeX file `solution.tex` can be submitted.
+include actual coding, this is the only file you have to submit. Optionally you can
+submit a [Markdown](https://docs.gitlab.com/ee/user/markdown.html) file `solution.md`
+instead. This allows basic formatting of the text.
 
 The directory `scratch` is meant as an area where you can put temporary files, solution
 attempts and other things that aren’t actual submissions. Any file put there will be
