@@ -1,11 +1,11 @@
 # Scientific Programming with C++
 In this module SCPROG the exercises and projects will be submitted online into a version
 control system [Git](https://git-scm.com/) hosted at the MatNat [GitLab](https://gitlab.mn.tu-dresden.de)
-platform, which is a web-based Git repository manager similar to [GitHub](https://github.com) 
+platform, which is a web-based Git repository manager similar to [GitHub](https://github.com)
 and [Bitbucket](https://bitbucket.org).
 
-Handing in solutions to exercises and projects digitally on such a platform is a 
-good way of learning and training collaborative coding, which is commonplace in 
+Handing in solutions to exercises and projects digitally on such a platform is a
+good way of learning and training collaborative coding, which is commonplace in
 Scientific Computing research groups.
 
 In order to allow fast correction and evaluation of submitted solutions, we require
@@ -17,7 +17,7 @@ style could have on actual collaborative projects.
 
 # Your Repository on GitLab
 ## Account
-In the first tutorial we will create an account on the local GitLab platform, 
+In the first tutorial we will create an account on the local GitLab platform,
 using the ZIH-Login (s...-number) for the account user name associated to your TU-Dresden
 email address. This ensures that you will get credit for your submissions.
 
@@ -45,12 +45,12 @@ sheet1
  |    \-- <files as above>
  |
  \-- (...)
- 
+
 sheet2
  +-- exercise1
  +-- exercise2
  \-- (...)
- 
+
 (...)
 ```
 
@@ -58,7 +58,7 @@ You are free to name and structure your C++ files in any way you like, but there
 should always be a file named `main.cc` that is a sample application of your implemented
 classes. Often the content is given in the exercise, if it isn’t you are free to choose
 sensible test cases yourselves. Make sure that this file `main.cc` can be compiled with
-the command given in the lecture, or alternatively provide a [MakeFile](http://www.c-howto.de/tutorial/makefiles/) 
+the command given in the lecture, or alternatively provide a [MakeFile](http://www.c-howto.de/tutorial/makefiles/)
 or [CMakeLists.txt](https://cmake.org/cmake/help/latest/) that builds the exercise.
 
 The file `solution.txt` is meant for the output of your `main.cc` and for answering
@@ -74,9 +74,9 @@ more than one, regardless of the group you are in. This allows for flexible hand
 unforeseen situations.
 
 # Submission of Exercises
-On each exercise sheet some exercises are marked for submission. You have approximately 
-two weeks for each of these exercises, where the final date is written next to the exercise. 
-In order to get your solutions reviewed, it has to be commited to your GitLab repository 
+On each exercise sheet some exercises are marked for submission. You have approximately
+two weeks for each of these exercises, where the final date is written next to the exercise.
+In order to get your solutions reviewed, it has to be committed to your GitLab repository
 following the procedure:
 
 1. For each exercise sheet create a new branch called `sheetX` where `X` is the number of
@@ -85,11 +85,11 @@ following the procedure:
 3. Commit your solutions to the branch
 4. Create a merge request to your master branch
 
-After final review of your submission (and maybe inclusion of your corrections) 
+After final review of your submission (and maybe inclusion of your corrections)
 you get a :thumbsup: and can merge your branch into your `master` branch.
 
-**Note:** each member of the group should participate in the submission, i.e. 
-commit her/his contributions individually and not just by the creator of the 
+**Note:** each member of the group should participate in the submission, i.e.
+commit her/his contributions individually and not just by the creator of the
 repository, if the exercise amount allows for splitting.
 
 # Style Guidelines
@@ -117,33 +117,33 @@ All programs you submit should follow basic programming rules like the following
   - Separate interface and implementation by correctly using public and private
   - Use exceptions instead of asserts / aborts and smart pointers instead of raw pointers once the lecture has introduced them
 
-See [Google C++ Style Guide](http://google.github.io/styleguide/cppguide.html) for 
-more rules and guidelines on the coding style. Also, see the 
-[C++ Core Guidelines](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md) 
+See [Google C++ Style Guide](http://google.github.io/styleguide/cppguide.html) for
+more rules and guidelines on the coding style. Also, see the
+[C++ Core Guidelines](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md)
 for a comprehensive list of best practice programming rules for C++.
 
 # More reading
 Online references and literature useful for completing the exercises are listed below:
 
-- **Online-References:** 
-  - [cppreference.com](http://en.cppreference.com), [BLAS](http://www.netlib.org/blas), 
-    [LAPACK](http://www.netlib.org/lapack/), [DUNE](https://www.dune-project.org/doxygen/), 
-    [Git](https://git-scm.com/docs), [Boost](https://www.boost.org/doc/libs/1_71_0/), 
+- **Online-References:**
+  - [cppreference.com](http://en.cppreference.com), [BLAS](http://www.netlib.org/blas),
+    [LAPACK](http://www.netlib.org/lapack/), [DUNE](https://www.dune-project.org/doxygen/),
+    [Git](https://git-scm.com/docs), [Boost](https://www.boost.org/doc/libs/1_71_0/),
     [CMake](https://cmake.org/cmake/help/latest/)
-- **Cheetsheets:** 
-  - [Divhints](https://devhints.io/), [Git](https://github.github.com/training-kit/downloads/github-git-cheat-sheet.pdf), 
+- **Cheetsheets:**
+  - [Divhints](https://devhints.io/), [Git](https://github.github.com/training-kit/downloads/github-git-cheat-sheet.pdf),
     [Linux Command Line](https://appletree.or.kr/quick_reference_cards/Unix-Linux/Linux%20Command%20Line%20Cheat%20Sheet.pdf)
-- **Tutorials:** 
+- **Tutorials:**
   - [MTL4](http://old.simunova.com/docs/mtl4/html/tutorial.html), [Git](https://git-scm.com/book/en/v2)
-- **Compiler:** 
+- **Compiler:**
   - [GCC](https://gcc.gnu.org/), [Clang](http://clang.llvm.org/), [Intel Icc](https://software.intel.com/en-us/c-compilers)
-- **Books:** 
-  - Discovering Modern C++: An Intensive Course for Scientists, Engineers, and Programmers, Peter Gottschling, 2015: 
+- **Books:**
+  - Discovering Modern C++: An Intensive Course for Scientists, Engineers, and Programmers, Peter Gottschling, 2015:
     [slub](http://katalogbeta.slub-dresden.de/id/0017278767/#detail), [online](http://proquest.tech.safaribooksonline.de/9780134383682)
-  - *References:* Die C++ Programmiersprache (Bjarne Stroustrup), 
+  - *References:* Die C++ Programmiersprache (Bjarne Stroustrup),
     C++ Kurz & Gut (Kyle Loudon, Rainer Grimm): [slub](http://katalogbeta.slub-dresden.de/id/0012713756/#detail)
   - *Beginners:* C++ Primer (Stanley Lippman, Josee Lajoie, Barbara E. Moo): [online](http://proquest.tech.safaribooksonline.de/9780133053043)
-  - *Intermediate level:* Effective Modern C++ (Scott Meyers): [slub](http://katalogbeta.slub-dresden.de/id/0013617247/#detail), [online](http://proquest.tech.safaribooksonline.de/9781491908419), 
+  - *Intermediate level:* Effective Modern C++ (Scott Meyers): [slub](http://katalogbeta.slub-dresden.de/id/0013617247/#detail), [online](http://proquest.tech.safaribooksonline.de/9781491908419),
     C++ Templates: The Complete Guide (David Vandevoorde, Nicolai M. Josuttis): [online](http://proquest.tech.safaribooksonline.de/0201734842)
-  - *Experts:* Modern C++ Design (Andrei Alexandrescu): [online](http://proquest.tech.safaribooksonline.de/0201704315), 
+  - *Experts:* Modern C++ Design (Andrei Alexandrescu): [online](http://proquest.tech.safaribooksonline.de/0201704315),
     C++ Template Metaprogramming (David Abrahams, Aleksey Gurovoy): [online](http://proquest.tech.safaribooksonline.de/0321227255)
