@@ -35,7 +35,7 @@ the Linux terminal, please perform the following tasks on your local machine:
 
 
 ## Exercise 2 (Compiling code)
-**Submit solution until 2019/10/30**
+**>> Submit solution until 2019/10/30**
 
 In the directory [material/sheet1/](https://gitlab.mn.tu-dresden.de/teaching/scprog/wi2019/blob/master/material/sheet1) you can find
 an initial C++ example in the files `exercise2_impl.cc`, `exercise2_impl.h`, and `exercise2.cc`. Download the files and compile the code:
@@ -63,7 +63,7 @@ You can find a documentation of the compiler arguments on
 
 
 ## Exercise 3 (Basic debugging)
-**Submit solution until 2019/10/30**
+**>> Submit solution until 2019/10/30**
 
 In the [material/sheet1/](https://gitlab.mn.tu-dresden.de/teaching/scprog/wi2019/blob/master/material/sheet1) directory, you can
 find a second exercise code for this exercise sheet, i.e. the files `exercise3_impl.cc`, `exercise3_impl.h`, and `exercise3.cc`.
