@@ -10,7 +10,7 @@ Scientific Computing research groups.
 
 In order to allow fast correction and evaluation of submitted solutions, we require
 a predefined structure of the repositories and coding styles to be follwed. Not
-following these rules for repositories may result in your solution not being graded.
+following these rules for repositories may result in your solution not being reviewed.
 You will then have to reformat it and submit again. Not following the style guidelines
 may result in point deduction, with the amount of points depending on the impact your
 style could have on actual collaborative projects.
@@ -70,8 +70,7 @@ instead. This allows basic formatting of the text.
 
 The directory `scratch` is meant as an area where you can put temporary files, solution
 attempts and other things that aren’t actual submissions. Any file put there will be
-ignored by the tutors, and can neither increase nor decrease the number of points you
-receive.
+ignored by the tutors.
 
 ## Access to the Repository
 Please give your tutor @spraetor write access to your project so that your submissions can be
@@ -82,7 +81,7 @@ unforeseen situations.
 # Submission of Exercises
 On each exercise sheet some exercises are marked as submissions. You have approximately 
 two weeks for each of these exercises, where the final date is written next to the exercise. 
-In order to get your solutions graded, is has to be commited to your GitLab repository 
+In order to get your solutions reviewed, is has to be commited to your GitLab repository 
 following the procedure:
 
 1. For each exercise sheet create a new branch called `sheetX` where `X` is the number of
