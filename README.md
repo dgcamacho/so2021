@@ -52,7 +52,6 @@ sheet2
  \-- (...)
  
 (...)
-scratch
 ```
 
 You are free to name and structure your C++ files in any way you like, but there
@@ -67,10 +66,6 @@ questions that appear in the exercises. If an exercise is of theoretical nature 
 include actual coding, this is the only file you have to submit. Optionally you can
 submit a [Markdown](https://docs.gitlab.com/ee/user/markdown.html) file `solution.md`
 instead. This allows basic formatting of the text.
-
-The directory `scratch` is meant as an area where you can put temporary files, solution
-attempts and other things that aren’t actual submissions. Any file put there will be
-ignored by the tutors.
 
 ## Access to the Repository
 Please give your tutor @spraetor write access to your project so that your submissions can be
