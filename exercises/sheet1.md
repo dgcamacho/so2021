@@ -40,7 +40,7 @@ the implications of these flags? Sometimes the option has an argument. Change th
 What is the effect? What is the minimal necessary set of options to pass?
 
 Document the output, results, and findings, write it into a file `solution.txt` or `solution.md` and commit into your repository. Follow the
-instructions given in the [README.md](https://gitlab.mn.tu-dresden.de/teaching/scprog/wi2019/blob/master/README.md) of this repository.
+instructions given in the [README.md](/README.md) of this repository.
 
 ### Resources
 You can find a documentation of the compiler arguments on
