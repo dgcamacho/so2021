@@ -34,7 +34,7 @@ the Linux terminal, please perform the following tasks on your local machine:
 - [Divhints](https://devhints.io/), [Cheet Sheet](https://appletree.or.kr/quick_reference_cards/Unix-Linux/Linux%20Command%20Line%20Cheat%20Sheet.pdf)
 
 
-## Exercise 2* (Compiling code)
+## Exercise 2 (Compiling code)
 **Submit solution until 2019/10/30**
 
 In the directory [material/sheet1/](https://gitlab.mn.tu-dresden.de/teaching/scprog/wi2019/blob/master/material/sheet1) you can find
@@ -63,6 +63,8 @@ You can find a documentation of the compiler arguments on
 
 
 ## Exercise 3 (Basic debugging)
+**Submit solution until 2019/10/30**
+
 In the [material/sheet1/](https://gitlab.mn.tu-dresden.de/teaching/scprog/wi2019/blob/master/material/sheet1) directory, you can
 find a second exercise code for this exercise sheet, i.e. the files `exercise3_impl.cc`, `exercise3_impl.h`, and `exercise3.cc`.
 Download, compile, and run again. What happens? The code should produce an error.
