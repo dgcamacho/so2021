@@ -18,8 +18,8 @@ style could have on actual collaborative projects.
 # Your Repository on GitLab
 ## Account
 In the first tutorial we will create an account on the local GitLab platform, 
-using the ZIH-Login (s...-number) for the account user name.
-This ensures that you will get credit for your submissions.
+using the ZIH-Login (s...-number) for the account user name associated to your TU-Dresden
+email address. This ensures that you will get credit for your submissions.
 
 ## Project Name
 Please form groups of up to three members and exchange contact details so you can find
