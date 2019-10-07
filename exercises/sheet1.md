@@ -34,7 +34,7 @@ the Linux terminal, please perform the following tasks on your local machine:
 - [Divhints](https://devhints.io/), [Cheet Sheet](https://appletree.or.kr/quick_reference_cards/Unix-Linux/Linux%20Command%20Line%20Cheat%20Sheet.pdf)
 
 
-## Exercise 2 (Compiling code)
+## :pencil2: Exercise 2 (Compiling code)
 **Submit solution until 2019/10/30**
 
 In the directory [material/sheet1/](https://gitlab.mn.tu-dresden.de/teaching/scprog/wi2019/blob/master/material/sheet1) you can find
@@ -62,7 +62,7 @@ You can find a documentation of the compiler arguments on
 - [GCC manual](https://gcc.gnu.org/onlinedocs/gcc-9.2.0/gcc/)
 
 
-## Exercise 3 (Basic debugging)
+## :pencil2: Exercise 3 (Basic debugging)
 **Submit solution until 2019/10/30**
 
 In the [material/sheet1/](https://gitlab.mn.tu-dresden.de/teaching/scprog/wi2019/blob/master/material/sheet1) directory, you can
