@@ -1,6 +1,7 @@
 # Exercises for the lecture Scientific Programming - Advanced Concepts
+## Winter term 2019/20
 
-**Dr. Simon Praetorius** <simon.praetorius@tu-dresden.de>
+**Dr. Simon Praetorius** (simon.praetorius@tu-dresden.de)
 
 There will be an exercise sheet every week with some exercises to be worked on during the tutorial and some to be
 submitted for review. The submission procedure is briefly described on the lecture repository startpage
