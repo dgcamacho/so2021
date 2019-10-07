@@ -79,6 +79,21 @@ graded. You also need to give read access to the repository to all tutors if the
 more than one, regardless of the group you are in. This allows for flexible handling of
 unforeseen situations.
 
+# Submission of Exercises
+On each exercise sheet some exercises are marked as submissions. You have approximately 
+two weeks for each of these exercises, where the final date is written next to the exercise. 
+In order to get your solutions graded, is has to be commited to your GitLab repository 
+following the procedure:
+
+1. For each exercise sheet create a new branch called `sheetX` where `X` is the number of
+   the sheet.
+2. Create the new directory following the directory structure as above
+3. Commit your solution to the branch
+4. Create a merge request to your master branch
+
+After final review of your submission (and maybe inclusion of your corrections) 
+you get a :thumbsup: and can merge your branch into your `master` branch.
+
 # Style Guidelines
 All programs you submit should follow basic programming rules like the following:
 
