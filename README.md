@@ -90,7 +90,7 @@ you get a :thumbsup: and can merge your branch into your `master` branch.
 
 **Note:** each member of the group should participate in the submission, i.e. 
 commit her/his contributions individually and not just by the creator of the 
-repository.
+repository, if the exercise amount allows for splitting.
 
 # Style Guidelines
 All programs you submit should follow basic programming rules like the following:
