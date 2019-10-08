@@ -14,9 +14,16 @@ the Linux terminal, please perform the following tasks on your local machine:
 - Find all files in the `Desktop` directory recursively containing the text "Hello"
 - Edit the file `Desktop/scprog/exercise1.txt` and replace the word "World" by "Dresden"
 
+You might need the following commands: `cat`, `cd`, `cp`, `echo`, `find`, `grep`, `ls`, `rm`, `vim`. Familiarize yourself with
+the commands, using the references given below or any other (online) resource and find out about possible arguments to the
+commands that could be useful.
+
+Create your own *cheat sheet* as Markdown `.md` file and store it in the `scprog` directory.
+
 ### Resources
 - [Tutorial](https://tutorials.ubuntu.com/tutorial/command-line-for-beginners)
 - [Divhints](https://devhints.io/), [Cheet Sheet](https://appletree.or.kr/quick_reference_cards/Unix-Linux/Linux%20Command%20Line%20Cheat%20Sheet.pdf)
+- [Markdown](https://daringfireball.net/projects/markdown/), [Markdown @ GitLab](https://docs.gitlab.com/ee/user/markdown.html)
 
 
 ## Exercise 2 (Compiling code)
