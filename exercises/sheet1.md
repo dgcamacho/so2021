@@ -33,8 +33,8 @@ In the directory [material/sheet1/](/exercises/material/sheet1) you can find
 an initial C++ example in the files `exercise2_impl.cc`, `exercise2_impl.h`, and `exercise2.cc`. Download the files and compile the code:
 
 ```bash
-g++-7 -std=c++14 -Wall -O2 -I/usr/include/amdis/mtl4 -c exercise2_impl.cc
-g++-7 -std=c++14 -Wall -O2 -I/usr/include/amdis/mtl4 -c exercise2.cc
+g++-7 -std=c++14 -Wall -O2 -c exercise2_impl.cc
+g++-7 -std=c++14 -Wall -O2 -c exercise2.cc
 g++-7 -o exercise2 exercise2_impl.o exercise2.o
 ```
 
@@ -44,7 +44,7 @@ This creates a new file `exercise2` in the current directory. You can now run th
 ./exercise2
 ```
 
-Familiarize yourself with the options passed to the compiler `g++`, i.e. `-std=c++14`, `-Wall`, `-O2`, `-I`, `-c`, and `-o`. What are
+Familiarize yourself with the options passed to the compiler `g++`, i.e. `-std=c++14`, `-Wall`, `-O2`, `-c`, and `-o`. What are
 the implications of these flags? Sometimes the option has an argument. Change the value (if meaningful), compile and run again.
 What is the effect? What is the minimal necessary set of options to pass?
 
