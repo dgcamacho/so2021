@@ -14,7 +14,7 @@ the Linux terminal, please perform the following tasks on your local machine:
 - Find all files in the `Desktop` directory recursively containing the text "Hello"
 - Edit the file `Desktop/scprog/exercise1.txt` and replace the word "World" by "Dresden"
 
-You might need the following commands: `cat`, `cd`, `cp`, `echo`, `find`, `grep`, `ls`, `rm`, `vim`. Familiarize yourself with
+You might need the following commands: `cat`, `cd`, `cp`, `echo`, `find`, `grep`, `ls`, `rm`, `sed`, `vim`. Familiarize yourself with
 the commands, using the references given below or any other (online) resource and find out about possible arguments to the
 commands that could be useful.
 
@@ -33,7 +33,9 @@ In the directory [material/sheet1/](/exercises/material/sheet1) you can find
 an initial C++ example in the files `exercise2_impl.cc`, `exercise2_impl.h`, and `exercise2.cc`. Download the files and compile the code:
 
 ```bash
-g++ -std=c++14 -Wall -O2 -o exercise2 exercise2_impl.cc exercise2.cc
+g++-7 -std=c++14 -Wall -O2 -I/usr/include/amdis/mtl4 -c exercise2_impl.cc
+g++-7 -std=c++14 -Wall -O2 -I/usr/include/amdis/mtl4 -c exercise2.cc
+g++-7 -o exercise2 exercise2_impl.o exercise2.o
 ```
 
 This creates a new file `exercise2` in the current directory. You can now run the example by
@@ -42,7 +44,7 @@ This creates a new file `exercise2` in the current directory. You can now run th
 ./exercise2
 ```
 
-Familiarize yourself with the options passed to the compiler `g++`, i.e. `-std=c++14`, `-Wall`, `-O2`, and `-o`. What are
+Familiarize yourself with the options passed to the compiler `g++`, i.e. `-std=c++14`, `-Wall`, `-O2`, `-I`, `-c`, and `-o`. What are
 the implications of these flags? Sometimes the option has an argument. Change the value (if meaningful), compile and run again.
 What is the effect? What is the minimal necessary set of options to pass?
 
@@ -51,7 +53,7 @@ instructions given in the [README.md](/README.md) of this repository.
 
 ### Resources
 You can find a documentation of the compiler arguments on
-- [GCC manual](https://gcc.gnu.org/onlinedocs/gcc-9.2.0/gcc/)
+- [GCC manual](https://gcc.gnu.org/onlinedocs/gcc-7.2.0/gcc/)
 
 
 ## Exercise 3 (Basic debugging)

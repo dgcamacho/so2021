@@ -8,6 +8,6 @@ Thus, it is a good way of learning and training collaborative coding.
 
 Code submission and code storage is organized using the [Git](https://git-scm.com/) version control system and the data is hosted
 at the MatNat [GitLab](https://gitlab.mn.tu-dresden.de) platform. Access to this platform is established during the first weeks
-in the semester. Therefore, you need to register to the tutorial part of the lecture in [selma](https://selma.tu-dresden.de).
+in the semester.
 
 Additionally to the submission of your own code, the exercise sheets and lecture notes are provided in this Git repository.
