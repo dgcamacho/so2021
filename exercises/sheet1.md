@@ -1,6 +1,6 @@
 # Exercise sheet 1 - 2019/10/16
 
-## Exercise 1 (Introduction to Linux command line)
+## Exercise 0 (Introduction to Linux command line)
 This exercise serves as introduction to the Linux command line. If your are not yet familiar with
 the Linux terminal, please perform the following tasks on your local machine:
 - Open the terminal
@@ -25,6 +25,58 @@ Create your own *cheat sheet* as Markdown `.md` file and store it in the `scprog
 - [Divhints](https://devhints.io/), [Cheet Sheet](https://appletree.or.kr/quick_reference_cards/Unix-Linux/Linux%20Command%20Line%20Cheat%20Sheet.pdf)
 - [Markdown](https://daringfireball.net/projects/markdown/), [Markdown @ GitLab](https://docs.gitlab.com/ee/user/markdown.html)
 
+
+## Exercise 1 (Introduction to Git)
+This exercise serves as an introduction to [Git]() and [GitLab](https://gitlab.mn.tu-dresden.de).
+Please perform the following tasks in a private repository. Below the lists of tasks is a list of
+Git commands that might be useful.
+
+Perform the following tasks, and document which Git command you have used, briefly describing
+its purpose:
+- Create a new folder on your computer, and *initialize* a new Git repository inside.
+- Put a text file into the repository (its contents don't matter, you could take one of the source
+  files of the lecture), *add* it to the files tracked by Git, and *commit* your changes to the repository,
+  using a meaningful commit message.
+- Check that your commit was successful by reading the *log* file, and take a look at the status of
+  your working directory.
+- Change something in the text file, *add* and *commit* those changes, assume you had made a mistake,
+  and *revert* your commit (note that `git revert` is not the right command in this situation).
+- Edit the file a second time, but *stash* your changes away to keep them save for using them at
+  some later point in time.
+
+Create a GitLab account by providing your Name, ZIH s-number, and TU-Dresden! Email-Adress to the tutor.
+Find the "Projects" tab, and press the "New Project" button. Enter a project name and set visibility to
+private. Follow the instructions under "Git global setup" and "Existing Git repository" to get your
+private project repository on GitLab. Note that there are also options for completely new projects or
+existing (non-Git) folders.
+
+- Use the URL on the project page to create *another copy* of your repository on your computer
+  (you can delete it afterwards).
+- Browse your repository content under the "Files" tab, and perform a quick edit to your text file,
+  *committing* the change directly from GitLab.
+- Change a *different* line on your computer. *Pulling* the newest version from GitLab should silently
+  incorporate both your changes.
+- Edit the line you changed locally also on GitLab, but in a different way. This time, *pulling* from
+  GitLab should cause a *merge conflict*. Check the difference to your last clean version, and try to
+  *resolve* the conflict by either accepting one of the versions ("theirs"/"ours") or using an interactive
+  *merge tool*. Resolving a conflict includes *committing* the merged files and explaining your
+  reasoning and choices.
+- Reapply the change you had *stashed* away, and check that the *difference* to your previous repository
+  state is what you would expect.
+- Create a new *branch* locally, edit the text file and *commit* your changes. Finally, *push* the new branch
+  to the repository.
+- Use GitLab to create a *Merge Request* of that branch to the master branch. If there are no *merge conflicts*,
+  merge it and *delete* the created branch afterwards.
+
+This exercise has left out several important Git concepts, but should suffice as a starting point for
+those who have not used Git before. There are also several tabs in
+GitLab that might be useful, e.g. the "Commits" and "Graph" tabs under "Repository", the "Issues"
+and "Todos" tabs, and the "Wiki" tab. If and how you use these features is up to you.
+
+### List of Git commands:
+`git add <file/folder>`, `git checkout --ours/--theirs <file>`, `git clone <url>`,
+`git commit`, `git init`, `git log`, `git mergetool`, `git pull`, `git push`, `git reset HEAD~`,
+`git stash`, `git status`, `git stash pop`, `git checkout -b <branch>`, `git branch`
 
 ## Exercise 2 (Compiling code)
 **>> Submit solution until 2019/10/30**
