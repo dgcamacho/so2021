@@ -22,8 +22,8 @@ Create your own *cheat sheet* as Markdown `.md` file and store it in the `scprog
 
 ### Resources
 - [Tutorial](https://tutorials.ubuntu.com/tutorial/command-line-for-beginners)
-- [Divhints](https://devhints.io/), [Cheet Sheet](https://appletree.or.kr/quick_reference_cards/Unix-Linux/Linux%20Command%20Line%20Cheat%20Sheet.pdf)
-- [Markdown](https://daringfireball.net/projects/markdown/), [Markdown @ GitLab](https://docs.gitlab.com/ee/user/markdown.html)
+- [Divhints](https://devhints.io/), [Cheat Sheet](https://appletree.or.kr/quick_reference_cards/Unix-Linux/Linux%20Command%20Line%20Cheat%20Sheet.pdf)
+- [Markdown](https://daringfireball.net/projects/markdown/), [Markdown@GitLab](https://docs.gitlab.com/ee/user/markdown.html)
 
 
 ## Exercise 1 (Introduction to Git)
@@ -77,6 +77,11 @@ and "Todos" tabs, and the "Wiki" tab. If and how you use these features is up to
 `git add <file/folder>`, `git checkout --ours/--theirs <file>`, `git clone <url>`,
 `git commit`, `git init`, `git log`, `git mergetool`, `git pull`, `git push`, `git reset HEAD~`,
 `git stash`, `git status`, `git stash pop`, `git checkout -b <branch>`, `git branch`
+
+### Resources
+- [Git manual](https://www.git-scm.com/book/en/v2)
+- [Git reference](https://www.git-scm.com/docs)
+- [cheat sheet](https://github.github.com/training-kit/downloads/github-git-cheat-sheet.pdf)
 
 ## Exercise 2 (Compiling code)
 **>> Submit solution until 2019/10/30**
@@ -142,6 +147,6 @@ which bugs you have found and how.
 
 ### Resources
 - [GDB Documentation](https://www.gnu.org/software/gdb/documentation/)
-- Cheet Sheets: [darkdust.net](https://darkdust.net/files/GDB%20Cheat%20Sheet.pdf),
+- Cheat Sheets: [darkdust.net](https://darkdust.net/files/GDB%20Cheat%20Sheet.pdf),
   [kapeli.com](https://kapeli.com/cheat_sheets/GDB.docset/Contents/Resources/Documents/index),
   [utexas.edu](http://users.ece.utexas.edu/~adnan/gdb-refcard.pdf)
