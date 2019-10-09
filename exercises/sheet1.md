@@ -27,7 +27,7 @@ Create your own *cheat sheet* as Markdown `.md` file and store it in the `scprog
 
 
 ## Exercise 1 (Introduction to Git)
-This exercise serves as an introduction to [Git]() and [GitLab](https://gitlab.mn.tu-dresden.de).
+This exercise serves as an introduction to [Git](https://www.git-scm.com/) and [GitLab](https://gitlab.mn.tu-dresden.de).
 Please perform the following tasks in a private repository. Below the lists of tasks is a list of
 Git commands that might be useful.
 
