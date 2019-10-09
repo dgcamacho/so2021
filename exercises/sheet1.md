@@ -45,8 +45,9 @@ its purpose:
 - Edit the file a second time, but *stash* your changes away to keep them save for using them at
   some later point in time.
 
-Create a GitLab account by providing your Name, ZIH s-number, and TU-Dresden! Email-Adress to the tutor.
-Find the "Projects" tab, and press the "New Project" button. Enter a project name and set visibility to
+Create a GitLab account by providing your Name, ZIH s-number, and **TU-Dresden!** email-address to the tutor.
+You will receive an email to set your password and activate your account.
+In GitLab, find the "Projects" tab and press the "New Project" button. Enter a project name and set visibility to
 private. Follow the instructions under "Git global setup" and "Existing Git repository" to get your
 private project repository on GitLab. Note that there are also options for completely new projects or
 existing (non-Git) folders.
