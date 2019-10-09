@@ -1,7 +1,16 @@
 #include <iostream>
-#include "exercise2_impl.hh"
+#include "linear_algebra.hh"
 
 namespace scprog {
+
+// set all entries of the vector to value v
+dense_vector& dense_vector::operator=(value_type v)
+{
+  for (auto& v_i : data_)
+    v_i = v;
+  return *this;
+}
+
 
 // perform update-assignment elementwise +=
 dense_vector& dense_vector::operator+=(dense_vector const& that)
@@ -23,11 +32,22 @@ dense_vector& dense_vector::operator-=(dense_vector const& that)
 }
 
 
-// set all entries of the vector to value v
-void dense_vector::set(value_type v)
+// perform update-assignment elementwise *= with a scalar
+dense_vector& dense_vector::operator*=(value_type s)
 {
-  for (auto& v_i : data_)
-    v_i = v;
+  for (size_type i = 0; i < size(); ++i)
+    data_[i] *= s;
+  return *this;
+}
+
+
+// perform update-assignment elementwise /= with a scalar
+dense_vector& dense_vector::operator/=(value_type s)
+{
+  assert(s != value_type(0));
+  for (size_type i = 0; i < size(); ++i)
+    data_[i] /= s;
+  return *this;
 }
 
 
@@ -56,7 +76,7 @@ typename dense_vector::value_type dense_vector::two_norm() const
   value_type result = 0;
   for (auto const& d : data_)
     result += d * d;
-  return result;
+  return sqrt(result);
 }
 
 
@@ -135,14 +155,15 @@ dense_matrix& dense_matrix::operator-=(dense_matrix const& that)
 
 
 // set all entries to v
-void dense_matrix::set(value_type v)
+dense_matrix& dense_matrix::operator=(value_type v)
 {
   for (auto& A_ij : data_)
     A_ij = v;
+  return *this;
 }
 
 
-// matrix-vector product
+// matrix-vector product A*x
 dense_vector operator*(dense_matrix const& A, dense_vector const& x)
 {
   using value_type = typename dense_matrix::value_type;
@@ -201,10 +222,12 @@ void dense_matrix::aypx(value_type a, dense_matrix const& X)
 }
 
 
+// Setup a matrix according to a Laplacian equation on a 2D-grid using a five-point-stencil.
+// Results in a matrix A of size (m*n) x (m*n)
 void laplacian_setup(dense_matrix& A, std::size_t m, std::size_t n)
 {
-  A.resize(m*n, m*n, 0);
-  A.set(0);
+  A.resize(m*n, m*n);
+  A = 0;
 
   for (std::size_t i = 0; i < m; i++) {
     for (std::size_t j = 0; j < n; j++) {
@@ -235,7 +258,7 @@ bool iteration::finished(real_type const& r)
 bool iteration::check_max()
 {
   if (i_ >= max_iter_)
-      error_ = 1, finished_ = true, err_msg_ = "Too many iterations.";
+    error_ = 1, finished_ = true, err_msg_ = "Too many iterations.";
   return finished_;
 }
 
@@ -282,9 +305,9 @@ int cg(dense_matrix const& A, dense_vector& x, dense_vector const& b, iteration&
   using Real   = typename iteration::real_type;
 
   Scalar rho(0), rho_1(0), alpha(0);
-  Vector p(b), q(b), r(b), z(b);
+  Vector p(b), q(b), z(b);
+  Vector r(b - A*x);
 
-  r = b - A*x;
   rho = r.unary_dot();
   while (! iter.finished(Real(sqrt(abs(rho))))) {
     ++iter;
