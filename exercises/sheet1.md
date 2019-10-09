@@ -13,6 +13,7 @@ the Linux terminal, please perform the following tasks on your local machine:
 - Change back to your home directory
 - Find all files in the `Desktop` directory recursively containing the text "Hello"
 - Edit the file `Desktop/scprog/exercise1.txt` and replace the word "World" by "Dresden"
+- What does the following command do: `du -s * | sort -nr > $HOME/user_space_report.txt` ?
 
 You might need the following commands: `cat`, `cd`, `cp`, `echo`, `find`, `grep`, `ls`, `rm`, `sed`, `vim`. Familiarize yourself with
 the commands, using the references given below or any other (online) resource and find out about possible arguments to the
