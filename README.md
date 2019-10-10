@@ -9,7 +9,7 @@ good way of learning and training collaborative coding, which is commonplace in
 Scientific Computing research groups.
 
 In order to allow fast correction and evaluation of submitted solutions, we require
-a predefined structure of the repositories and coding styles to be follwed. Not
+a predefined structure of the repositories and coding styles to be followed. Not
 following these rules for repositories may result in your solution not being reviewed.
 You will then have to reformat it and submit again. Not following the style guidelines
 may result in point deduction, with the amount of points depending on the impact your
@@ -88,9 +88,6 @@ following the procedure:
 After final review of your submission (and maybe inclusion of your corrections)
 you get a :thumbsup: and can merge your branch into your `master` branch.
 
-**Note:** each member of the group should participate in the submission, i.e.
-commit her/his contributions individually and not just by the creator of the
-repository, if the exercise amount allows for splitting.
 
 # Style Guidelines
 All programs you submit should follow basic programming rules like the following:
@@ -103,17 +100,17 @@ All programs you submit should follow basic programming rules like the following
   - The name should reflect the purpose of the variable
   - Variable names start with a lowercase letter, types with an uppercase letter
   - The rest of the name format for identifiers is up to you
-  - Simple counting integers and similar variables are exempt
+  - Simple counting integers and similar variables are exceptions
 - **Comments**
   - Comments allow others to understand your intentions
   - Tutors can only give you points if they understand what you were trying to do
   - *Guideline:* one comment per class, per function, per algorithm subtask, per tricky or "exotic" source line
-  - Don’t comment to much either, this may visually drown the actual code or diverge from what is actually coded (!)
+  - Don't comment to much either, this may visually drown the actual code or diverge from what is actually coded (!)
   - Leave out trivial comments ("This is the constructor")
 - **Language constructs**
   - You may use any construct you want, even if it has not yet been introduced in the lecture
   - Avoid constructs that have been superseded by better alternatives in the lecture
-  - Declare variables and references as const where it is possible
+  - Declare variables and references as `const` where it is possible
   - Separate interface and implementation by correctly using public and private
   - Use exceptions instead of asserts / aborts and smart pointers instead of raw pointers once the lecture has introduced them
 
