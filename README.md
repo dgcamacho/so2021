@@ -112,7 +112,7 @@ All programs you submit should follow basic programming rules like the following
   - Avoid constructs that have been superseded by better alternatives in the lecture
   - Declare variables and references as `const` where it is possible
   - Separate interface and implementation by correctly using public and private
-  - Use exceptions instead of asserts / aborts and smart pointers instead of raw pointers once the lecture has introduced them
+  - Use smart pointers instead of raw pointers once the lecture has introduced them
 
 See [Google C++ Style Guide](http://google.github.io/styleguide/cppguide.html) for
 more rules and guidelines on the coding style. Also, see the
