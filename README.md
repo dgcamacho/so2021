@@ -9,7 +9,7 @@ good way of learning and training collaborative coding, which is commonplace in
 Scientific Computing research groups.
 
 Additionally to the learning effect, you can collect points for submitted exercises
-that may eventually lead to an improvement in you final exam by at most a grad 0.3. To
+that may eventually lead to an improvement in you final exam by at most a grade 0.3. To
 reach this bonus, you have to gain 80% of the possible exercise points.
 
 In order to allow fast correction and evaluation of submitted solutions, we require
