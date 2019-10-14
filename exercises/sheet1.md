@@ -86,7 +86,7 @@ and "Todos" tabs, and the "Wiki" tab. If and how you use these features is up to
 - [Git reference](https://www.git-scm.com/docs)
 - [cheat sheet](https://github.github.com/training-kit/downloads/github-git-cheat-sheet.pdf)
 
-## Exercise 2 (Compiling code) ... (5 Points)
+## Exercise 2 (Compiling code)
 **>> Submit solution until 2019/10/30**
 
 In the directory [material/sheet1/](/exercises/material/sheet1) you can find
@@ -115,8 +115,10 @@ instructions given in the [README.md](/README.md) of this repository.
 You can find a documentation of the compiler arguments on
 - [GCC manual](https://gcc.gnu.org/onlinedocs/gcc-7.2.0/gcc/)
 
+### > 5 Points
 
-## Exercise 3 (Basic debugging) ... (5 Points)
+
+## Exercise 3 (Basic debugging)
 **>> Submit solution until 2019/10/30**
 
 In the [material/sheet1/](/exercises/material/sheet1) directory, you can
@@ -153,3 +155,5 @@ which bugs you have found and how.
 - Cheat Sheets: [darkdust.net](https://darkdust.net/files/GDB%20Cheat%20Sheet.pdf),
   [kapeli.com](https://kapeli.com/cheat_sheets/GDB.docset/Contents/Resources/Documents/index),
   [utexas.edu](http://users.ece.utexas.edu/~adnan/gdb-refcard.pdf)
+
+### > 5 Points
