@@ -1,6 +1,6 @@
 # Exercises for the lecture SCPROG in the winter term 2019/20
 
-**Tutor:** Dr. Simon Praetorius (simon.praetorius@tu-dresden.de)
+**Tutor:** Dr. Simon Praetorius (simon.praetorius@tu-dresden.de), user @spraetor
 
 There will be an exercise sheet every week with some exercises to be worked on during the tutorial and some to be
 submitted for review. The submission procedure is briefly described on the lecture repository [README.md](/README.md) page and follows the way of code submission in many (scientific) software projects.
