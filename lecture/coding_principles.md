@@ -10,15 +10,15 @@ doubt: use double precision.
 Give your variables a reasonable name.
 
 ## 3. RAII
-Resource allocation is initialisation (RAII):
+Resource allocation is initialization (RAII):
 Whenever a resource, e.g. variable, is allocated/declared,
-it should be initialised with some reasonable value.
+it should be initialized with some reasonable value.
 
 ## 4. const usage
 Use const as much as possible.
 
 ## 5. pointer init to NULL
-Always initialise a pointer with the address of an existing
+Always initialize a pointer with the address of an existing
 variable or with NULL.
 
 ## 6. float equality test
@@ -74,7 +74,7 @@ Always encapsulate your header files by an
 ifndef-define-endif construct.
 
 ## 20. global variables
-Only if absolutely neccessary make non-const variables
+Only if absolutely necessary make non-const variables
 global.
 
 ## 21. anonymous namespaces
