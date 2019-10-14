@@ -115,7 +115,7 @@ instructions given in the [README.md](/README.md) of this repository.
 You can find a documentation of the compiler arguments on
 - [GCC manual](https://gcc.gnu.org/onlinedocs/gcc-7.2.0/gcc/)
 
-### > 5 Points
+**(5 Points)**
 
 
 ## Exercise 3 (Basic debugging)
@@ -156,4 +156,4 @@ which bugs you have found and how.
   [kapeli.com](https://kapeli.com/cheat_sheets/GDB.docset/Contents/Resources/Documents/index),
   [utexas.edu](http://users.ece.utexas.edu/~adnan/gdb-refcard.pdf)
 
-### > 5 Points
+**(5 Points)**
