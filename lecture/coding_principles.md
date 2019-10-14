@@ -112,3 +112,14 @@ Use exceptions for all error handling.
 ## 28. dynamic casts
 Use dynamic casts for type casting of derived datatypes
 as much as possible.
+
+## 29. DRY - Don't Repeat Yourself
+Every piece of knowledge must have a single, unambiguous, authoritative
+representation within a system.
+
+The alternative is to have the same thing expressed in two or more places. If you change one, you
+have to remember to change the others, or, like the alien computers, your program will be brought
+to its knees by a contradiction. It isn't a question of whether you'll remember: it's a question of when
+you'll forget.
+
+(The Progmatic Programmer: Tip 11)
