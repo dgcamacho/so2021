@@ -130,7 +130,7 @@ Online references and literature useful for completing the exercises are listed 
     [LAPACK](http://www.netlib.org/lapack/), [DUNE](https://www.dune-project.org/doxygen/),
     [Git](https://git-scm.com/docs), [Boost](https://www.boost.org/doc/libs/1_71_0/),
     [CMake](https://cmake.org/cmake/help/latest/)
-- **Cheetsheets:**
+- **Cheat-sheets:**
   - [Divhints](https://devhints.io/), [Git](https://github.github.com/training-kit/downloads/github-git-cheat-sheet.pdf),
     [Linux Command Line](https://appletree.or.kr/quick_reference_cards/Unix-Linux/Linux%20Command%20Line%20Cheat%20Sheet.pdf)
 - **Tutorials:**
