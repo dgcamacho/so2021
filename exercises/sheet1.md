@@ -86,8 +86,8 @@ and "Todos" tabs, and the "Wiki" tab. If and how you use these features is up to
 - [Git reference](https://www.git-scm.com/docs)
 - [cheat sheet](https://github.github.com/training-kit/downloads/github-git-cheat-sheet.pdf)
 
-## Exercise 2 (Compiling code)
-**>> Submit solution until 2019/10/30**
+## Exercise 2 (Compiling code) :arrow_right:
+
 
 In the directory [material/sheet1/](/exercises/material/sheet1) you can find
 an initial C++ example in the files `linear_algebra.cc`, `linear_algebra.h`, and `exercise2.cc`. Download the files and compile the code:
@@ -111,15 +111,14 @@ What is the effect? What is the minimal necessary set of options to pass?
 Document the output, results, and findings, write it into a file `solution.txt` or `solution.md` and commit into your repository. Follow the
 instructions given in the [README.md](/README.md) of this repository.
 
-**(5 Points)**
+**>> Submit solution until 2019/10/30 ... (5 Points)**
 
 ### Resources
 You can find a documentation of the compiler arguments on
 - [GCC manual](https://gcc.gnu.org/onlinedocs/gcc-7.2.0/gcc/)
 
 
-## Exercise 3 (Basic debugging)
-**>> Submit solution until 2019/10/30**
+## Exercise 3 (Basic debugging) :arrow_right:
 
 In the [material/sheet1/](/exercises/material/sheet1) directory, you can
 find a second exercise code for this exercise sheet, i.e. the file `exercise3.cc`.
@@ -150,7 +149,7 @@ or a class member (e.g. `x.data_`), or the current instance of the class (e.g. `
 Use GDB to locate, find, and correct the bugs in the provided source code. Document
 which bugs you have found and how.
 
-**(5 Points)**
+**>> Submit solution until 2019/10/30 ... (5 Points)**
 
 ### Resources
 - [GDB Documentation](https://www.gnu.org/software/gdb/documentation/)
