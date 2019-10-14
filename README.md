@@ -10,7 +10,7 @@ Scientific Computing research groups.
 
 Additionally to the learning effect, you can collect points for submitted exercises
 that may eventually lead to an improvement in you final exam by at most a grade 0.3. To
-reach this bonus, you have to gain 80% of the possible exercise points.
+reach this bonus, you have to gain 66% of the possible exercise points.
 
 In order to allow fast correction and evaluation of submitted solutions, we require
 a predefined structure of the repositories and coding styles to be followed. Not
@@ -26,10 +26,10 @@ using the ZIH-Login (s...-number) for the account user name associated to your T
 email address. This ensures that you will get credit for your submissions.
 
 ## Project Name
-Please form groups of up to three members and exchange contact details so you can find
+Please form groups of up to two members and exchange contact details so you can find
 each other on GitLab. One of you should create a *private* (!) project, and invite the rest
-of the group. The name of your project is `scprog-Name1Name2Name3`, where `Name1`
-is the last name of the first student, `Name2` that of the second student, and so on. These
+of the group. The name of your project is `scprog-Name1Name2`, where `Name1`
+is the last name of the first student, `Name2` that of the second student. These
 names should be sorted alphabetically. If your lineup changes for any reason during the
 course of the semester, please create a new project that reflects this and inform your
 tutors.
