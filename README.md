@@ -72,10 +72,8 @@ submit a [Markdown](https://docs.gitlab.com/ee/user/markdown.html) file `solutio
 instead. This allows basic formatting of the text.
 
 ## Access to the Repository
-Please give your tutor @spraetor write access to your project so that your submissions can be
-graded. You also need to give read access to the repository to all tutors if there is
-more than one, regardless of the group you are in. This allows for flexible handling of
-unforeseen situations.
+Please give your tutor @spraetor write access (at least Reporter status) to your project so that
+your submissions can be graded.
 
 # Submission of Exercises
 On each exercise sheet some exercises are marked for submission with in sum 10 possible exercise points.
