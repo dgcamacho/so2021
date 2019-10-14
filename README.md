@@ -8,6 +8,10 @@ Handing in solutions to exercises and projects digitally on such a platform is a
 good way of learning and training collaborative coding, which is commonplace in
 Scientific Computing research groups.
 
+Additionally to the learning effect, you can collect points for submitted exercises
+that may eventually lead to an improvement in you final exam by at most a grad 0.3. To
+reach this bonus, you have to gain 80% of the possible exercise points.
+
 In order to allow fast correction and evaluation of submitted solutions, we require
 a predefined structure of the repositories and coding styles to be followed. Not
 following these rules for repositories may result in your solution not being reviewed.
@@ -74,10 +78,10 @@ more than one, regardless of the group you are in. This allows for flexible hand
 unforeseen situations.
 
 # Submission of Exercises
-On each exercise sheet some exercises are marked for submission. You have approximately
-two weeks for each of these exercises, where the final date is written next to the exercise.
-In order to get your solutions reviewed, it has to be committed to your GitLab repository
-following the procedure:
+On each exercise sheet some exercises are marked for submission with in sum 10 possible exercise points.
+You have approximately two weeks for each of these exercises, where the final date is written
+next to the exercise. In order to get your solutions reviewed, it has to be committed to your
+GitLab repository following the procedure:
 
 1. For each exercise sheet create a new branch called `sheetX` where `X` is the number of
    the sheet.
@@ -86,7 +90,8 @@ following the procedure:
 4. Create a merge request to your master branch
 
 After final review of your submission (and maybe inclusion of your corrections)
-you get a :thumbsup: and can merge your branch into your `master` branch.
+you get a comment in the MergeRequest section of GitLab and a :thumbsup:. This allows you to merge
+your branch into your `master` branch.
 
 
 # Style Guidelines
@@ -114,7 +119,7 @@ All programs you submit should follow basic programming rules like the following
   - Separate interface and implementation by correctly using public and private
   - Use smart pointers instead of raw pointers once the lecture has introduced them
 
-See [Google C++ Style Guide](http://google.github.io/styleguide/cppguide.html) for
+Optionally, see [Google C++ Style Guide](http://google.github.io/styleguide/cppguide.html) for
 more rules and guidelines on the coding style. Also, see the
 [C++ Core Guidelines](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md)
 for a comprehensive list of best practice programming rules for C++.
