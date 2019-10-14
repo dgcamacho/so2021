@@ -86,7 +86,7 @@ and "Todos" tabs, and the "Wiki" tab. If and how you use these features is up to
 - [Git reference](https://www.git-scm.com/docs)
 - [cheat sheet](https://github.github.com/training-kit/downloads/github-git-cheat-sheet.pdf)
 
-## Exercise 2 (Compiling code)
+## Exercise 2 (Compiling code) ... (5 Points)
 **>> Submit solution until 2019/10/30**
 
 In the directory [material/sheet1/](/exercises/material/sheet1) you can find
@@ -116,7 +116,7 @@ You can find a documentation of the compiler arguments on
 - [GCC manual](https://gcc.gnu.org/onlinedocs/gcc-7.2.0/gcc/)
 
 
-## Exercise 3 (Basic debugging)
+## Exercise 3 (Basic debugging) ... (5 Points)
 **>> Submit solution until 2019/10/30**
 
 In the [material/sheet1/](/exercises/material/sheet1) directory, you can
