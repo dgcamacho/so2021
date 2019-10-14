@@ -123,3 +123,11 @@ to its knees by a contradiction. It isn't a question of whether you'll remember:
 you'll forget.
 
 (The Progmatic Programmer: Tip 11)
+
+## 30. asserts
+If It Can't Happen, Use Assertions to Ensure That It Won't 
+
+Don't use assertions in place of real error handling. Assertions check for things that should never
+happen.
+
+(The Progmatic Programmer: Tip 33)
