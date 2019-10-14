@@ -111,11 +111,11 @@ What is the effect? What is the minimal necessary set of options to pass?
 Document the output, results, and findings, write it into a file `solution.txt` or `solution.md` and commit into your repository. Follow the
 instructions given in the [README.md](/README.md) of this repository.
 
+**(5 Points)**
+
 ### Resources
 You can find a documentation of the compiler arguments on
 - [GCC manual](https://gcc.gnu.org/onlinedocs/gcc-7.2.0/gcc/)
-
-**(5 Points)**
 
 
 ## Exercise 3 (Basic debugging)
@@ -150,10 +150,10 @@ or a class member (e.g. `x.data_`), or the current instance of the class (e.g. `
 Use GDB to locate, find, and correct the bugs in the provided source code. Document
 which bugs you have found and how.
 
+**(5 Points)**
+
 ### Resources
 - [GDB Documentation](https://www.gnu.org/software/gdb/documentation/)
 - Cheat Sheets: [darkdust.net](https://darkdust.net/files/GDB%20Cheat%20Sheet.pdf),
   [kapeli.com](https://kapeli.com/cheat_sheets/GDB.docset/Contents/Resources/Documents/index),
   [utexas.edu](http://users.ece.utexas.edu/~adnan/gdb-refcard.pdf)
-
-**(5 Points)**
