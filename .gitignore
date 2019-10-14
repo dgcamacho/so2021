@@ -1,0 +1,28 @@
+# ignore generated temporaries
+*.aux
+*.log
+*.lof
+*.lot
+*.toc
+*.bbl
+*.blg
+*.out
+*.idx
+*.ind
+*.ilg
+*.fls
+*.fdb_latexmk
+*.~*
+
+# ignore final papers
+*.pdf
+*.dvi
+*.ps
+
+# ignore build directories
+_minted*/
+_repo/
+
+# ignore c++ object files
+*.o
+a.out

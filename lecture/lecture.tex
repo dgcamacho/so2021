@@ -1,0 +1,71 @@
+\documentclass[10pt,a4paper]{report}
+\usepackage[left=1.5cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\input{declarations}
+
+\author{Dr. Simon Praetorius}
+\title{Scientific Programming with C++}
+
+\begin{document}
+
+\maketitle
+\begin{abstract}
+The focus of this module lies on aspects of software development like programming on high-performance computers,
+object-oriented software design, generic (template-based) programming, and the efficient implementation of
+numerical algorithms. Additionally experience in analysis, application and extension of software and software
+libraries is developed. This module in the winter term especially focuses on software development with the
+programming language C++.
+
+Three main learning goals can be formulated:
+\begin{enumerate}
+  \item You know how to program with modern C++, using generic programming and advanced techniques, like meta
+  programming, expression templates, and concepts.
+  \item You know how to use programming tools and you can apply these tools to debug, benchmark, and manage your
+  code. The list of tools include compilers, build systems, version control, debuggers, and profilers.
+  \item You can read, understand, and utilize (scientific) software libraries, like BLAS (Basic Linear Algebra
+  Subroutines), LAPACK (Linear Algebra Package), STL (Standard template library), Dune (framework for the
+  discretization of partial differential equations), MTL4 (Matrix Template Library), Boost (portable C++ library).
+\end{enumerate}
+
+There are exercises every week to practice the C++ programming. During the semester programming projects in groups
+are assigned.
+
+These lecture notes are partially based on a bool manuscript by Peter Gottschling \cite{gottschling2016}, The book
+``C++ kurz \& gut'' \cite{loudon2013}, and ``Die C++-Programmiersprache'' \cite{stroustrup2000}. It is continuously
+developed since the initial lecture in So2014. This is \textit{work in progress} and may contain typos and errors
+that need to be corrected in future releases of the notes. Please feel free to submit any correction.
+\end{abstract}
+
+\tableofcontents
+
+\input{01_introduction}
+
+
+%\input{ch1}  % Einleitung
+%\input{ch2a}  % C++ Basics
+%\input{ch2b}  % C++ Basics
+%\input{ch2c}  % C++ Basics
+%\input{ch3}  % Generisches Programmieren
+%\input{ch4}  % Funktoren
+%\input{ch5}  % Iteratoren
+%\input{ch6}  % Meta-Programming
+%\input{type_traits}
+%\input{optimization}
+%\input{ch7}  % Expression Templates
+%\input{ch8}  % Compile-Time Symbolic Differentiation
+%\input{ch9}
+
+% \input{ch9}  % Programmierkonzepte in der Linearen Algebra
+% \input{ch10} % Sonstiges
+
+% \input{ch_exercises}
+% \input{ch_appendix}
+
+\todos
+
+\printindex
+
+\bibliographystyle{abbrv}
+\bibliography{references}
+
+
+\end{document}

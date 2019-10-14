@@ -1,0 +1,150 @@
+\chapter{Introduction}
+\begin{zitat}{Bjarne Stroustrup (1994) \cite{stroustrup1994design}}
+  ``It would be nice if every kind of numeric software could be written in C++ without loss of efficiency, but unless something can be found that achieves this without compromising the C++ type system it may be preferable to rely on Fortran, Assembler or architecture-specific extensions.''
+\end{zitat}
+
+Scientific programming is an old discipline in computer science. The first applications on computers were indeed computations.
+In the early decades, ALGOL was a relatively popular programming language, competing with FORTRAN. FORTRAN 77 became a standard
+in scientific programming because of its efficiency and portability. Other computer languages were developed in computer science
+but not frequently used in scientific computing: C, Ada, Java, C++. They were merely used in universities and labs for research
+purposes.
+
+C++ was not a reliable computer language in the 90s: code was not portable, object code not efficient and had a large size. This
+made C++ unpopular in scientific computing. This changed at the end of the nineties: the compilers produced more efficient code,
+and the standard was more and more supported by compilers. Especially the ability to inline small functions and the introduction
+of complex numbers in the C99 standard made C++ more attractive to scientific programmers.
+
+Together with the development of compilers, numerical libraries are being developed in C++ that offer great flexibility together
+with efficiency. This work is still ongoing and more and more software is being written in C++. Currently, other languages used
+for numerics are FORTRAN 77 (even new codes!), Fortran 95, and Matlab. More and more becoming popular is Python. The nice thing
+about Python is that it is relatively easy to link C++ functions and classes into Python scripts. Writing such interfaces is not
+a subject of this course, though.
+
+The quote of Bjarne Stroustrup, the developer of the C++ programming language, is from the mid 90s. Since then a lot has changed.
+\begin{zitat}{Todd L. Veldhuizen (2000) \cite{veldhuizen2000}}
+  ``C++ is now ready to compete with the performance of Fortran. Its performance problems have been solved by a combination of
+  better optimizing compilers and template techniques. It's possible that C++ will be faster than Fortran for some applications.''
+\end{zitat}
+
+The goal of this course is to introduce students to the exciting world of C++ programming for scientific applications. The course
+does not offer a deep study of the programming language itself, but rather focuses on those aspects that make C++ suitable for
+scientific programming. Language concepts are introduced and applied to numerical programming, together with the STL and Boost.
+
+It is not our goal to explain all C++ features in a well-balanced manner. We rather aim for an application-driven illustration of
+features that are valuable for writing well-structured, readable, maintainable, extensible, type-safe, reliable, portable, and last
+but not least highly performing software. In order to achieve this goal we not only want to explain a programming language, but
+also discuss best practice in coding and project management of scientific software.
+
+\section{Initial example}
+While in classical computer science courses the famous \emph{hello world} example is shown at the beginning, in the scientific
+programming lecture I switch to a more numerics oriented initial example: matrix-vector multiplication.
+
+Let $A\in\mathbb{R}^{n\times n}$ be a real (dense) matrix of size $n\times n$, with $n > 0$ a positive integer, and $x\in\mathbb{R}^n$
+a corresponding real vector of size $n$. We do not assume any special properties of $A$, like symmetry, bandedness, or triangular
+shape. As will be explained later in the lecture and in some exercises, we have two classes, \cpp{dense_matrix} and \cpp{dense_vector}
+that can represent our real-valued matrix $A$ and vector $x$:
+%
+\begin{minted}{c++}
+  dense_matrix A(100, 100);
+  // initialize A
+  dense_vector x(100);
+  // initialize x
+\end{minted}
+
+First, we solve the task $y = A\cdot x + y$ (accumulated matrix-vector multiplication) with $y\in\mathbb{R}^n$ initialized to zero,
+using the library CBLAS:
+%
+\begin{minted}{c++}
+  int m = A.rows();         // number of rows of the matrix A
+  int n = A.cols();         // number of columns of the matrix A
+  int lda = std::max(1,m);  // Specifies the leading dimension of array storing the value of A
+  int incx = 1;             // Specifies the increment for the elements of x
+  int incy = 1;             // Specifies the increment for the elements of y
+  double alpha = 1.0, beta = 1.0;
+
+  dense_vector y(m, 0.0);
+  cblas_dgemv(CblasRowMajor, CblasNoTrans, m, n, alpha, &A[0][0], lda,
+              &x[0], incx, beta, &y[0], incy);
+\end{minted}
+%
+Second, we solve the same task, using some techniques we will develop during this lecture:
+%
+\begin{minted}{c++}
+  dense_vector y(m, 0.0);
+  y += A*x;
+\end{minted}
+
+The C++ version more clearly states what it computes, has no arguments that you could mix up, and (this might be
+surprising) is not necessarily slower than the first version and even can call all variants of the \texttt{clas\_***mv} methods
+from CBLAS simply by analyzing the arguments passed to the multiplication operator \texttt{*}.
+
+\begin{rem}
+  If you test the initial exercise implementation, you will find that it is indeed slower than the CBLAS. During the semester
+  we will learn some more advanced techniques and ways to come close the performance of an optimized blas.
+\end{rem}
+
+\begin{example}
+Ist \cpp{A} oder \cpp{B} eine Diagonalmatrix, Tridiagonalmatrix, Dreiecksmatrix, symmetrische Matrix, ... dann lässt sich eventuell das Product \cpp{A*B} effizienter implementieren. C++ bietet die Möglichkeit den selben Ausdruck (\cpp{A*B}) für verschiedene Objekte/ Datentypen (z.B. Matrizen mit verschiedenen Eigenschaften) zu definieren, wobei im Hintergrund automatisch der passende Algorithmus ausgewählt wird. Noch dazu könnte man im Hintergrund die Operation parallelisieren, ohne dass der Anwender dies explizit fordern muss.
+\end{example}
+
+Ziel dieses Kurses soll es sein über die Grundlagen von C++ hinaus zu erfahren, wie man gut strukturierte, lesbare, wartbare, erweiterbare, Typ-sichere, verlässliche, portable, hoch performante Software mit C++ schreibt. Dabei wollen wir uns in diesem Kurs weniger auf Konzepte des Objekt-Orientierten Programmierens (OOP) konzentrieren, als vielmehr auf Konzepte des generischen Programmierens --- später wird genauer erklärt, was man darunter versteht. Eine Einführung in OOP wird es in einem anderen Kurs \textit{Fortgeschrittene Konzepte des Wissenschaftlichen Programmierens - OOP mit Java} bei Prof. W. Walter zu hören geben.
+
+\section{Organisatorisches}
+Der Kurs hat drei Lernziele / Schwerpunkte:
+\begin{enumerate}[1)]
+\item Konzepte der Programmierung mit C++ (80\%)
+\item Arbeit mit Programmierwerkzeugen (z.B. Compiler, Buildsysteme, Versionskontrollsysteme, Debugger, Quelltextdokumentation, Testsysteme) (10\%)
+\item Arbeit mit komplexen Software-Bibliotheken (z.B. STL (Standard Bibliothek), Dune (Framework zur Diskretisierung von Differentialgleichungen), MTL4 (Matrix Template Library), Boost (portable C++ Bibliothek) ) (10\%)
+\end{enumerate}
+
+Für die Übungen werden wöchentlich Aufgaben online gestellt. Diese sind zu finden unter der Adresse
+
+\url{www.math.tu-dresden.de/~spraetor}
+
+in der Kategorie \textit{Vorlesung / Übung zu Scientific Programming - Fortgeschrittene Konzepte - WS2016}. Mehrfach im Semester werden einzelne Übungsaufgaben ausgesucht, die spätestens zum Ende der jeweiligen Übung abgegeben werden müssen. Diese können aber auch schon zu Hause gelöst werden. Aufgaben sollen dazu in ein Online-Repository eingechecked werden. Mehr dazu in den Übungen.
+
+\section{Literatur}
+\begin{description}
+\item[Online-Referenzen]: \url{http://www.cplusplus.com}, \url{http://en.cppreference.com}
+\item[Grundlage der Vorlesung] Discovering Modern C++: An Intensive Course for Scientists, Engineers, and Programmers, Peter Gottschling, 2015
+\item[Referenz] Die C++ Programmiersprache (Bjarne Stroustrup)
+\item[Anfänger] C++ Primer (Stanley Lippman, Josee Lajoie, Barbara E. Moo), C++ Kurz \& Gut (Kyle Loudon, Rainer Grimm)
+\item[Mittleres Level] (More) Effective C++ (Scott Meyers), C++ Templates: The Complete Guide (David Vandevoorde, Nicolai M. Josuttis)
+\item[Fortgeschrittene] Modern C++ Design (Andrei Alexandrescu), C++ Template Metaprogramming (David Abrahams, Aleksey Gurovoy)
+\end{description}
+
+\section{Geschichte von C++}
+\subsection{Frühes C++}
+Die Geschichte von C++ geht zurück auf das Jahr \textbf{1979}, in dem Bjarne Stroustrup sich in seiner Doktorarbeit mit der Programmiersprache \textit{Simula} beschäftigte. Diese gilt als eine der ersten Objekt-Orientierten Programmiersprachen (entwickelt in den \textbf{1960er} Jahren von Ole-Johan Dahl und Kristen Nygaard). Er erkannte den Nutzen dieser Programmiertechnik in der Softwareentwicklung, allerdings war die Simula Sprache viel zu langsam für die praktische Nutzung.
+
+Als erste Entwicklung hin zu C++ wurde in den Jahren \textbf{1979--1983} die Sprache C um Klassen erweitert $\rightarrow$ \textit{C with classes}. Ein erster Kompiler (\textit{Cfront}) wurde von einem C-Kompiler abgeleitet. Die Spracherweiterung umfasste damals Klassen, grundlegende Vererbung, Inlining, Standardwerte in Funktionsargumenten und strenge Type-Überprüfung zusätzlich zu den Features der Sprache C.
+
+Als weitere Features hinzukamen (wie z.B. Exceptions) wurde der Kompiler \textit{Cfront} aufgegeben. Im Jahr 1983 bekam die Sprache dann einen neuen Namen: \textit{C++} der sich vom Inkretment Operator in C ableitete --- also eine Weiterentwicklung von C. Neue Features kamen hinzu: virtuelle Funktionen, Funktionsüberladung, Referenzen mit dem \cpp{&} Symbol, das Schlüsselwort \cpp{const} und einzeilige Kommentare mit dem doppelten Schrägstrich.
+
+Eines der ersten Referenzmanuale war das Buch \textit{The C++ programming language} aus dem Jahr \textbf{1985}, später dann im Jahr 1990 das Buch \textit{The Annotated C++ Reference Manual}. Noch war die Sprache nicht standardisiert, so dass diese Bücher quasi als Standard-Nachschlagewerk dienten. Zu dieser Zeit wurde auch der kommerzielle \textit{Borland C++ Compiler} veröffentlich. Im Jahr \textbf{1987} bekam auch die GNU Compiler Collection GCC Umterstützung für C++.
+
+\subsection{Standard C++}
+Der erste ISO-Standard wurde \textbf{1998} veröffentlich, auch bekannt unter der Bezeichnung \cxx{98} Standard. Um das Jahr \textbf{1979} wurde auch begonnen eine Standardbibliothek zu entwickeln, die dann mit in den Standard einfloss. Im Jahr \textbf{1999} wurde \textit{Boost} von einigen Standard-Kommitee-Mitgliedern gegründet, um qualitative Kandidatenten für zukünftige Versionen der C++-Standardbibliothek zu entwickeln.
+
+Eine Korrektur des 98er Standards, die einige Probleme beseitigte, die im Laufe der Zeit entdeckt wurden, ist im Jahr \textbf{2003} veröffentlicht worden. Dieser Standard ist auch bekannt als \cxx{03} Standard. Im Jahre \textbf{2005} wurde eine Erweiterung des 2003er Standards in Form eines technischen Reports TR1 veröffentlicht, der einige neue Features beinhaltet. Eigentlich sollten diese Ideen in einem neuen Standard noch im selben Jahrzehnt zusammengefasst werden, was die Arbeitsbezeichnung \cxx{0x} begründet. Allerdings ist erst in der Mitte des Jahres \textbf{2011} der nächste C++ Standard finalisiert worden (\cxx{11}). Noch immer ist dieser nicht überall verbreitet und viele Programme basieren noch auf dem Standard \cxx{03}. Ab der Version 4.8.1. ist dieser Standard vollständig im Compiler GCC umgesetzt, ab der Version 3.3. im Compiler \textit{clang}, ab der Version 15.0 im Intel C++ Compiler. Microsoft Visual Studio unterstützt \cxx{11} in der aktuellen Version 2015 noch nicht vollständig, aber weitestgehend.
+
+Der C++11 Standard brachte viele neue Features, manche wurden aber nicht vollständig im Standard umgesetzt oder zuende gedacht. Deswegen wurde im Jahr \textbf{2014} eine Minor-Revision zum Standard veröffentlicht (\cxx{14}), die als aktueller Standard angesehen werden kann und von vielen Kompilern nahezu vollständig umgesetzt ist. Der Entwurf von \cxx{14} wird auch als \cxx{1y} bezeichnet. Ab der Kompilerversion 6.1. in GCC wird \cxx{14} vollständig umgesetzt, in Clang ab Version 3.4.
+
+Einen detaillierteren Überblick findet man z.B. unter \url{http://en.cppreference.com/w/cpp/language/history} und in den Büchern von Bjarne Stroustrup: \url{http://www.stroustrup.com/hopl2.pdf} (A History of C++: 1979--1991) und \url{http://www.stroustrup.com/hopl-almost-final.pdf} (Evolving a language in and for the real world: C++ 1991--2006)
+
+\subsection{Zukünftige Entwicklungen}
+Für das Jahr \textbf{2017} ist der nächste C++ Standard geplant. Der Entwurf läuft dabei unter der Bezeichnung \cxx{1z} was darauf hindeutet, dass er noch dieses Jahrzehnt veröffentlich wird. Es sind auch schon Ideen für den darauf folgenden Standard \textbf{2020} in verschiedenen Technischen Reports formuliert. Die Dokumente finden sich auf der ISO-Standard Seite der Arbeitsgruppe 21: \url{http://www.open-std.org/jtc1/sc22/wg21/}.
+
+% \section{Motivation}
+% Wir werden in den Übungen aus mathematischer Sicht relativ einfache algorithmen betrachten. Dazu zählen die Berechnung des Abstands zweier Punkte, der Norm eines Vektors, Addition, Skalierung und Transformation von Vektoren. Nimmt man diese elementaren Operationen aber zusammen kann man viele komplexe Algorithmen effizient umsetzen. Als Beispiel soll uns hier die klassische Moleküldynamik dienen.
+%
+% Betrachte $N$ Partikel mit den Massen $m_i$, Positionen $\mathbf{r}_i(t)$ und Geschwindigkeiten $\mathbf{v}_i(t)$ zu einem Zeitpunkt $t$. Die Bewegung und Interaktion dieser Partikel könnte man mit der Newtonschen Bewegungsgleichung beschreiben:
+% \[m_k \ddot{\mathbf{r}}_k(t) = \mathbf{F}_k(t, \vec{\mathbf{r}}),\]
+% mit $\vec{\mathbf{r}}=(\mathbf{r}_1,\mathbf{r}_2,\ldots,\mathbf{r}_N)$ und $\mathbf{F}_k$ die Kraft, die auf das Partikel $k$ wirkt. Die Kraft wird hier durch eine Entwicklung von Gradienten von Wechselwirkungspotentialen dargestellt, d.h. $\mathbf{F}_k = -\nabla_{\mathbf{r}_k} V(\vec{\mathbf{r}})$, mit
+% \[V(\vec{\mathbf{r}}) = \sum_{k=1}^N V_1(\mathbf{r}_k) + \sum_{k<l}^N V_2(\mathbf{r}_k, \mathbf{r}_l) + \sum_{k<l<m}^N V_3(\mathbf{r}_k,\mathbf{r}_l,\mathbf{r}_m) + \cdots\]
+% In einigen Anwendungsfällen vereinfacht man die Darstellung des Potentials noch weiter und schränkt sich auf paar-Potentiale $V_2$ ein. Außerdem wird dann häufig angenommen, dass die Wechselwirkung symmetrisch ist, und $V$ nur noch vom Abstand der Partikel abhängt, also
+% \[V\approx\sum_{k<l}^N V_2(\|\mathbf{r}_k-\mathbf{r}_l\|),\quad \text{mit }V_2(\|\mathbf{r}_k-\mathbf{r}_l\|)=:V_2(r_{ij}).\]
+%
+% Das bedeutet, dass zur Simulation der Bewegung von Partikel viele Abstände von Punkten / Koordinaten berechnet werden müssen und dies möglichst effizient. Ein weiterer wichtiger Punkt sind Summen über Ausdrücke. Um dies effizient zu machen, wollen wir uns mit dem Aufrollen von Schleifen beschäftigen.
+%
+% Hat man viele Partikel und nehmen wir an, dass die Kräfte für große Abstände verschwinden, dann ließe sich über eine Parallelisierung der Simulation nachdenken. Für jeden Partikel wird die selbe Gleichung gelöst und eventuell gibt es nur wenig Wechselwirkung und damit in der Parallelisierung wenig Kommunikation. Im letzten Teil der Vorlesung soll es (wenn es die Zeit zulässt) um das Rechnen auf Grafikkarten und Parallelisierung mittels MPI gehen.

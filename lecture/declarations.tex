@@ -1,0 +1,125 @@
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{paralist}
+\usepackage{amsthm} % pushQED, popQED
+\usepackage{hyperref}
+\usepackage{qtree}
+\usepackage{tabularx}
+\usepackage{minted}
+\usepackage{lipsum}
+\usepackage{todo}
+%\usepackage{dingbat}
+\usepackage{mdframed}
+\usepackage{makeidx}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{tcolorbox}
+
+\usepackage[automark]{scrpage2}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+\definecolor{hellgrau}{rgb}{0.9, 0.9, 0.9}
+\definecolor{dunkelgruen}{rgb}{0, 0.5, 0.0}
+\definecolor{grau}{rgb}{0.4, 0.4, 0.4}
+\definecolor{dunkelblau}{rgb}{0.3, 0.3, 0.5}
+\definecolor{darkgreen}{rgb}{0.0, 0.6, 0.0}
+\definecolor{darkblue}{rgb}{0.0, 0.0, 0.8}
+
+\hypersetup{
+    bookmarks=false,
+    unicode=false,
+    pdftoolbar=false,
+    pdfmenubar=true,
+    pdffitwindow=false,
+    pdfstartview={FitH},
+    pdftitle={Scientific Programming with C++},
+    pdfsubject={Lecture notes}
+    pdfauthor={Simon Praetorius},
+    pdfnewwindow=true,
+    colorlinks=true,
+    linkcolor=darkblue,
+    citecolor=darkgreen,
+    filecolor=magenta,
+    urlcolor=darkblue
+}
+
+\setminted[c++]{mathescape,
+		linenos=false,
+		numbersep=5pt,
+		frame=none,
+		framesep=2mm,
+		breaklines=true}
+
+
+\setminted[java]{mathescape,
+		linenos=false,
+		numbersep=5pt,
+		frame=topline,
+		framesep=2mm,
+		label={Java Code},
+		breaklines=true}
+
+\newcommand{\cpp}{\mintinline{c++}}
+\newcommand{\cppline}{\mint[frame=none,linenos=false,breaklines=true]{c++}}
+
+\newenvironment{zitat}[1]{%
+  \pushQED{#1}%
+  \begin{quote}\itshape
+}{%
+  \par\normalfont\nointerlineskip\noindent\hfill--- \textsc{\popQED}%
+  \end{quote}%
+}
+
+\newenvironment{guideline}[1]{%
+  \pushQED{#1}%
+  \begin{tcolorbox}[colback=gray!5]\itshape
+}{%
+  \par\normalfont\nointerlineskip\noindent\hfill--- \textbf{\popQED}%
+  \end{tcolorbox}%
+}
+
+\newif\ifmanuscript
+\manuscripttrue
+
+
+\newif\ifoldexcercise
+\oldexcercisefalse
+
+% \newtheorem{lemma}{Lemma}
+% \newtheorem{corollary}{Corollary}
+
+%\theoremstyle{plain}
+\newtheorem{lem}{Lemma}
+\newtheorem{thm}{Theorem}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{rem}{Remark}
+\newtheorem{example}{Example}
+
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition}
+
+
+\newenvironment{task}{%
+  \begin{quote}\marginpar{\vspace{11pt}\smallpencil}\textbf{Exercise:}~\itshape
+}{
+  \end{quote}%
+}
+
+
+\newcommand{\cxx}[1]{\texttt{C++{#1}}}
+
+
+%\newcommand{\TODO}[1]{\begin{mdframed}[backgroundcolor=red!20]#1\todo*{#1}\end{mdframed}}
+\newcommand{\TODO}[1]{\begin{mdframed}[backgroundcolor=red!20]\Todo{#1}\end{mdframed}}
+
+
+\makeindex
+\newcommand{\Index}[1]{\textbf{#1}\index{#1}}
