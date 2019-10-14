@@ -143,8 +143,9 @@ Some important commands, sufficient for this exercise, are:
 - `step` (or `s`): enter first function on marked line
 - `watch <expression>`: break if value of expression changes
 
-Where the angular brackets `<` and `>` must be omitted. The `<expression>` can be any function parameter (e.g. `x`),
-or a class member (e.g. `x.data_`), or the current instance of the class (e.g. `*this`).
+Where the values in the angular brackets `<...>` just name the command arguments.
+The `<expression>` can be any function parameter (e.g. `x`), or a class member (e.g. `x.data_`),
+or the current instance of the class (e.g. `*this`).
 
 Use GDB to locate, find, and correct the bugs in the provided source code. Document
 which bugs you have found and how.
