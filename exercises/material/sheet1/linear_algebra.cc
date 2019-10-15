@@ -4,7 +4,7 @@
 namespace scprog {
 
 // set all entries of the vector to value v
-dense_vector& dense_vector::operator=(value_type v)
+DenseVector& DenseVector::operator=(value_type v)
 {
   for (auto& v_i : data_)
     v_i = v;
@@ -13,7 +13,7 @@ dense_vector& dense_vector::operator=(value_type v)
 
 
 // perform update-assignment elementwise +=
-dense_vector& dense_vector::operator+=(dense_vector const& that)
+DenseVector& DenseVector::operator+=(DenseVector const& that)
 {
   assert(size() == that.size());
   for (size_type i = 0; i < size(); ++i)
@@ -23,7 +23,7 @@ dense_vector& dense_vector::operator+=(dense_vector const& that)
 
 
 // perform update-assignment elementwise +=
-dense_vector& dense_vector::operator-=(dense_vector const& that)
+DenseVector& DenseVector::operator-=(DenseVector const& that)
 {
   assert(size() == that.size());
   for (size_type i = 0; i < size(); ++i)
@@ -33,7 +33,7 @@ dense_vector& dense_vector::operator-=(dense_vector const& that)
 
 
 // perform update-assignment elementwise *= with a scalar
-dense_vector& dense_vector::operator*=(value_type s)
+DenseVector& DenseVector::operator*=(value_type s)
 {
   for (size_type i = 0; i < size(); ++i)
     data_[i] *= s;
@@ -42,7 +42,7 @@ dense_vector& dense_vector::operator*=(value_type s)
 
 
 // perform update-assignment elementwise /= with a scalar
-dense_vector& dense_vector::operator/=(value_type s)
+DenseVector& DenseVector::operator/=(value_type s)
 {
   assert(s != value_type(0));
   for (size_type i = 0; i < size(); ++i)
@@ -52,7 +52,7 @@ dense_vector& dense_vector::operator/=(value_type s)
 
 
 // computes Y = a*X + Y.
-void dense_vector::axpy(value_type a, dense_vector const& x)
+void DenseVector::axpy(value_type a, DenseVector const& x)
 {
   assert(size() == x.size());
   for (size_type i = 0; i < data_.size(); ++i)
@@ -61,7 +61,7 @@ void dense_vector::axpy(value_type a, dense_vector const& x)
 
 
 // computes Y = a*Y + X.
-void dense_vector::aypx(value_type a, dense_vector const& x)
+void DenseVector::aypx(value_type a, DenseVector const& x)
 {
   assert(size() == x.size());
   for (size_type i = 0; i < data_.size(); ++i)
@@ -70,7 +70,7 @@ void dense_vector::aypx(value_type a, dense_vector const& x)
 
 
 // return the two-norm ||vector||_2 = sqrt(sum_i v_i^2)
-typename dense_vector::value_type dense_vector::two_norm() const
+typename DenseVector::value_type DenseVector::two_norm() const
 {
   using std::sqrt;
   value_type result = 0;
@@ -81,7 +81,7 @@ typename dense_vector::value_type dense_vector::two_norm() const
 
 
 // return the infinity-norm ||vector||_inf = max_i(|v_i|)
-typename dense_vector::value_type dense_vector::inf_norm() const
+typename DenseVector::value_type DenseVector::inf_norm() const
 {
   using std::abs;
   using std::max;
@@ -93,7 +93,7 @@ typename dense_vector::value_type dense_vector::inf_norm() const
 
 
 // return v^T*v
-typename dense_vector::value_type dense_vector::unary_dot() const
+typename DenseVector::value_type DenseVector::unary_dot() const
 {
   value_type result = 0;
   for (auto const& d : data_)
@@ -103,7 +103,7 @@ typename dense_vector::value_type dense_vector::unary_dot() const
 
 
 // return v^T*v2
-typename dense_vector::value_type dense_vector::dot(dense_vector const& v2) const
+typename DenseVector::value_type DenseVector::dot(DenseVector const& v2) const
 {
   assert(v2.size() == size());
   value_type result = 0;
@@ -113,7 +113,7 @@ typename dense_vector::value_type dense_vector::dot(dense_vector const& v2) cons
 }
 
 // construct a matrix from initializer lists
-dense_matrix::dense_matrix(std::initializer_list<std::initializer_list<value_type>> l)
+DenseMatrix::DenseMatrix(std::initializer_list<std::initializer_list<value_type>> l)
 {
   // 1. determine number of entries
   size_type columns = 0;
@@ -133,7 +133,7 @@ dense_matrix::dense_matrix(std::initializer_list<std::initializer_list<value_typ
 
 
 // perform update-assignment elementwise +=
-dense_matrix& dense_matrix::operator+=(dense_matrix const& that)
+DenseMatrix& DenseMatrix::operator+=(DenseMatrix const& that)
 {
   assert(rows() == that.rows());
   assert(cols() == that.cols());
@@ -144,7 +144,7 @@ dense_matrix& dense_matrix::operator+=(dense_matrix const& that)
 
 
 // perform update-assignment elementwise +=
-dense_matrix& dense_matrix::operator-=(dense_matrix const& that)
+DenseMatrix& DenseMatrix::operator-=(DenseMatrix const& that)
 {
   assert(rows() == that.rows());
   assert(cols() == that.cols());
@@ -155,7 +155,7 @@ dense_matrix& dense_matrix::operator-=(dense_matrix const& that)
 
 
 // set all entries to v
-dense_matrix& dense_matrix::operator=(value_type v)
+DenseMatrix& DenseMatrix::operator=(value_type v)
 {
   for (auto& A_ij : data_)
     A_ij = v;
@@ -164,17 +164,17 @@ dense_matrix& dense_matrix::operator=(value_type v)
 
 
 // matrix-vector product A*x
-dense_vector operator*(dense_matrix const& A, dense_vector const& x)
+DenseVector operator*(DenseMatrix const& A, DenseVector const& x)
 {
-  using value_type = typename dense_matrix::value_type;
-  dense_vector y(A.cols(), value_type(0));
+  using value_type = typename DenseMatrix::value_type;
+  DenseVector y(A.cols(), value_type(0));
   A.mult(x, y);
   return y;
 }
 
 
 // computes the matrix-vector product, y = Ax.
-void dense_matrix::mult(dense_vector const& x, dense_vector& y) const
+void DenseMatrix::mult(DenseVector const& x, DenseVector& y) const
 {
   assert(x.size() == cols());
   assert(y.size() == rows());
@@ -188,7 +188,7 @@ void dense_matrix::mult(dense_vector const& x, dense_vector& y) const
 
 
 // computes v3 = v2 + A * v1.
-void dense_matrix::mult_add(dense_vector const& v1, dense_vector const& v2, dense_vector& v3) const
+void DenseMatrix::mult_add(DenseVector const& v1, DenseVector const& v2, DenseVector& v3) const
 {
   assert(v1.size() == cols());
   assert(v2.size() == rows());
@@ -203,7 +203,7 @@ void dense_matrix::mult_add(dense_vector const& v1, dense_vector const& v2, dens
 
 
 // computes Y = a*X + Y.
-void dense_matrix::axpy(value_type a, dense_matrix const& X)
+void DenseMatrix::axpy(value_type a, DenseMatrix const& X)
 {
   assert(rows() == X.rows());
   assert(cols() == X.cols());
@@ -213,7 +213,7 @@ void dense_matrix::axpy(value_type a, dense_matrix const& X)
 
 
 // computes Y = a*Y + X.
-void dense_matrix::aypx(value_type a, dense_matrix const& X)
+void DenseMatrix::aypx(value_type a, DenseMatrix const& X)
 {
   assert(rows() == X.rows());
   assert(cols() == X.cols());
@@ -224,7 +224,7 @@ void dense_matrix::aypx(value_type a, dense_matrix const& X)
 
 // Setup a matrix according to a Laplacian equation on a 2D-grid using a five-point-stencil.
 // Results in a matrix A of size (m*n) x (m*n)
-void laplacian_setup(dense_matrix& A, std::size_t m, std::size_t n)
+void laplacian_setup(DenseMatrix& A, std::size_t m, std::size_t n)
 {
   A.resize(m*n, m*n);
   A = 0;
@@ -243,7 +243,7 @@ void laplacian_setup(dense_matrix& A, std::size_t m, std::size_t n)
 
 
 // Iteration finished according to residual value r
-bool iteration::finished(real_type const& r)
+bool BasicIteration::finished(real_type const& r)
 {
   bool result = false;
   if (converged(r))
@@ -255,7 +255,7 @@ bool iteration::finished(real_type const& r)
 }
 
 
-bool iteration::check_max()
+bool BasicIteration::check_max()
 {
   if (i_ >= max_iter_)
     error_ = 1, finished_ = true, err_msg_ = "Too many iterations.";
@@ -263,7 +263,7 @@ bool iteration::check_max()
 }
 
 
-bool iteration::converged() const
+bool BasicIteration::converged() const
 {
   if (norm_r0_ == 0)
     return resid_ <= atol_;  // ignore relative tolerance if |r0| is zero
@@ -271,7 +271,7 @@ bool iteration::converged() const
 }
 
 
-void iteration::print_resid()
+void BasicIteration::print_resid()
 {
   if (!quite_ && i_ % cycle_ == 0) {
     if (i_ != last_print_) { // Avoid multiple print-outs in same iteration
@@ -282,7 +282,7 @@ void iteration::print_resid()
 }
 
 
-int iteration::error_code() const
+int BasicIteration::error_code() const
 {
   using std::pow;
   if (!suppress_)
@@ -297,12 +297,12 @@ int iteration::error_code() const
 
 
 // Apply the conjugate gradient algorithm to the linear system A*x = b and return the number of iterations
-int cg(dense_matrix const& A, dense_vector& x, dense_vector const& b, iteration& iter)
+int cg(DenseMatrix const& A, DenseVector& x, DenseVector const& b, BasicIteration& iter)
 {
   using std::abs;
-  using Vector = dense_vector;
-  using Scalar = typename dense_vector::value_type;
-  using Real   = typename iteration::real_type;
+  using Vector = DenseVector;
+  using Scalar = typename DenseVector::value_type;
+  using Real   = typename BasicIteration::real_type;
 
   Scalar rho(0), rho_1(0), alpha(0);
   Vector p(b), q(b), z(b);
