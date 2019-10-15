@@ -41,13 +41,13 @@ programming lecture I switch to a more numerics oriented initial example: matrix
 
 Let $A\in\mathbb{R}^{n\times n}$ be a real (dense) matrix of size $n\times n$, with $n > 0$ a positive integer, and $x\in\mathbb{R}^n$
 a corresponding real vector of size $n$. We do not assume any special properties of $A$, like symmetry, bandedness, or triangular
-shape. As will be explained later in the lecture and in some exercises, we have two classes, \cpp{dense_matrix} and \cpp{dense_vector}
+shape. As will be explained later in the lecture and in some exercises, we have two classes, \cpp{DenseMatrix} and \cpp{DenseVector}
 that can represent our real-valued matrix $A$ and vector $x$:
 %
 \begin{minted}{c++}
-  dense_matrix A(100, 100);
+  DenseMatrix A(100, 100);
   // initialize A
-  dense_vector x(100);
+  DenseVector x(100);
   // initialize x
 \end{minted}
 
@@ -62,7 +62,7 @@ using the library CBLAS:
   int incy = 1;             // Specifies the increment for the elements of y
   double alpha = 1.0, beta = 1.0;
 
-  dense_vector y(m, 0.0);
+  DenseVector y(m, 0.0);
   cblas_dgemv(CblasRowMajor, CblasNoTrans, m, n, alpha, &A[0][0], lda,
               &x[0], incx, beta, &y[0], incy);
 \end{minted}
@@ -70,7 +70,7 @@ using the library CBLAS:
 Second, we solve the same task, using some techniques we will develop during this lecture:
 %
 \begin{minted}{c++}
-  dense_vector y(m, 0.0);
+  DenseVector y(m, 0.0);
   y += A*x;
 \end{minted}
 
@@ -79,13 +79,29 @@ surprising) is not necessarily slower than the first version and even can call a
 from CBLAS simply by analyzing the arguments passed to the multiplication operator \texttt{*}.
 
 \begin{rem}
-  If you test the initial exercise implementation, you will find that it is indeed slower than the CBLAS. During the semester
-  we will learn some more advanced techniques and ways to come close the performance of an optimized blas.
+  If you test the initial exercise implementation, you will find that it is indeed slower than the CBLAS version. During the semester
+  we will learn some more advanced techniques and ways to come close the performance of an optimized blas. An example of a high-level
+  C++ implementation beating the BLAS call, is MTL4 by Peter Gottschling.
 \end{rem}
 
-\begin{example}
-Ist \cpp{A} oder \cpp{B} eine Diagonalmatrix, Tridiagonalmatrix, Dreiecksmatrix, symmetrische Matrix, ... dann lässt sich eventuell das Product \cpp{A*B} effizienter implementieren. C++ bietet die Möglichkeit den selben Ausdruck (\cpp{A*B}) für verschiedene Objekte/ Datentypen (z.B. Matrizen mit verschiedenen Eigenschaften) zu definieren, wobei im Hintergrund automatisch der passende Algorithmus ausgewählt wird. Noch dazu könnte man im Hintergrund die Operation parallelisieren, ohne dass der Anwender dies explizit fordern muss.
-\end{example}
+\begin{rem}
+  In BLAS there are multiple different version of the \texttt{dgemv} function. The function name encodes different combinations, i.e.
+  the first letter \texttt{d} means \cpp{double} precision, the letters \texttt{ge} means \textit{general}, \texttt{m} mean \textit{matrix}
+  and \texttt{v} means vector. So, it implements the matrix-vector product of a general matrix in double precision. Other precision
+  types are \{\texttt{s}: single precision, \texttt{d}: double precision, \texttt{c}: complex single precision, and \texttt{z}: complex
+  double precision\}, for the matrix type, we have \{\textit{general matrix}, \textit{general band matrix}, \textit{hermitian/symmetric matrix},
+  \textit{triangular matrix}, $\ldots$\}, and the matrix can be transposed, or conjugate transposed, and can be in different storage format.
+
+  Thus, BLAS provides many combinations of these different properties, but all functions have a different name, and different arguments. It
+  is not so easy to get it right and hard to debug. The documentation of just 3 different functions in all its variants is a 24 pages long document.
+
+  On the other hand in C++ you can encode several of these properties in the type of the matrix. This allows to generate for the \textbf{same}
+  function call different specialized implementations by the compiler. So, there is no overhead of dispatching by the various matrix properties.
+  The MTL4 library implements this and we will also see how to switch an algorithm by inspecting type properties.
+\end{rem}
+
+
+
 
 Ziel dieses Kurses soll es sein über die Grundlagen von C++ hinaus zu erfahren, wie man gut strukturierte, lesbare, wartbare, erweiterbare, Typ-sichere, verlässliche, portable, hoch performante Software mit C++ schreibt. Dabei wollen wir uns in diesem Kurs weniger auf Konzepte des Objekt-Orientierten Programmierens (OOP) konzentrieren, als vielmehr auf Konzepte des generischen Programmierens --- später wird genauer erklärt, was man darunter versteht. Eine Einführung in OOP wird es in einem anderen Kurs \textit{Fortgeschrittene Konzepte des Wissenschaftlichen Programmierens - OOP mit Java} bei Prof. W. Walter zu hören geben.
 
