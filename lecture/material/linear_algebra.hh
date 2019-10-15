@@ -1,5 +1,3 @@
-#pragma once
-
 #include <cassert>
 #include <cmath>
 #include <complex>
@@ -10,7 +8,7 @@
 namespace scprog
 {
   /// A contiguous vector with vector-space operations
-  class dense_vector
+  class DenseVector
   {
   public:
 
@@ -26,20 +24,20 @@ namespace scprog
   public:
 
     /// default constructor, creates an empty vector of size 0
-    dense_vector() = default;
+    DenseVector() = default;
 
     /// constructor of vector with size s and all entries initialized with value v
-    explicit dense_vector(size_type s, value_type v = value_type{})
+    explicit DenseVector(size_type s, value_type v = value_type{})
       : data_(s, v)
     {}
 
     /// constructor with vector entries initialized by initializer_list
-    explicit dense_vector(std::initializer_list<value_type> l)
+    explicit DenseVector(std::initializer_list<value_type> l)
       : data_(l.begin(), l.end())
     {}
 
     /// set all entries of the vector to value v
-    dense_vector& operator=(value_type v);
+    DenseVector& operator=(value_type v);
 
     /// resize vector to size s and fill new entries with value v
     void resize(size_type s, value_type v = value_type{})
@@ -58,16 +56,16 @@ namespace scprog
   public:
 
     /// perform update-assignment elementwise +=
-    dense_vector& operator+=(dense_vector const& that);
+    DenseVector& operator+=(DenseVector const& that);
 
     /// perform update-assignment elementwise +=
-    dense_vector& operator-=(dense_vector const& that);
+    DenseVector& operator-=(DenseVector const& that);
 
     /// perform update-assignment elementwise *= with a scalar
-    dense_vector& operator*=(value_type s);
+    DenseVector& operator*=(value_type s);
 
     /// perform update-assignment elementwise /= with a scalar
-    dense_vector& operator/=(value_type s);
+    DenseVector& operator/=(value_type s);
 
 
   // ----- element access functions  -------------------------------------------
@@ -92,34 +90,34 @@ namespace scprog
   public:
 
     /// addition of two vectors
-    friend dense_vector operator+(dense_vector lhs, dense_vector const& rhs)
+    friend DenseVector operator+(DenseVector lhs, DenseVector const& rhs)
     {
       return lhs += rhs;
     }
 
     /// subtraction of two vectors
-    friend dense_vector operator-(dense_vector lhs, dense_vector const& rhs)
+    friend DenseVector operator-(DenseVector lhs, DenseVector const& rhs)
     {
       return lhs -= rhs;
     }
 
     /// multiplication of the vector with a scalar from the right, i.e. vec * s
-    friend dense_vector operator*(dense_vector vec, value_type s)
+    friend DenseVector operator*(DenseVector vec, value_type s)
     {
       return vec *= s;
     }
 
     /// multiplication of the vector with a scalar from the left, i.e. s * vec
-    friend dense_vector operator*(value_type s, dense_vector vec)
+    friend DenseVector operator*(value_type s, DenseVector vec)
     {
       return vec *= s;
     }
 
     /// computes Y = a*X + Y.
-    void axpy(value_type a, dense_vector const& X);
+    void axpy(value_type a, DenseVector const& X);
 
     /// computes Y = a*Y + X.
-    void aypx(value_type a, dense_vector const& X);
+    void aypx(value_type a, DenseVector const& X);
 
 
   // ----- reduction operators  ------------------------------------------------
@@ -135,7 +133,7 @@ namespace scprog
     value_type unary_dot() const;
 
     /// return v^T*v2
-    value_type dot(dense_vector const& v2) const;
+    value_type dot(DenseVector const& v2) const;
 
 
   // ----- data members  -------------------------------------------------------
@@ -147,7 +145,7 @@ namespace scprog
 
   /// A dense matrix with row-wise contiguous storage and matrix-matrix as well as
   /// matrix-vector operations.
-  class dense_matrix
+  class DenseMatrix
   {
   public:
     using size_type       = std::size_t;
@@ -162,20 +160,20 @@ namespace scprog
   public:
 
     /// default constructor, creates and empty matrix of size 0x0
-    dense_matrix() = default;
+    DenseMatrix() = default;
 
     /// constructor of matrix with rows r, columns c and all entries initialized with value v
-    explicit dense_matrix(size_type r, size_type c, value_type v = value_type{})
+    explicit DenseMatrix(size_type r, size_type c, value_type v = value_type{})
       : data_(r*c, v)
       , rows_(r)
       , cols_(c)
     {}
 
     /// constructor with matrix entries initialized by initializer_list
-    explicit dense_matrix(std::initializer_list<std::initializer_list<value_type>> l);
+    explicit DenseMatrix(std::initializer_list<std::initializer_list<value_type>> l);
 
     /// set all entries to v
-    dense_matrix& operator=(value_type v);
+    DenseMatrix& operator=(value_type v);
 
     /// resize matrix to rows r and columns c and fill new entries with value v
     void resize(size_type r, size_type c, value_type v = value_type{})
@@ -232,37 +230,37 @@ namespace scprog
   public:
 
     /// perform update-assignment elementwise +=
-    dense_matrix& operator+=(dense_matrix const& that);
+    DenseMatrix& operator+=(DenseMatrix const& that);
 
     /// perform update-assignment elementwise +=
-    dense_matrix& operator-=(dense_matrix const& that);
+    DenseMatrix& operator-=(DenseMatrix const& that);
 
     /// addition of two matrices
-    friend dense_matrix operator+(dense_matrix lhs, dense_matrix const& rhs)
+    friend DenseMatrix operator+(DenseMatrix lhs, DenseMatrix const& rhs)
     {
       return lhs += rhs;
     }
 
     /// subtraction of two matrices
-    friend dense_matrix operator-(dense_matrix lhs, dense_matrix const& rhs)
+    friend DenseMatrix operator-(DenseMatrix lhs, DenseMatrix const& rhs)
     {
       return lhs -= rhs;
     }
 
     /// matrix vector product A*x
-    friend dense_vector operator*(dense_matrix const& A, dense_vector const& x);
+    friend DenseVector operator*(DenseMatrix const& A, DenseVector const& x);
 
     /// computes the matrix-vector product, y = Ax.
-    void mult(dense_vector const& x, dense_vector& y) const;
+    void mult(DenseVector const& x, DenseVector& y) const;
 
     /// computes v3 = v2 + A * v1.
-    void mult_add(dense_vector const& v1, dense_vector const& v2, dense_vector& v3) const;
+    void mult_add(DenseVector const& v1, DenseVector const& v2, DenseVector& v3) const;
 
     /// computes Y = a*X + Y.
-    void axpy(value_type a, dense_matrix const& X);
+    void axpy(value_type a, DenseMatrix const& X);
 
     /// computes Y = a*Y + X.
-    void aypx(value_type a, dense_matrix const& X);
+    void aypx(value_type a, DenseMatrix const& X);
 
 
   // ----- data members  -------------------------------------------------------
@@ -276,13 +274,13 @@ namespace scprog
 
   /// Setup a matrix according to a Laplacian equation on a 2D-grid using a five-point-stencil.
   /// Results in a matrix A of size (m*n) x (m*n)
-  void laplacian_setup(dense_matrix& A, std::size_t m, std::size_t n);
+  void laplacian_setup(DenseMatrix& A, std::size_t m, std::size_t n);
 
 
   /// Basic utility class to control iterative solvers
-  class iteration
+  class BasicIteration
   {
-    using self = iteration;
+    using self = BasicIteration;
 
   public:
     using real_type = double;
@@ -296,7 +294,7 @@ namespace scprog
      * \param cycle     the print cycle of the solver iterations
      **/
     template <class Vector>
-    iteration(Vector const& r0, int max_iter, real_type rtol, real_type atol = real_type(0), int cycle = 100)
+    BasicIteration(Vector const& r0, int max_iter, real_type rtol, real_type atol = real_type(0), int cycle = 100)
       : norm_r0_(std::abs(r0.two_norm()))
       , max_iter_(max_iter)
       , cycle_(cycle)
@@ -312,7 +310,7 @@ namespace scprog
      * \param atol      absolute tolerance: |b - A*x| < atol
      * \param cycle     the print cycle of the solver iterations
      **/
-    iteration(real_type nb, int max_iter, real_type rtol, real_type atol = real_type(0), int cycle = 100)
+    BasicIteration(real_type nb, int max_iter, real_type rtol, real_type atol = real_type(0), int cycle = 100)
       : norm_r0_(nb)
       , max_iter_(max_iter)
       , cycle_(cycle)
@@ -428,7 +426,7 @@ namespace scprog
     /// Is final resume suppressed
     bool resume_suppressed() const { return suppress_; }
 
-    void update_progress(iteration const& that)
+    void update_progress(BasicIteration const& that)
     {
       i_ = that.i_;
       resid_= that.resid_;
@@ -456,9 +454,9 @@ namespace scprog
    * \param b  The load vector of the linear system
    * \param iter  An iteration object controlling number of iterations and break tolerances.
    *
-   * \return The error code of the \ref iteration object. err=0 means no error.
+   * \return The error code of the \ref BasicIteration object. err=0 means no error.
    **/
-  int cg(dense_matrix const& A, dense_vector& x, dense_vector const& b, iteration& iter);
+  int cg(DenseMatrix const& A, DenseVector& x, DenseVector const& b, BasicIteration& iter);
 
 
 } // end namespace scprog

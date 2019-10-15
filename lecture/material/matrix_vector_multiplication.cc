@@ -1,10 +1,11 @@
+#include <cmath>
 #include <iostream>
-#include <cblas.h>
 
+#include <cblas.h>
 #include <boost/numeric/mtl/mtl.hpp>
 
 #include "linear_algebra.hh"
-#include "Timer.hh"
+#include "timer.hh"
 
 int main(int argc, char** argv)
 {
@@ -13,8 +14,8 @@ int main(int argc, char** argv)
 
   const int N = 10000;
 
-  dense_matrix A(N, N, 1.0);
-  dense_vector x(N, 1.0);
+  DenseMatrix A(N, N, 1.0);
+  DenseVector x(N, 1.0);
 
   // CBLAS
   {
@@ -26,7 +27,7 @@ int main(int argc, char** argv)
     int incy = 1;             // Specifies the increment for the elements of y
     double alpha = 1.0, beta = 1.0;
 
-    dense_vector y(m, 0.0);
+    DenseVector y(m, 0.0);
     cblas_dgemv(CblasRowMajor, CblasNoTrans, m, n, alpha, &A[0][0], lda,
                 &x[0], incx, beta, &y[0], incy);
     std::cout << "CBLAS implementation: " << t.elapsed() << " sec" << std::endl;
@@ -36,7 +37,7 @@ int main(int argc, char** argv)
   // lecture implementation
   {
     t.reset();
-    dense_vector y(A.rows(), 0.0);
+    DenseVector y(A.rows(), 0.0);
     y += A*x;
     std::cout << "lecture implementation: " << t.elapsed() << " sec" << std::endl;
     std::cout << "|y| = " << y.two_norm() << std::endl;
