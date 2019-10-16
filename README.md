@@ -10,7 +10,7 @@ Scientific Computing research groups.
 
 Additionally to the learning effect, you can collect points for submitted exercises
 that may eventually lead to an improvement in you final exam by at most a grade 0.3. To
-reach this bonus, you have to gain 66% of the possible exercise points.
+reach this bonus, you have to gain 66% of the possible exercise points (max. = 100).
 
 In order to allow fast correction and evaluation of submitted solutions, we require
 a predefined structure of the repositories and coding styles to be followed. Not
