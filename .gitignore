@@ -14,11 +14,6 @@
 *.fdb_latexmk
 *.~*
 
-# ignore final papers
-*.pdf
-*.dvi
-*.ps
-
 # ignore build directories
 _minted*/
 _repo/
