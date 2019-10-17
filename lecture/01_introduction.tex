@@ -31,18 +31,19 @@ does not offer a deep study of the programming language itself, but rather focus
 scientific programming. Language concepts are introduced and applied to numerical programming, together with the STL and Boost.
 
 It is not our goal to explain all C++ features in a well-balanced manner. We rather aim for an application-driven illustration of
-features that are valuable for writing well-structured, readable, maintainable, extensible, type-safe, reliable, portable, and last
-but not least highly performing software. In order to achieve this goal we not only want to explain a programming language, but
-also discuss best practice in coding and project management of scientific software.
+features that are valuable for writing \textbf{well-structured}, \textbf{readable}, \textbf{maintainable}, \textbf{extensible},
+\textbf{type-safe}, \textbf{reliable}, \textbf{portable}, and last but not least \textbf{highly performing} software. In order
+to achieve this goal we not only want to explain a programming language, but also discuss best practice in coding and project
+management of scientific software.
 
-\section{Initial example}
+\section{Motivating example}
 While in classical computer science courses the famous \emph{hello world} example is shown at the beginning, in the scientific
-programming lecture I switch to a more numerics oriented initial example: matrix-vector multiplication.
+programming lecture we switch to a more numerics oriented initial example: matrix-vector multiplication.
 
-Let $A\in\mathbb{R}^{n\times n}$ be a real (dense) matrix of size $n\times n$, with $n > 0$ a positive integer, and $x\in\mathbb{R}^n$
+Let $A\in\mathbb{R}^{n\times n}$ be a real (dense) matrix of size $n\times n$, with $n > 0$ a positive integer, and $\mathbf{x}\in\mathbb{R}^n$
 a corresponding real vector of size $n$. We do not assume any special properties of $A$, like symmetry, bandedness, or triangular
 shape. As will be explained later in the lecture and in some exercises, we have two classes, \cpp{DenseMatrix} and \cpp{DenseVector}
-that can represent our real-valued matrix $A$ and vector $x$:
+that can represent our real-valued matrix $A$ and vector $\mathbf{x}$:
 %
 \begin{minted}{c++}
   DenseMatrix A(100, 100);
@@ -51,8 +52,14 @@ that can represent our real-valued matrix $A$ and vector $x$:
   // initialize x
 \end{minted}
 
-First, we solve the task $y = A\cdot x + y$ (accumulated matrix-vector multiplication) with $y\in\mathbb{R}^n$ initialized to zero,
-using the library CBLAS:
+We want to solve the task $\mathbf{y} = \alpha A\mathbf{x} + \beta \mathbf{y}$ (accumulated matrix-vector multiplication) with $\mathbf{y}\in\mathbb{R}^n$ initialized to zero
+and $\alpha=\beta=1$ for simplicity.
+%
+\begin{minted}{c++}
+  DenseVector y(m, 0.0);
+\end{minted}
+
+First, we are using the library CBLAS:
 %
 \begin{minted}{c++}
   int m = A.rows();         // number of rows of the matrix A
@@ -62,7 +69,6 @@ using the library CBLAS:
   int incy = 1;             // Specifies the increment for the elements of y
   double alpha = 1.0, beta = 1.0;
 
-  DenseVector y(m, 0.0);
   cblas_dgemv(CblasRowMajor, CblasNoTrans, m, n, alpha, &A[0][0], lda,
               &x[0], incx, beta, &y[0], incy);
 \end{minted}
@@ -70,8 +76,7 @@ using the library CBLAS:
 Second, we solve the same task, using some techniques we will develop during this lecture:
 %
 \begin{minted}{c++}
-  DenseVector y(m, 0.0);
-  y += A*x;
+  y += A*x; // or more generally: y = alpha*A*x + beta*y;
 \end{minted}
 
 The C++ version more clearly states what it computes, has no arguments that you could mix up, and (this might be
@@ -101,7 +106,7 @@ from CBLAS simply by analyzing the arguments passed to the multiplication operat
   The MTL4 library implements this and we will also see in this lecture how to switch an algorithm by inspecting type properties.
 \end{rem}
 
-This lecture goes beyond the basics of the C++ programming language and tries to teach how to write , debug, and manage code, how to analyze
+This lecture goes beyond the basics of the C++ programming language and tries to teach how to write, debug, and manage code, how to analyze
 performance and how to test and optimize your implementation. Classical design patterns of object-oriented programming is more the focus of
 the twin lecture SCPROG -- Fortgeschrittene Konzepte des Wissenschaftlichen Programmierens: OOP mit Java -- by Prof. W. Walter.
 
@@ -122,23 +127,38 @@ On each exercise sheet there are a few exercises marked for submission. Approxim
 and are supposed to submit your solutions into the Git repository itself. Therefore, in the first tutorials you get an account and
 have to create a Git project on the TU-Dresden local GitLab server \url{https://gitlab.mn.tu-dresden.de}. The details about this are
 explained on the repository README page and are presented in the first tutorial. The advantage you have from submitting the exercises
-is 1. you get a personal review and feedback, 2. you lear how to work in a cooperative environment on scientific projects, and 3. you
+is 1. you get a personal review and feedback, 2. you learn how to work in a cooperative environment on scientific projects, and 3. you
 can get a bonus for the final oral exam (reaching 66\% of the possible exercise points gives a bonus of up to a grade of 0.3).
 
+\subsection{Course outline}
+\begin{itemize}
+  \item Best practice in scientific programming
+  \item C++ basics (data-types, operators, pointers, arrays, references, $\ldots$)
+  \item Scopes, Namespaces, Functions
+  \item Overloading, Specialization
+  \item Basics of object-oriented class design, inheritance, polymorphie
+  \item Generic Programming with templates
+  \item Generic Design patterns (Functors, Iterators, Type-Traits)
+  \item Algorithms and Data-Structures in the C++ standard library
+  \item Meta-Programming
+  \item Expression-Templates
+  \item (Compile-Time symbolic differentiation)
+\end{itemize}
 
 \section{Literature and material}
 There is a lot of good (and a lot of bad) literature on C++ programming. Some references with links to the Slub and to online sources
 are given on the website
 
-\url{https://tu-dresden.de/mn/math/wir/das-institut/beschaeftigte/simon-praetorius/teaching/scientific-programming-mit-c}
+\url{https://math.tu-dresden.de/~spraetor}
 
-or on the README page of the repository as above. The main source for reference of C++ is the nearly complete online standard at
+on the subpage \texttt{Teaching/Scientific Programming with C++}, or on the README page of the repository as above. The main source for reference of C++ is the nearly complete online standard at
 
 \url{https://en.cppreference.com}
 
 and the official standard
 
-\url{https://github.com/cplusplus/draft}, or \url{http://www.open-std.org/jtc1/sc22/wg21/}
+\url{https://github.com/cplusplus/draft}, or \\
+\url{http://www.open-std.org/jtc1/sc22/wg21/}
 
 
 \section{Programming paradigms}
@@ -198,10 +218,11 @@ constructors/destructors, Call and return functions (later removed), friend clas
 inline functions, default arguments and assignment-operator overloading.
 
 When it came to more and more features, the concept C with classes was buried and designed from scratch. Also the compiler based on a C compiler
-was abandoned. In the year 1983 a new language with a new name was born: \textit{C++}, derived from the increment operator in C, where the \texttt{++}
-could be understood as \emph{next}, \emph{successor}, or \emph{increment} of the C language. New features, compared to \emph{C with classes} introduced
-in C++ are: virtual functions, function name and operator overloading, references, constants, user-controlled free-storage memory control,
-improved type checking. A long list a more feature was added in the Release 2.0 of the language around \textbf{1986-1987}.
+was abandoned. In the year \textbf{1983} a new language with a new name was born: \textit{C++}, derived from the increment operator in C,
+where the \texttt{++} could be understood as \emph{next}, \emph{successor}, or \emph{increment} of the C language. New features, compared
+to \emph{C with classes} introduced in C++ are: virtual functions, function name and operator overloading, references, constants,
+user-controlled free-storage memory control, improved type checking. A long list a more feature was added in the Release 2.0 of the language
+around \textbf{1986-1987}.
 
 A first reference manual, \textit{The C++ programming language}, was written in the year \textbf{1985}, and later in \textbf{1990} the book
 \textit{The Annotated C++ Reference Manual}. The language was not yet standardized. So, the book are kind of the standard reference manuals.

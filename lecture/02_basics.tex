@@ -1,0 +1,417 @@
+\chapter{C++ Basics\label{sec:basics}}
+\section{Introductory example\label{sec:introductory-example}}
+
+Let $x,y\in \mathbb{R}^2$ be two elements of the (Euclidean) vector space $\mathbb{R}^2$, interpreted as
+two points (coordinate vectors) in the plane. The space may be equipped with a norm induced by the standard
+dot product in $\mathbb{R}^2$.
+
+Implement this vector space and calculate for two elements of the space its distance, i.e. the norm of its difference!
+
+So, the structure representing the vector space should hold all possible realizations of vectors in this vector space
+and should provide required vector space operations on its realizations (instances).
+
+
+\begin{minted}[frame=lines,label={Introductory example}]{c++}
+  #include <iostream> // for std::cout
+  #include <cmath>    // for std::sqrt
+
+  // Structure defining the vector space
+  struct Vector
+  {
+    double x, y;
+
+    Vector operator-(Vector const& that) const
+    {
+      return {this->x - that.x, this->y - that.y}; // pointer vs. reference
+    }
+  };
+
+  double dot(Vector const& a, Vector const& b)
+  {
+    return a.x * b.x + a.y * b.y; // operator precedence!
+  }
+
+  double two_norm(Vector const& a) { return std::sqrt(dot(a,a)); }
+
+  /*
+    Distance of two points
+    */
+  double distance(Vector const& a, Vector const& b) { return two_norm(a - b); }
+
+  int main() // or int main(int argc, char** argv)
+  {
+    Vector a{ 1.0, 2.0 };
+    Vector b{ 7.0,-1.5 };
+    std::cout << "distance of a and b = " << distance(a,b) << std::endl;
+    return 0;
+  }
+\end{minted}
+
+Some comments about this example:
+
+\begin{itemize}
+  \item Main program: The entry point for the program is the function \cpp{main}. It must be available in all executables and returns an
+        integer indicating an error code of the program (\cpp{0} means no error).
+
+  \item Typically, there are just two variants of the \cpp{main} function allowed, without arguments or with two arguments containing
+        command-line parameters to the program. Thereby, \cpp{int argc} indicates the number of command-line arguments and \cpp{char** argv}
+        or \cpp{char* argv[]} a sequence of null-terminated character sequences (strings) representing the actual command-line arguments.
+        Especially, the zero-th argument \cpp{argv[0]} corresponds to the name of the executable.
+
+        \textit{Remark:} Some compilers allow more than those two arguments, that may contain environmental variables.
+  \item Input- and Output is not part of the C++ core language, but is implemented in libraries, like the C++ standard library. Those libraries
+        must be included explicitly.
+
+  \item Include-files are any regular files that can be found by the compiler. Typically, those includes have the file ending \texttt{.h}
+        (for header file) and contain specifications of the interface of functions or even implementations of those functions.
+        Include in C++ means: the text of the file is copied to the include directive \cpp{#include} into the code.
+
+        \textit{Remark 1:} Header-files of the C++ standard library do not have a file extension. This is, in order to avoid conflicts with the
+        C standard library (those files have the extension \texttt{.h}).
+
+        \textit{Remark 2:} There are two variants for the include directive: \cpp{#include <Dateiname>} or \cpp{#include "Dateiname"}. In the
+        first variant the include files are search in the compiler include paths and system paths while in variant 2 it is search also in the
+        current source directory. This is why the standard library is typically included in angular brackets \cpp{<...>}.
+
+  \item The functions of the standard library are group in the namespace \cpp{std}. Again, this is done in order to avoid conflicts with functions
+        from other libraries and your own code. In order to call functions from the standard library, you have to add the prefix
+        (name resolution operator) \cpp{::}, e.g. \cpp{std::sqrt}.
+
+  \item Additionally to the main program, we have a class (structure) \cpp{Vector} and (free) functions \cpp{dot}, \cpp{two_norm}, and \cpp{distance}.
+        A free function is a function not part of a class. But, there is also a function bound to the class. It has the strange name
+        \cpp{operator-} and implement the subtraction operator between two vectors.
+
+  \item The class \cpp{Vector} contains 2 member variables, that are filled with values for concrete realizations (instances) of that class in the
+        \cpp{main()} function. The access to these values is by the ``member selection''-operator \cpp{.} (point).
+
+  \item Finally, the output of the result to the screen is by an output-stream object \cpp{std::cout} (part of the standard library). It provides
+        a way to assign new output data to the output device, using the ``shift'' operator \cpp{<<}. The expression \cpp{std::endl} thereby indicates
+        a line-break (the end-of-line symbol). One could also write the character \cpp{'\n'} directly.
+
+  \item Brackets \cpp{{ }} in C++ inclose a local code block (scope). Variables declared inside a scope can only be accessed from within that scope
+        or a sub-scope. The brackets are also used during the initialization of an object.
+
+  \item There is more in this example: Functions arguments by references, the \cpp{this} pointer inside the class, \cpp{const} specifiers,
+        comments \cpp{//} or \cpp{/* ... */},...
+\end{itemize}
+
+Some questions to think about:
+\begin{itemize}
+  \item What happens if you add another \cpp{main(...)} function to the code? Is it possible to add both main functions,
+        \cpp{main(), main(int, char**)} at the same time?
+  \item There is not just text pushed to the output stream, but also values (numbers). How are numbers printed / converted to strings? How to modify
+        this behavior?
+  \item What happens if we remove all \cpp{const}s in argument lists? Why is there a \cpp{const} behind a function?
+  \item Is it possible to remove the reference sign \cpp{&}? What could be the consequence of this?
+\end{itemize}
+
+
+
+\section{Compiling C++ code\label{sec:compiling}}
+Compared to scripting or interpreted languages, like Python, Matlab, or JavaScript, C++ code must be translated into machine-readable, executable instructions. This process of translation is called \Index{Compiling}. More generally, one could understand compiling as a transformation of code
+from one (high-level) language to another (low-level) language.
+
+\begin{rem}
+  During the compiling of C++ code, you might even print out intermediate states of is transformation process, like preprocessor output, or
+  Assembler output. We will look at these intermediate code in the lecture or exercises, to understand better, what the compiler is doing with
+  our code.
+\end{rem}
+
+\begin{itemize}
+\item The process of compiling is performed by a program, called the \Index{compiler}. Typical examples of compilers are \emph{g++},
+      \emph{clang}, \emph{Intel ICC}, \emph{MSVC}, and others.
+\item The compiler gets as input a \Index{translation unit}, typically a text file containing the c++ code -- the definition of functions and classes.
+      A program typically consists of many translation units that are combined)
+\item The output of the compiler is a collection of \Index{object files}, one for each translation unit.
+\item To generate an executable (or a library) from these object files, the \Index{linker} combines all the objects to a single file.
+\end{itemize}
+
+The process of compiling can be split into several stages:
+\begin{description}
+  \item[pre-processing] (performed by the \Index{preprocessor}) The content of include files is copied to the include directives, macros and
+  preprocessor constants are evaluated.
+  \item[linguistic analysis] Check of syntax rules.
+  \item[\Index{assembling}] Translation of the language constructs into CPU instructions, e.g. in form of assembler code.
+  \item[code output] Transformation of internal code (assembler code) into machine-readable binary code. Collection of symbols into
+  symbol table with jump references.
+\end{description}
+
+On many linux distributions the c++ compiler of the GNU Compiler Collection (GCC) or the clang compiler of LLVM are preinstalled.
+Assume the code from the introductory example is stored in a text file \texttt{distance.cc}. This can be compiled into an executable, by
+%
+\begin{verbatim}
+  c++ distance.cpp
+\end{verbatim}
+%
+where \texttt{c++} is an alias (often a symbolic link) to the actual compiler.
+
+\begin{rem}
+  The version and name of the compiler can be obtained by \texttt{c++ --version}.
+\end{rem}
+
+The result of the compilation is a binary file, named \texttt{a.out}. This is the default executable name, that can be changed by
+providing the argument \texttt{-o NAME}:
+%
+\begin{verbatim}
+  g++ distance.cpp -o distance
+\end{verbatim}
+%
+Later in the lecture we get to know different C++ language features available in a specific version of the C++ standard (see history of C++).
+The standard can be selected explicitly by the additional argument \texttt{-std=VERSION}, e.g. for \cxx{11}:
+%
+\begin{verbatim}
+  g++ -std=c++11 distance.cpp -o distance
+\end{verbatim}
+%
+where the \texttt{VERSION} follows the naming given in the chapter \emph{History of C++}.
+
+If you have multiple files to compile, e.g. one file provides the implementation of the functions and classes, and the other file just
+the \cpp{main()} function, we say that we have multiple translation units. Those can be compiled individually and then linked together:
+%
+\begin{verbatim}
+  g++ -c file1.cpp
+  g++ -c file2.cpp
+  g++ file1.o file.o -o program
+\end{verbatim}
+%
+The output name of the compiled translation units follows the pattern \texttt{FILE\_BASE\_NAME.o}. The compiler allows to combine the compiler
+and linker call in one line, by listing all the files to compiler one after the other:
+%
+\begin{verbatim}
+  g++ file1.cpp file2.cpp -o program
+\end{verbatim}
+
+If a source file depends on some include files (in the top of the file you find the lines \cpp{#include <...>} or \cpp{#include "..."}), the
+compiler has to search for these \textit{header}-files. It automatically searches in default system paths, but for everything else the compiler
+has to be pointed to the location of the include files. This can be done by the additional argument \texttt{-I[path-to-files]}, e.g.
+%
+\begin{verbatim}
+  g++ -I/usr/local/library/include/ file1.cpp file2.cpp -o program
+\end{verbatim}
+%
+and if the program depends not only on include files, but also \Index{Symbols} (compiled implementations) of library functions, a list of additional
+library to link the executable with has to be appended. Therefore, two arguments are allowed for the compiler: \texttt{-L[path-to-library]} and
+\texttt{-l[libname]}, where \texttt{libname} contains the part of the file name of the library between the prefix \texttt{lib} and the file
+extension \texttt{.so} or \texttt{.a}. (This might be different on different operating systems, like MacOS or MS Windows).
+%
+\begin{verbatim}
+  g++ -I/usr/local/library/include/ file1.cpp file2.cpp -o program -L/usr/local/library/lib -llibrary
+\end{verbatim}
+%
+
+If your project depends on multiple library that itself depend on other libraries it gets more and more complicated to put everything correctly
+into the compile command. To simplify this, there are multiple different \Index{build systems} developed that collect and analyze dependencies
+and generate compiler commands for you. A classical one is a \Index{Makefile}, that defines various targets that can depend on each other and
+some way to construct from these targets a sequence of commands to execute in order to compile (build) the executable. Another example is
+\Index{CMake} (more precisely it is a build system generator).
+
+\begin{rem}
+As you may have noticed, source files that are compiled by the compiler are typically named with a file extension \texttt{.cc}, \texttt{.cpp},
+or \texttt{.cxx}. This differs from the include (header) files with file extension \texttt{.h}, \texttt{.hh}, \texttt{.hpp}, or \texttt{.hxx}.
+Here the first file extension comes from C and is just a abbreviation for \textit{header}. Later in the lecture, we will see source (implementation)
+files, that are not compiled, but are typically included at the end of the corresponding header file. This is related to template
+implementations. Sometimes these files are name \texttt{.tpp}, or \texttt{.txx}, but more ofter just \texttt{.impl.hh}, or \texttt{.inc.hh},
+(with any of the header file extensions from above).
+
+While file extensions and naming of files in general is arbitrary, it is recommended to name source and its corresponding header file with the
+same base name and matching file extensions, e.g. \texttt{linear\_algebra.hh} and \texttt{linear\_algebra.cc}.
+\end{rem}
+
+
+% ==============================================================================
+\section{Basic structure of a C++ program\label{sec:code-structure}}
+Each C++ code resulting in an executable, must contain exactly one \cpp{main(...)} function, while both variants
+%
+\begin{minted}{c++}
+  int main();
+  int main(int argc, char* argv[]); // or. int main(int argc, char** argv);
+\end{minted}
+%
+are allowed. The arguments \cpp{argc, argv} are filled when running the executable with command-line arguments. Thereby, the argument \cpp{argc}
+represents the number of command-line arguments and \cpp{argv} represents and \textit{array} of \textit{strings} representing each individual
+command-line argument. The fist entry in this array, \cpp{argv[0]}, contains the name of the executed program.
+
+\paragraph{Splitting in multiple source files}
+Code can (and should) be split into multiple translation units representing different components of the program. This splitting means multiple
+header and source files, where each source file can be translated into an object file without the knowledge of the other source files.
+
+Typically, in header files the functions and classes are just \Index{declared}, while in the source file those entities are \Index{defined}.
+
+Example 1: A header file contains the \Index{prototyp} (interface description) of a function and a class definiton.
+\begin{minted}[frame=lines,label={example.hh}]{c++}
+#ifndef EXAMPLE_HH
+#define EXAMPLE_HH
+
+// declaration and definition of a class
+struct Point
+{
+  double x, y;
+
+  // declaration of a member function
+  Point subtract(Point const& other) const;
+};
+
+// declaration of a function
+double distance(Point const& a, Point const& b);
+
+// deklaration of a template function
+template <class T> void foo();
+
+#include "example.impl.h"
+#endif // EXAMPLE_HH
+\end{minted}
+
+Example 2: The definition of a template function (included at the end of the header file)
+
+\begin{minted}[frame=lines,label={example.impl.hh}]{c++}
+// definition of the funktion foo()
+template <class T>
+void foo() { /*...*/ }
+\end{minted}
+
+Example 3: The source file, includes the header file and defines the functions
+
+\begin{minted}[frame=lines,label={example.cc}]{c++}
+#include "example.hh"
+#include <cmath>
+
+// definition of a member function
+Point Point::subtract(Point const& other) const
+{
+  return {this->x - other.x, this->y - other.y};
+}
+
+// definition of the function distance()
+double distance(Point const& a, Point const& b)
+{
+  Point ab = a.subtract(b);
+  return std::sqrt(ab.x * ab.x + ab.y * ab.y);
+}
+
+int main(int argc, char** argv)
+{
+  Point a{ 1.0, 2.0 }, b{ 7.0,-1.5 };
+  distance(a,b);
+  return 0;
+}
+\end{minted}
+
+
+Some remarks to the examples above:
+\begin{itemize}
+  \item The triplet \cpp{#ifndef NAME}, \cpp{#define NAME} and \cpp{#endif} builds a so called \textbf{include guard}. It prevents the header file
+    to be included multiple times in the same translation unit. This is not allowed, since the C++ standard requires a \textbf{one definition rule},
+    meaning: No translation unit shall contain more than one definition of any variable, function, class type, enumeration type, or template.
+
+    Another way of enforcing that a file is included only once, is by using the (non-standard) preprocessor directive \cpp{#pragma once} in the
+    top of the include file. This directive is supported by all major compilers and can be used without any problems.
+
+  \item If you want to (or have to) provide an implementation of a function or class method in a header file, it must be included together with
+    the corresponding declaration. Often, since is done my an include statement at the end of the header file. Or the definition is provided
+    together with the declaration.
+\end{itemize}
+
+
+
+
+% ==============================================================================
+\section{Variable declaration and fundamental types\label{sec:data-type}}
+C++ is a statically typed language (in contrast to dynamically typed languages like e.g. PHP), meaning: each identifier and expression in a
+C++ program has assigned a type that is already known to the compiler and this type can not be changed.
+
+Example:
+\begin{minted}{c++}
+float x;          // x is a single precision floating point number
+int y = 3+4;      // y is an integer variable with initial value 7
+float f(int);     // f is a function with one argument of type int and returning a float number
+\end{minted}
+
+In this example, the variable \cpp{y} is initialized with an expression on the right-hand side of the assignment operator \cpp{=}. This
+expression \cpp{3+4} also has a type. Since \cpp{3} and \cpp{4} are integer numbers and the result of the addition of two integers is
+defined to be also an integer, the expression is of type \cpp{int}.
+
+\begin{zitat}{C++ standard \S 7 (1)}
+  An expression is a sequence of operators and operands that specifies a computation. An expression can result in a value and can cause side effects.
+\end{zitat}
+
+\begin{rem}
+  That the expression \cpp{3+4} has the type \cpp{int} is not as trivial as you might think. In some languages, it might be a type that could be
+  larger than \cpp{int} but that can hold the value of the addition of these two integers.
+
+  Later we will see how to extract the type of an expression (\cpp{decltype}) and how to declare a variable directly of the type
+  of the expression assigned to the variable (\cpp{auto}).
+\end{rem}
+
+\subsection{Literals\label{sec:literal}}
+A literal is a tokes directly representing a constant value of a concrete type.
+
+Examples:
+\begin{minted}{c++}
+  42u       // unsigned integer literal
+  108.87e-1 // floating point literal
+  true      // boolean literal
+  "Hello"   // string literal
+\end{minted}
+
+The type of the literal is often determined by a literal suffix (like in \cpp{42u} the \texttt{u}). All integer literals are just a
+sequence of digits that has no period or exponent part, while floating point literals must contain a period and/or an exponent part.
+Character literals are introduced with a single quote \cpp{'c'}, and string literals with the double quotes \cpp{"Hello"}. There are
+some more literals, we will see in the exercise.
+
+\begin{rem}
+  Since \cxx{11} one can define own literals of the form \texttt{build-in literal + \_ + Suffix}. This allows, for example, to create
+  numbers with units.
+
+Example:
+\begin{minted}{c++}
+  101000101_b  // binary representation
+  63_s         // seconds
+  123.45_km    // kilometer
+  33_cent      // cent
+\end{minted}
+
+where the implemented is responsible for giving those literals a meaning.
+\end{rem}
+
+\begin{rem}
+  A literal is a \textit{primary expression}. Its type depends on its form (see above). A string literal is an \Index{lvalue}; all other
+  literals are \Index{prvalues}.
+\end{rem}
+
+
+\subsection{Declaration -- Definition -- Initialization}
+\begin{description}
+\item[Declaration] A declaration may introduce one or more names into a translation unit or redeclare names
+  introduced by previous declarations.
+
+\item[Definition] A \textit{declaration} that provides the implementation details of that entity, or in case of variables, reserves memory for
+  the entity.
+
+  A \textit{declaration} of a class (\cpp{struct}, \cpp{class}, \cpp{enum}, \cpp{union}), function, or method is a definition if the declaration is
+  followed by curly braces, containing the implementation body.
+
+  Variable declarations are always \textit{definitions} unless prefixed with the keyword \cpp{extern}.
+
+\item[Initialization] A \textit{definition} with explicit value assignment.
+\end{description}
+
+Examples:
+\begin{minted}{c++}
+class Test;             // declaration of a class
+class Test {};          // definition of that class
+
+int func();             // declaration of a function
+int func() { return 7;} // definition of that function
+
+extern int i=func();    // definition and initialization of a variable
+extern int j;           // declaration of a variable
+int k;                  // definition of a variable
+
+Test obj();             // declaration of a funktion (with return type Test)
+\end{minted}
+
+
+\begin{guideline}{One-definition rule}
+  No translation unit shall contain more than one definition of any variable, function, class type, enumeration
+  type, or template. (C++-Standard \S 6.2 (1))
+\end{guideline}
