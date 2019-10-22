@@ -20,23 +20,23 @@ and should provide required vector space operations on its realizations (instanc
   {
     double x, y;
 
-    Vector operator-(Vector const& that) const
+    Vector operator-(Vector that) const
     {
       return {this->x - that.x, this->y - that.y}; // pointer vs. reference
     }
   };
 
-  double dot(Vector const& a, Vector const& b)
+  double dot(Vector a, Vector b)
   {
     return a.x * b.x + a.y * b.y; // operator precedence!
   }
 
-  double two_norm(Vector const& a) { return std::sqrt(dot(a,a)); }
+  double two_norm(Vector a) { return std::sqrt(dot(a,a)); }
 
   /*
     Distance of two points
     */
-  double distance(Vector const& a, Vector const& b) { return two_norm(a - b); }
+  double distance(Vector a, Vector b) { return two_norm(a - b); }
 
   int main() // or int main(int argc, char** argv)
   {
@@ -91,8 +91,7 @@ Some comments about this example:
   \item Brackets \cpp{{ }} in C++ inclose a local code block (scope). Variables declared inside a scope can only be accessed from within that scope
         or a sub-scope. The brackets are also used during the initialization of an object.
 
-  \item There is more in this example: Functions arguments by references, the \cpp{this} pointer inside the class, \cpp{const} specifiers,
-        comments \cpp{//} or \cpp{/* ... */},...
+  \item Single line comments are introduced by \cpp{//} and multi-line comments are introduced by \cpp{/* ... */}
 \end{itemize}
 
 Some questions to think about:
@@ -248,11 +247,11 @@ struct Point
   double x, y;
 
   // declaration of a member function
-  Point subtract(Point const& other) const;
+  Point subtract(Point other) const;
 };
 
 // declaration of a function
-double distance(Point const& a, Point const& b);
+double distance(Point a, Point b);
 
 // deklaration of a template function
 template <class T> void foo();
@@ -276,13 +275,13 @@ Example 3: The source file, includes the header file and defines the functions
 #include <cmath>
 
 // definition of a member function
-Point Point::subtract(Point const& other) const
+Point Point::subtract(Point other) const
 {
   return {this->x - other.x, this->y - other.y};
 }
 
 // definition of the function distance()
-double distance(Point const& a, Point const& b)
+double distance(Point a, Point b)
 {
   Point ab = a.subtract(b);
   return std::sqrt(ab.x * ab.x + ab.y * ab.y);
@@ -319,29 +318,39 @@ Some remarks to the examples above:
 C++ is a statically typed language (in contrast to dynamically typed languages like e.g. PHP), meaning: each identifier and expression in a
 C++ program has assigned a type that is already known to the compiler and this type can not be changed.
 
-Example:
+Examples:
 \begin{minted}{c++}
-float x;          // x is a single precision floating point number
-int y = 3+4;      // y is an integer variable with initial value 7
-float f(int);     // f is a function with one argument of type int and returning a float number
+  float x;          // x is a single precision floating point number
+  int y = 3+4;      // y is an integer variable with initial value 7
+  float f(int);     // f is a function with one integer argument and float return type
 \end{minted}
 
-In this example, the variable \cpp{y} is initialized with an expression on the right-hand side of the assignment operator \cpp{=}. This
+Here, the variable \cpp{y} is initialized with an expression on the right-hand side of the assignment operator \cpp{=}. This
 expression \cpp{3+4} also has a type. Since \cpp{3} and \cpp{4} are integer numbers and the result of the addition of two integers is
 defined to be also an integer, the expression is of type \cpp{int}.
 
-\begin{zitat}{C++ standard \S 7 (1)}
+\begin{standard}{\S 7.1 (1)}
   An expression is a sequence of operators and operands that specifies a computation. An expression can result in a value and can cause side effects.
-\end{zitat}
+\end{standard}
 
 \begin{rem}
   That the expression \cpp{3+4} has the type \cpp{int} is not as trivial as you might think. In some languages, it might be a type that could be
   larger than \cpp{int} but that can hold the value of the addition of these two integers.
-
-  Later we will see how to extract the type of an expression (\cpp{decltype}) and how to declare a variable directly of the type
-  of the expression assigned to the variable (\cpp{auto}).
 \end{rem}
 
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Automatic type deduction}
+When the compiler parses an expression, it internally determines its type. In order to create a variable of just that type, the language has
+introduced the meta-type \cpp{auto}. It is not an actual data-type, but is a placeholder for the type determined by the expression of the
+initialization:
+\begin{minted}{c++}
+  auto x = 3+4;       // deduce the type from the expression: x <-- int
+  auto y = long{3+4}; // explicitly committing to a type: y <-- long
+  auto z{3+4};        // same as variable x: z <-- int                  [C++17]
+\end{minted}
+
+% -------------------------------------------------------------------------------------------------
 \subsection{Literals\label{sec:literal}}
 A literal is a tokes directly representing a constant value of a concrete type.
 
@@ -359,7 +368,7 @@ Character literals are introduced with a single quote \cpp{'c'}, and string lite
 some more literals, we will see in the exercise.
 
 \begin{rem}
-  Since \cxx{11} one can define own literals of the form \texttt{build-in literal + \_ + Suffix}. This allows, for example, to create
+  Since\marginpar{[\cxx11]} \cxx{11} one can define own literals of the form \texttt{build-in literal + \_ + Suffix}. This allows, for example, to create
   numbers with units.
 
 Example:
@@ -370,7 +379,7 @@ Example:
   33_cent      // cent
 \end{minted}
 
-where the implemented is responsible for giving those literals a meaning.
+where the implementer is responsible for giving those literals a meaning.
 \end{rem}
 
 \begin{rem}
@@ -379,6 +388,7 @@ where the implemented is responsible for giving those literals a meaning.
 \end{rem}
 
 
+% -------------------------------------------------------------------------------------------------
 \subsection{Declaration -- Definition -- Initialization}
 \begin{description}
 \item[Declaration] A declaration may introduce one or more names into a translation unit or redeclare names
@@ -397,21 +407,239 @@ where the implemented is responsible for giving those literals a meaning.
 
 Examples:
 \begin{minted}{c++}
-class Test;             // declaration of a class
-class Test {};          // definition of that class
+  class Test;             // declaration of a class
+  class Test {};          // definition of that class
 
-int func();             // declaration of a function
-int func() { return 7;} // definition of that function
+  int func();             // declaration of a function
+  int func() { return 7;} // definition of that function
 
-extern int i=func();    // definition and initialization of a variable
-extern int j;           // declaration of a variable
-int k;                  // definition of a variable
+  extern int i=func();    // definition and initialization of a variable
+  extern int j;           // declaration of a variable
+  int k;                  // definition of a variable
 
-Test obj();             // declaration of a funktion (with return type Test)
+  Test obj();             // declaration of a funktion (with return type Test)
+\end{minted}
+
+A fundamental rule is that you are not allowed two define an object twice. While it may be allowed to declare exactly the same object multiple times, even after the definition.
+
+\begin{standard}{\S 6.3 (1)}
+  \textbf{One-definition rule:} No translation unit shall contain more than one definition of any variable, function, class type, enumeration
+  type, or template.
+\end{standard}
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Fundamental Types\label{sec:fundamental-type}}
+We have seen already some types in the examples above, like integer types and floating-point types. There are more fundamental data-types
+available in C++. A summary can be found at \url{http://en.cppreference.com/w/cpp/language/types}.
+
+Basic types in C++ a categorized into three groups: integral types, floating-point types, and \cpp{void}. Integral type represent integer numbers, while floating-point type might represent fractions.
+
+The type \cpp{void} represents the empty set of values. No variable can be declared of type \cpp{void}. Thus, \cpp{void} is an \emph{incomplete type}. It is used as the return type for functions that do not return a value. Any expression can be explicitly converted to type \cpp{void}.
+
+\subsubsection{Integral numbers}
+The group of integral types contains
+\begin{itemize}
+  \item The boolean type \cpp{bool} with values \cpp{true} and \cpp{false} (both are boolean literals). The size of that type is implementation
+  defined and typically $> 1$ Byte.
+  \item Character type \cpp{char} to represent a single character. It is a distinct type and either a signed or unsigned integer type of size $\geq$ 1 Byte. For utf-8 character encodings, there are also larger character types like \cpp{wchar_t}, \cpp{char16_t}, or \cpp{char32_t}.
+  \item Standard (signed/unsigned) integer types include \cpp{short int, int, long int, long long int} possibly qualified with the type prefix
+  \cpp{signed, unsigned}. No signed-ness qualification means signed integers. The postfix \cpp{int} may be omitted (except for \cpp{int} itself).
+
+  The range of representable values for a signed integer type is $-2^{N-1}$ to $2^{N-1} - 1$ (inclusive), where $N$ is called the width of the type.
+  An unsigned integer type has the same width $N$ as the corresponding signed integer type. The range of representable values for the unsigned type
+  is $0$ to $2^{N-1}$ (inclusive).
+
+  Arithmetic for the unsigned type is performed modulo $2^N$. \emph{Note:} Unsigned arithmetic does not overflow. Overflow for signed arithmetic
+  yields \textbf{undefined behavior}.
+\end{itemize}
+
+In the C++ standard the sizes (widths) of the integer types are not specified explicitly, but a minimal size is given. Thus, one finds the relations
+%
+\cppline{  sizeof(short) <= sizeof(int) <= sizeof(long) <= sizeof(long long)}
+%
+where \cpp{sizeof} is a C++-operator returning the width of a data-type (or an expression) in Byte. On 32-Bit systems, typically the sizes 2, 4, 4, 8 Byte are used, on 64 Bit systems \cpp{long} is often of size 8 Byte.
+
+The\marginpar{[\cxx{11}]} type \cpp{long long} is introduced in \cxx{11} and was available as compiler specific extensions before.
+
+\begin{rem}
+  As\marginpar{[\cxx{11}]} for \cpp{char} there are integer type with prescribed width, defined in the header file \cpp{<cstdint>}. Those are named \cpp{std::int16_t, std::uint32_t, ...}.
+\end{rem}
+
+\begin{rem}
+  In the standard library a \textbf{type-alias} is introduced for an integer type often used for vector indices and vector sizes,
+  named \cpp{std::size_t}. It is typically an \cpp{unsigned long int} type, but on some compilers it may be different. The type referenced
+  by \cpp{std::size_t} can store the maximum size of a theoretically possible object of any type (including array).
+\end{rem}
+
+There are special \emph{literals}, suffixes appended to numbers, to indicate explicitly a type: \texttt{U, u, L, l, LL, ll}, where
+there is no difference between lower and upper case suffixes. \texttt{u} means \cpp{unsigned}, \texttt{l} means \cpp{long}, and \texttt{ll} means
+\cpp{long long}. Additionally, a prefix can be put in front of the number to indicate a base for the number systems used: \texttt{0} (Null), \texttt{0x}, or \texttt{0b}. Those represent octal, hexadecimal, or binary numbers, repsectively.
+
+Example:
+\cppline{  1234L, 9565ul, 012 == 10, 0x2a == 42}
+
+\begin{standard}{\S 5.13.2 (1)}
+  An integer literal is a sequence of digits that has no period or exponent part, with optional separating single
+  quotes that are ignored when determining its value. An integer literal may have a prefix that specifies
+  its base and a suffix that specifies its type.
+\end{standard}
+
+
+\subsubsection{Gleitkommatypen}
+Standard type for floating-point numbers are
+%
+\cppline{  float, double, long double}
+%
+The range of possible values is defined in \cpp{<limits>} and the sizes may be compiler dependent, typically 4, 8, 10 Byte. The relation
+%
+\cppline{  sizeof(float) <= sizeof(double) <= sizeof(long double)}
+%
+holds for the floating-point types.
+
+Literals, to indicate how to interpret a number, are \texttt{F,f,L,l} for \cpp{float} and \cpp{long double}.
+
+\begin{rem}
+  In GCC an extension is implemented to allow quad-precision arithmetics with the data-type \cpp{__float128}. The size is 16 Byte. Typically, this
+  is implemented as a software library, e.g. by concatenating two \cpp{double} types. Only rarely there is hardware support for quad precision
+  numbers (e.g. IBM POWER9 CPU). The arithmetic is defined in the standard document \href{https://doi.org/10.1109%2FIEEESTD.2008.4610935}{IEEE 754-2008}.
+\end{rem}
+
+\begin{rem}
+  To do arithmetic with arbitrary precision, there a multiple libraries available. Examples include \href{https://gmplib.org/}{GNU GMP}
+  (Gnu MultiPrecision Arithmetic Library) and \href{https://www.boost.org/doc/libs/1_71_0/libs/multiprecision/doc/html/index.html}{Boost.Multiprecision} library.
+
+  An example of high precision calculation of the enclosed area of a circle with boost multiprecision is given below. Note, it uses templates to
+  implement the actual algorithm.
+\end{rem}
+\begin{minted}[frame=lines,label={multiprecision.cc}]{c++}
+#include <iostream>
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#include <boost/math/constants/constants.hpp>
+
+// Typ-Alias für Gleitkommazahl mit 50 Dezimalstellen.
+using float_50 = boost::multiprecision::cpp_dec_float_50;
+
+template <class T>
+T area_of_a_circle(T r)
+{
+   using boost::math::constants::pi;
+   return pi<T>() * r * r;
+}
+
+template <class T>
+int digits() { return std::numeric_limits<T>::digits10; }
+
+int main()
+{
+  float r_f = float(123) / 100;
+  float a_f = area_of_a_circle(r_f);
+
+  double r_d = double(123) / 100;
+  double a_d = area_of_a_circle(r_d);
+
+  float_50 r_mp = float_50(123) / 100;
+  float_50 a_mp = area_of_a_circle(r_mp);
+
+  // 4.75292
+  std::cout << std::setprecision(digits<float>()) << a_f << std::endl;
+  // 4.752915525616
+  std::cout << std::setprecision(digits<double>()) << a_d << std::endl;
+  // 4.7529155256159981904701331745635599135018975843146
+  std::cout << std::setprecision(digits<float_50>()) << a_mp << std::endl;
+}
 \end{minted}
 
 
-\begin{guideline}{One-definition rule}
-  No translation unit shall contain more than one definition of any variable, function, class type, enumeration
-  type, or template. (C++-Standard \S 6.2 (1))
-\end{guideline}
+\begin{rem}
+  Arithmetic with floating-point number is not the same as arithmetic with real $\mathbb{R}$ numbers. There are effects of rounding,
+  finite representation, cancelation, non-associativity, $\ldots$. Details can be found in the standard document
+  \href{https://standards.ieee.org/content/ieee-standards/en/standard/754-2019.html}{IEEE 754} and are explained in the lecture
+  \emph{Computer arithmetics} by Prof. W. Walter.
+\end{rem}
+
+
+
+
+
+
+
+
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Arrays\label{sec:array}}
+Ein statisches Feld aus Werten des gleichen Typs (Array)\index{Array} wird in C/C++ erstellt mittels
+%
+\cppline{TYPE varname[SIZE];}
+%
+Die Variable \cpp{varname} ist dann ein Array aus \cpp{TYPE}s mit \underline{konstanter} Größe. Zugriff auf die Elemente erfolgt über die eckigen Klammern, z.B. \cpp{varname[1]}. Die Initialisierung eines Arrays kann über Initialisierungslisten \index{Initialisierungsliste} geschehen:
+%
+\cppline{double x[] = {1.0, 2.0, 3.0};}
+%
+Hierbei wird die Arraygröße automatisch bestimmt. Mehrdimensionale Arrays werden mit mehreren eckigen Klammern geschrieben:
+\begin{minted}{c++}
+int A[2][3]; // eine 2 x 3 Matrix
+double B[5][4][3]; // ein 5 x 4 x 3 Array
+\end{minted}
+und können verstanden werden als Arrays von Arrays. Die Initialisierung über Listen geht über Schachtelung der Initialisierungslisten:
+\begin{minted}{c++}
+double A[2][3] =
+{
+  {1.0, 2.0, 3.0},
+  {4.0, 5.0, 6.0}
+};
+\end{minted}
+
+\begin{rem}
+Ein Array kann auch mit weniger Elementen initialisiert werden, als die Größe angibt. Die übrigen Elemente werden mit Standardwerten initialisiert, d.h. Integer-/Gleitkommzahlen mit 0 und andere Typen mit dem Defaultkonstruktor (falls vorhanden).
+
+Beispiel:
+\cppline{int foo[5] {1,2,3}; // [1,2,3,0,0]}
+(Der Zuweisungsoperator ``\cpp{=}'' wurde hier ersetzt durch eine \textit{universelle Initialisierung}.) Ein mehrdimensionales Array kann auch mit einer einfachen Initialisierungsliste initialisiert werden:
+\cppline{int foo[][2] {1,2,3,4}; // [1,2; 3,4]}
+\end{rem}
+
+Wird ein Array an Funktionen übergeben, dann bedeutet das nicht, dass der ganze Speicherblock des Arrays an die Funktion übergeben wird, sondern vielmehr die Adresse des Arrays. Dazu verwendet man als Argument-Deklaration
+\begin{minted}{c++}
+Result funcname(TYPE varname[]) {...}
+Result funcname2(TYPE matrix[][size2]) {...}
+\end{minted}
+In \cpp{funcname2} muss die zweite Dimension der Matrix spezifiziert werden! Die Übergabe als Adresse, ist aber gerade wie die Übergabe eines Pointers (siehe unten), d.h. die obige Funktionsdeklaration ist äquivalent zu
+\cppline{Result funcname(TYPE* varname);}
+d.h. wir verlieren eigentlich jede Information über die Größe des Arrays und können diese in der Funktion auch nicht mehr reproduzieren.
+
+\begin{rem}
+\underline{Vorausschau:} Mit Templates kann die Größe eines Arrays bei der Übergabe an eine Funktion doch noch erhalten werden:
+\begin{minted}{c++}
+template <class T, int N>
+int array_size(T (&)[N]) { return N; }
+
+template <class T, int N1, int N2>
+std::array<int,2> mult_array_size(T (&)[N1][N2]) { return {{N1, N2}}; }
+\end{minted}
+(Der Ausdruck \cpp{T (&)[N]} meint eine Referenz auf ein C-Array vom Datentyp \cpp{T} mit \cpp{N} Elementen.)
+\end{rem}
+
+\subsubsection{Standard-Arrays}
+Probleme mit C-Arrays: Es gibt keine Index-Überprüfung und die Größe geht bei der Übergabe an Funktionen verloren.
+
+Als \textit{moderne} Alternative zu C-Arrays wird in der Standardbibliothek seit \texttt{C++11} der Typ \cpp{std::arrays<T, Size>}\index{Array} eingeführt:
+\begin{minted}{c++}
+#include <array>
+// ...
+std::array<int, 3> vec = {{ 1.0, 2.0, 3.0 }};
+std::cout << vec[1];
+\end{minted}
+
+\begin{rem}
+Man beachte die doppelten geschweiften Klammern bei der Initialisierung. Dies ist notwendig, da ein \cpp{std::array} in etwa so was ist, wie
+\begin{minted}{c++}
+template <typename T, int size>
+struct array
+{
+  T data[size];
+};
+\end{minted}
+und damit dient die äußere geschweifte Klammer zur Initialisierung der Klasse und die innere geschweifte Klammer zur Initialisierung des C-Array Members. Das nennt man auch \textbf{Aggregate-Initialisierung}, da \cpp{std::array} eine Aggregate Klasse ist (eine Klasse ohne nutzerdefinierten Konstruktor, ohne \cpp{private}/\cpp{protected} nicht-statische Membervariablen, ohne Basis-Klasse und ohne virtuelle Funktionen).
+\end{rem}
+
