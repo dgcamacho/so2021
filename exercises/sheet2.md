@@ -150,14 +150,13 @@ where `T` is a placeholder for the type that is used, and `SUM` for the value ca
 
 ### Resources
 - [Kahan Summation](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
-- [std::array](https://en.cppreference.com/w/cpp/container/array),
-  [std::vector](https://en.cppreference.com/w/cpp/container/vector),
+- [std::vector](https://en.cppreference.com/w/cpp/container/vector),
   [std::exp](http://en.cppreference.com/w/cpp/numeric/math/exp)
 - [Optimization options](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html),
   [fast-math](http://stackoverflow.com/questions/7420665/what-does-gccs-ffast-math-actually-do)
 
 
-## Exercise 5 (GotW86: Slight typos)
+## Exercise 5 (GotW-86: Slight typos)
 See [GotW #86](http://www.gotw.ca/gotw/086.htm). Answer the following question without using a compiler.
 
 What is the output of the following program on a standards-conforming C++ compiler?
