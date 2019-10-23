@@ -86,17 +86,21 @@
   \end{tcolorbox}%
 }
 
+\newenvironment{standard}[1]{%
+  \pushQED{C++-Standard (\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4835.pdf}{n4835}) #1}%
+  \begin{quote}\itshape
+}{%
+  \par\normalfont\nointerlineskip\noindent\hfill--- \textsc{\popQED}%
+  \end{quote}%
+}
+
+
 \newif\ifmanuscript
 \manuscripttrue
-
 
 \newif\ifoldexcercise
 \oldexcercisefalse
 
-% \newtheorem{lemma}{Lemma}
-% \newtheorem{corollary}{Corollary}
-
-%\theoremstyle{plain}
 \newtheorem{lem}{Lemma}
 \newtheorem{thm}{Theorem}
 \newtheorem{prop}[thm]{Proposition}
@@ -106,20 +110,8 @@
 \theoremstyle{definition}
 \newtheorem{defn}[thm]{Definition}
 
-
-\newenvironment{task}{%
-  \begin{quote}\marginpar{\vspace{11pt}\smallpencil}\textbf{Exercise:}~\itshape
-}{
-  \end{quote}%
-}
-
-
 \newcommand{\cxx}[1]{\texttt{C++{#1}}}
-
-
-%\newcommand{\TODO}[1]{\begin{mdframed}[backgroundcolor=red!20]#1\todo*{#1}\end{mdframed}}
 \newcommand{\TODO}[1]{\begin{mdframed}[backgroundcolor=red!20]\Todo{#1}\end{mdframed}}
-
 
 \makeindex
 \newcommand{\Index}[1]{\textbf{#1}\index{#1}}
