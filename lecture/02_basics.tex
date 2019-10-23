@@ -105,7 +105,7 @@ Some questions to think about:
 \end{itemize}
 
 
-
+% =================================================================================================
 \section{Compiling C++ code\label{sec:compiling}}
 Compared to scripting or interpreted languages, like Python, Matlab, or JavaScript, C++ code must be translated into machine-readable, executable instructions. This process of translation is called \Index{Compiling}. More generally, one could understand compiling as a transformation of code
 from one (high-level) language to another (low-level) language.
@@ -253,16 +253,17 @@ struct Point
 // declaration of a function
 double distance(Point a, Point b);
 
-// deklaration of a template function
+// declaration of a template function
 template <class T> void foo();
 
-#include "example.impl.h"
+#include "example.impl.hh"
 #endif // EXAMPLE_HH
 \end{minted}
 
 Example 2: The definition of a template function (included at the end of the header file)
 
 \begin{minted}[frame=lines,label={example.impl.hh}]{c++}
+#pragma once
 // definition of the funktion foo()
 template <class T>
 void foo() { /*...*/ }
@@ -309,8 +310,6 @@ Some remarks to the examples above:
     the corresponding declaration. Often, since is done my an include statement at the end of the header file. Or the definition is provided
     together with the declaration.
 \end{itemize}
-
-
 
 
 % ==============================================================================
@@ -485,7 +484,7 @@ Example:
 \end{standard}
 
 
-\subsubsection{Gleitkommatypen}
+\subsubsection{Floating-point types}
 Standard type for floating-point numbers are
 %
 \cppline{  float, double, long double}
@@ -558,88 +557,329 @@ int main()
 \end{rem}
 
 
+\begin{guideline}{Principle}
+  Declare variables as late as possible, usually right before using them the first time and whenever possible not before you can initialize them.
+\end{guideline}
 
 
 
+\subsection{Number conversion}
+Whenever you initialize a variable with an expression, the value of that expression must be converted to the type of the variable.
 
+Example:
+\begin{minted}{c++}
+  long l = 1234567890123;
+\end{minted}
+(Fine if \cpp{long} is 64Bit long, wrong value if \cpp{long} is only 32Bit long)
 
+We call an initialization of a value to a smaller type that can not represent this value a \emph{narrowing initialization} or
+\emph{narrowing conversion}. In the example above, the compiler will not give any error and compiles fine, although the value might be wrong.
+Maybe the compiler prints a warning, but not on all warning levels and this is not guaranteed.
 
+\begin{guideline}{Principle}
+  Enable all warnings and stick to the c++ standard, i.e., use the compiler flags \texttt{-Wall -Wextra -pedantic}, optionally you may
+  even set the flag \texttt{-Werror} to assert an error instead of warnings.
+\end{guideline}
+
+With\marginpar{[\cxx{11}]} \cxx{11} the compiler added the \emph{uniform initialization} using curly brackets, in order to assert an error
+instead of silently accepting the code, in case of narrowing conversion. This means, almost always use
+\begin{minted}{c++}
+  long l1{1234567890123}; // or
+  long l2 = {1234567890123};
+\end{minted}
+
+Some examples of narrowing conversions:
+\begin{minted}{c++}
+  int i1 = 3.14;    // initializes to 3, no error
+  int i2 = {3.14};  // Narrowing ERROR: fractional part lost
+
+  unsigned u1 = -3; // initializes to largest possible unsigned number
+  unsigned u2{-3};  // Narrowing ERROR: no negative values
+
+  float f1 = {3.14} // ok. initializes to float number closest to 3.14
+
+  double d = 3.14;
+  float f2 = {d};   // Narrowing ERROR. Possible lost of accuracy
+
+  unsigned u3 = {3};
+  int      i3 = {2};
+  unsigned u4 = {i2}; // Narrowing ERROR: no negative values
+  int      i4 = {u3}; // Narrowing ERROR: no all values
+\end{minted}
+
+\begin{rem}
+  The\marginpar{[\cxx{17}]} curly braces, i.e. uniform initialization, also works with the automatic type deduction \cpp{auto}. But be careful! The meaning
+  of the curly braces has changed in \cxx{17} and also before results sometimes in a type different from what you would expect.
+  \begin{minted}{c++}
+  auto x1 = {42}; // c++14 x1 is of type std::initializer_list<int>
+  auto x2 = {42}; // c++17 x2 is of type std::initializer_list<int>
+
+  auto x3{42};    // c++14: x3 is of type std::initializer_list<int>
+  auto x4{42};    // c++17: x4 is of type int
+  \end{minted}
+\end{rem}
+
+\subsection{Constants\label{sec:const}}
+An important aspect of programming languages is to control the access to data. A data-type with the property \cpp{const}
+is called a \emph{constant} ans is immutable. The syntax to declare a constant is
+
+\cppline{TYPE const VARNAME = VALUE;}
+
+The \cpp{const} could also be on the left of the \texttt{TYPE}, but as a rule of thumb put the qualifier \cpp{const} on the right of what
+should be constant. The compiler will assert an error if you try to modify a constant object.
+
+Example:
+\begin{minted}{c++}
+  int n1 = 0;           // non-const object
+  int const n2 = 0;     // const object
+  const int n3 = 0;     // const object (same as n2)
+
+  n1 = 1;  // OK: mutable object
+  n2 = 2;  // ERROR: non-mutable object
+\end{minted}
+
+Constants can be defined using automatic type deduction. Therefore, the keyword \cpp{const} simply qualifies the placeholder \cpp{auto}:
+%
+\begin{minted}{c++}
+  auto i1 = 7;          // mutable variable
+  auto const i2 = 8;    // const integer variable initialized with 8
+  const auto d1 = 2.0;  // const double variable initialized with 2.0
+\end{minted}
+
+\subsubsection{constexpr specifier}
+There is another qualifier that is stronger that \cpp{const}: The \cpp{constexpr} specifier declares that it is possible to evaluate the
+value of the variable at compile time. Such variables can then be used where only compile time constant expressions are allowed.
+A \cpp{constexpr} specifier used in an object declaration implies \cpp{const}.
+
+A \cpp{constexpr} variable must satisfy the following requirements:
+\begin{itemize}
+  \item its type must be a \emph{LiteralType}.
+  \item it must be immediately initialized
+  \item the full-expression of its initialization, including all implicit conversions, constructors calls, etc, must be a constant expression
+\end{itemize}
+
+The category \emph{LiteralType} can not yet be fully explained, but especially the fundamental types discussed above are \emph{LiteralTypes}.
+
+\begin{rem}
+  \cpp{constexpr} variables, expressions and functions are a powerful tool within C++, available since \cxx{11} and extended in \cxx{14} and \cxx{17}.
+  In the chapter \emph{Meta programming}, we will see how to use \cpp{constexpr} (functions) as a language within C++ to force the compiler to
+  do computations for us.
+\end{rem}
 
 
 % -------------------------------------------------------------------------------------------------
-\subsection{Arrays\label{sec:array}}
-Ein statisches Feld aus Werten des gleichen Typs (Array)\index{Array} wird in C/C++ erstellt mittels
-%
-\cppline{TYPE varname[SIZE];}
-%
-Die Variable \cpp{varname} ist dann ein Array aus \cpp{TYPE}s mit \underline{konstanter} Größe. Zugriff auf die Elemente erfolgt über die eckigen Klammern, z.B. \cpp{varname[1]}. Die Initialisierung eines Arrays kann über Initialisierungslisten \index{Initialisierungsliste} geschehen:
-%
-\cppline{double x[] = {1.0, 2.0, 3.0};}
-%
-Hierbei wird die Arraygröße automatisch bestimmt. Mehrdimensionale Arrays werden mit mehreren eckigen Klammern geschrieben:
+\subsection{Scopes}
+Each name that appears in a C++ program is only valid in some possibly discontiguous portion of the source code called its scope. Thus,
+scopes determine the lifetime and visibility of (non-static) variables and constants. There are different types of scopes,
+global scope, function scope, class scope, block scope, function parameter scope, namespace scope, \dots. Typically, scopes a blocks of
+code surrounded by curly braces, except for the global scope that lives outside of functions and classes.
+
+\begin{guideline}{Principle}
+  Do not use global variables!
+\end{guideline}
+
+A local variable is declared within a block of a function. Its visibility and accessability is limited to the \texttt{\{ - \}}-enclosed block
+of its declaration. More precisely, the scope of the variable begins at the point of declaration and ends at the end of the block.
 \begin{minted}{c++}
-int A[2][3]; // eine 2 x 3 Matrix
-double B[5][4][3]; // ein 5 x 4 x 3 Array
+  int main()
+  {                     // begin of the function block
+    double pi = 3.14;   // begin of the variable scope
+    std::cout << pi;
+  }                     // end of variable scope and function block
 \end{minted}
-und können verstanden werden als Arrays von Arrays. Die Initialisierung über Listen geht über Schachtelung der Initialisierungslisten:
+
+There might be nested blocks within other blocks that can limit the visibility of names declared inside this block:
 \begin{minted}{c++}
-double A[2][3] =
-{
-  {1.0, 2.0, 3.0},
-  {4.0, 5.0, 6.0}
-};
+  int main()
+  {                     // begin of the function block
+    {                   // begin of an inner block scope
+      double pi = 3.14; // begin of the variable scope
+    }                   // end of variable and block scope
+    std::cout << pi;    // ERROR: pi is out of scope
+  }                     // end of variable scope and function block
 \end{minted}
+
+\subsubsection{Hiding}
+In each scope a name can be defined only once (one-definition rule), but in another scope (even nested) the same name can be
+used to declare a new variable hiding the outer one with lifetime only in that nested scope.
+
+\begin{minted}[frame=lines,label={scope.cc}]{c++}
+  int x = 11;  // (0) global variable x
+
+  void f() {   // function scope
+    int x;     // (1) local x hiding global x
+    x = 1;     // assignment to local x (1)
+    {
+      int x;   // (2) hides local x (1)
+      x = 2;   // assignment ot local x (2)
+    }
+    x = 3;     // assignment to local x (1)
+  }
+
+  void f2() {  // function scope
+    int y = x; // use global x
+    int x = 1; // (3) hides the global x
+    ::x = 2;   // assignment to global x
+    y = x;     // use local x (3)
+    x = 2;     // assignment to local x (3)
+  }
+\end{minted}
+
+\section{Library types}
+With the fundamental types and some language constructs we will learn later, you can already build powerful C++ programs. But it is possible
+to define your own types for more complex data-structures, like vectors, tuples, lists, associative maps and sets, and so on. The standard library
+defines already some of these types thus allows to easily write more advanced programs.
+
+Here, I just give an overview about some useful data-structures, later we will look more deeply into the standard library.
+
+\subsection{Strings}
+Character sequences were already mentioned at the beginning, when discussing the argument the function \cpp{main(int, char**)}. This
+functions accepts a low-level form of arrays of strings as second argument. But these low-level strings are hard to use right. Thus,
+the standard library defines the type \cpp{std::string} instead:
+\begin{minted}{c++}
+  #include <iostream> // for std::cout, std::endl
+  #include <string>
+  int main()
+  {
+    std::string text = "This is a long text";
+    std::cout << "length = " << text.size() << std::endl;
+  }
+\end{minted}
+
+\subsection{Container}
+In the header \cpp{<vector>} the standard library provides a contiguous resizable vector container with flexible element types:
+\begin{minted}{c++}
+  #include <vector>
+  int main()
+  {
+    // vector of 3 doubles
+    std::vector<double> x(3);
+    x[0] = 0.0; x[1] = 1.0; x[2] = 2.0;
+
+    // direct initialization with values
+    std::vector<double> y = {1.0, 2.0, 3.0};
+
+    // add a new entry at the end of the vector
+    x.push_back(3.0);
+
+    // resize the vector to the specified size
+    y.resize(4);
+
+    assert(x.size() == y.size());
+  }
+\end{minted}
+
+The storage of the vector is handled automatically, being expanded and contracted as needed. Vectors usually occupy more space than static arrays, because more memory is allocated to handle future growth. This way a vector does not need to reallocate each time an element is inserted, but only when the additional memory is exhausted. The total amount of allocated memory can be queried using \cpp{capacity()} function.
 
 \begin{rem}
-Ein Array kann auch mit weniger Elementen initialisiert werden, als die Größe angibt. Die übrigen Elemente werden mit Standardwerten initialisiert, d.h. Integer-/Gleitkommzahlen mit 0 und andere Typen mit dem Defaultkonstruktor (falls vorhanden).
-
-Beispiel:
-\cppline{int foo[5] {1,2,3}; // [1,2,3,0,0]}
-(Der Zuweisungsoperator ``\cpp{=}'' wurde hier ersetzt durch eine \textit{universelle Initialisierung}.) Ein mehrdimensionales Array kann auch mit einer einfachen Initialisierungsliste initialisiert werden:
-\cppline{int foo[][2] {1,2,3,4}; // [1,2; 3,4]}
+  The \cpp{main()} function needs two argument to represent an array of string, the size and the address. Instead, one could
+  store this in a vector of strings instead:
+  \begin{minted}{c++}
+  int main(int argc, char** argv) {
+    std::vector<std::string> args(argv, argv + argc);
+    // nr of arguments = args.size()
+    // i-th argument = args[i]
+  }
+  \end{minted}
 \end{rem}
 
-Wird ein Array an Funktionen übergeben, dann bedeutet das nicht, dass der ganze Speicherblock des Arrays an die Funktion übergeben wird, sondern vielmehr die Adresse des Arrays. Dazu verwendet man als Argument-Deklaration
+Apart from the \emph{sequence container} \cpp{std::vector}, there is also the associative container \cpp{std::map}, associating a value to a key:
 \begin{minted}{c++}
-Result funcname(TYPE varname[]) {...}
-Result funcname2(TYPE matrix[][size2]) {...}
-\end{minted}
-In \cpp{funcname2} muss die zweite Dimension der Matrix spezifiziert werden! Die Übergabe als Adresse, ist aber gerade wie die Übergabe eines Pointers (siehe unten), d.h. die obige Funktionsdeklaration ist äquivalent zu
-\cppline{Result funcname(TYPE* varname);}
-d.h. wir verlieren eigentlich jede Information über die Größe des Arrays und können diese in der Funktion auch nicht mehr reproduzieren.
+  #include <map>
+  int main()
+  {
+    std::map<int, double> m; // mapping int -> double
+    m[17] = 42.0             // new association is created on access
 
-\begin{rem}
-\underline{Vorausschau:} Mit Templates kann die Größe eines Arrays bei der Übergabe an eine Funktion doch noch erhalten werden:
-\begin{minted}{c++}
-template <class T, int N>
-int array_size(T (&)[N]) { return N; }
-
-template <class T, int N1, int N2>
-std::array<int,2> mult_array_size(T (&)[N1][N2]) { return {{N1, N2}}; }
-\end{minted}
-(Der Ausdruck \cpp{T (&)[N]} meint eine Referenz auf ein C-Array vom Datentyp \cpp{T} mit \cpp{N} Elementen.)
-\end{rem}
-
-\subsubsection{Standard-Arrays}
-Probleme mit C-Arrays: Es gibt keine Index-Überprüfung und die Größe geht bei der Übergabe an Funktionen verloren.
-
-Als \textit{moderne} Alternative zu C-Arrays wird in der Standardbibliothek seit \texttt{C++11} der Typ \cpp{std::arrays<T, Size>}\index{Array} eingeführt:
-\begin{minted}{c++}
-#include <array>
-// ...
-std::array<int, 3> vec = {{ 1.0, 2.0, 3.0 }};
-std::cout << vec[1];
+    // test whether the key 42 is found
+    assert(m.count(42) == 1);
+  }
 \end{minted}
 
-\begin{rem}
-Man beachte die doppelten geschweiften Klammern bei der Initialisierung. Dies ist notwendig, da ein \cpp{std::array} in etwa so was ist, wie
+This can be combined with vector and string:
 \begin{minted}{c++}
-template <typename T, int size>
-struct array
-{
-  T data[size];
-};
+  #include <map>
+  #include <string>
+  #include <vector>
+  int main()
+  {
+    std::map<std::string, std::vector<int>> m; // mapping string -> vector<int>
+    m["Hello"] = {1,2,3,4,5};
+  }
 \end{minted}
-und damit dient die äußere geschweifte Klammer zur Initialisierung der Klasse und die innere geschweifte Klammer zur Initialisierung des C-Array Members. Das nennt man auch \textbf{Aggregate-Initialisierung}, da \cpp{std::array} eine Aggregate Klasse ist (eine Klasse ohne nutzerdefinierten Konstruktor, ohne \cpp{private}/\cpp{protected} nicht-statische Membervariablen, ohne Basis-Klasse und ohne virtuelle Funktionen).
-\end{rem}
 
+\subsection{Tuples}
+A vector represents a tuple of values of the same type. If the type should be
+different for each element, one could use a \cpp{std::tuple} instead. There, the types of all elements must be given
+explicitly:
+%
+\begin{minted}{c++}
+  std::tuple<int,double,float> t = {1, 2.0, 3.0f};
+\end{minted}
+%
+To access an entry in a tuple, one cannot use the classical bracket operator \texttt{[]} as for vectors, but has to call a
+function instead:
+%
+\begin{minted}{c++}
+  double t1 = std::get<1>(t);
+\end{minted}
+
+A special tuple is a pair. It consists of just two elements:
+%
+\begin{minted}{c++}
+  std::pair<int,double> p = {1, 2.0};
+\end{minted}
+%
+Here, the elements can be accessed again using \cpp{std::get}, but have also an explicit name:
+%
+\begin{minted}{c++}
+  int p0 = p.first;
+  double p1 = p.second;
+\end{minted}
+
+Tuples can be used to return multiple values from a function (see below) and to assign multiple values to a set of
+variables:
+%
+\begin{minted}{c++}
+  // create a tuple from values
+  auto t = std::make_tuple(0, 1.0, 2.0f);
+
+  // assign the tuple entries to variables
+  int t0;
+  double t1;
+  float t2; // not used
+  std::tie(t0,t1,std::ignore) = t;
+\end{minted}
+%
+where \cpp{std::ignore} is an object of unspecified type such that any value can be assigned to it with no effect, and
+\cpp{std::tie} is a function that takes references to variables and assigns the value of a tuple to it.
+
+
+\subsubsection{Structured Binding}
+We have seen the effect of \cpp{std::tie} in the last section. There, we had to declare the variables before we can assign
+values to it and we have to know the types explicitly. With\marginpar{[\cxx{17}]} \cxx{17} this can be combined with \cpp{auto}
+to create new variables with types deduced from the tuple elements. This is called \Index{structured binding}:
+%
+\begin{minted}{c++}
+  auto [t0,t1,t2] = t;
+\end{minted}
+%
+Again, as for classical \cpp{auto} type deduction, the variable declaration can be extended by the const
+qualifiers:
+%
+\begin{minted}{c++}
+  auto const [t0,t1,t2] = t;
+\end{minted}
+
+
+This structured binding does not only work for tuple-like structures, but also for structs:
+%
+\begin{minted}{c++}
+  std::pair<int, std::string> p {1, "pair"};
+  auto [first,second] = p;
+  assert(first == 1 && second == "pair");
+
+  Point point {0.0, 4.0};
+  auto [x,y] = point;
+  assert(x == 0.0 && y == 2.0);
+\end{minted}
