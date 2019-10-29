@@ -69,25 +69,33 @@ i.e., $`f(x) = 0 \Leftrightarrow |x|=\sqrt{a}`$.
 The Newton-method introduces an iteration $`x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}`$ starting from some initial value $`x_0`$.
 
 This calculation rule can be interpreted as a recursion in the sense:
-```
-  T : x -> x - f(x)/f'(x)
-  x_(n) = T(x_(n-1))
+```math
+  T: x\mapsto x - f(x)/f'(x)\\
+  x_n = T(x_{n-1}) \\
   x_0 = GIVEN
 ```
-or it can be interpreted as in iteration starting from `x_0` and iteratively calculating the next value.
+or it can be interpreted as in iteration starting from $`x_0`$ and iteratively calculating the next value.
 
 Implement the functions
 ```c++
   double sqrt_recu(double a, double x0, int N); // returns x_N
   double sqrt_iter(double a, double x0, int N); // returns x_N
 ```
-by realizing this code _recursively_ and _iteratively_. Use `x0` as recursion break condition or initial value `x_0` and return the value `x_N`
+by realizing this code _recursively_ and _iteratively_. Use `x0` as recursion break condition or initial value $`x_0`$ and return the value `x_N`
 as your approximation of the square-root of `a`.
 
 Try your code with a recursion depth of $`N=5, 10, 100`$ for $`a=10`$ and initial value $`x_0=3`$.
 
+How to check the error you have made? How to choose the initial value `x0` and the iteration count `N`? How would you design your implementation
+`double sqrt(double a)` of a square-root function and which version of the implementation above would you choose?
+
 **>> Submit solution until 2019/11/13 ... (10 Points)**
 
+### Notes and additional questions:
+- You can use the `std::sin` function from `<cmath>` as a comparison.
+- Measure the time of your implementation and compare it against the time of the `std::sin` implementation. Therefore, either use the `Timer`
+  in the lecture material folder, or user the Google micro benchmarking suite: https://github.com/google/benchmark
+- What happens if your change your type from `double` to `float`. Do you see any difference in accuracy and performance?
 
 ## Exercise 5 (GotW-78: Operators, Operators Everywhere)
 See [GotW #78](http://www.gotw.ca/gotw/078.htm).
