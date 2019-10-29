@@ -35,7 +35,7 @@
 - The exact result `0.3` is also not representable exactly in floating-point numbers.
 - All operations and initializations round to the nearest floating-point number.
 - In `float` this by chance results after rounding in the same float number for both expression, in `double` it does not.
-- General rule: To not compare floating-point numbers resulting from mathematical expression by ==.
+- General rule: Do not compare floating-point numbers resulting from mathematical expression by ==.
 - Only exactly representable floating point constants, like powers of 2, should be compared. E.g. comparison with 0.0 is
   fine, if you allow that `0 != 1.e-308`.
 - Better: Use comparison with a tolerance depending on the machine epsilon (the smallest representable number eps such that `1+eps != 1`)
