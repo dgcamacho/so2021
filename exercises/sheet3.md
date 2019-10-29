@@ -70,9 +70,9 @@ The Newton-method introduces an iteration $`x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n
 
 This calculation rule can be interpreted as a recursion in the sense:
 ```math
-  T: x\mapsto x - f(x)/f'(x)\\
-  x_n = T(x_{n-1}) \\
-  x_0 = GIVEN
+  T: x\mapsto x - f(x)/f'(x),\quad
+  x_n = T(x_{n-1}),\;
+  x_0 = \text{\texttt{x0}}
 ```
 or it can be interpreted as in iteration starting from $`x_0`$ and iteratively calculating the next value.
 
