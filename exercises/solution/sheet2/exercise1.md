@@ -8,7 +8,7 @@
 
 ### Float
 - The single precision format uses an 8 bit exponent and 23 bit fraction part
-- The minimal subnormal number (exponent = 0 => biased exponent = -127): `+- 1.401,298,4 *·* 10^-45`
+- The minimal subnormal number (exponent = 0 => biased exponent = -127): `+- 1.401,298,4 * 10^-45`
 - The minimal normal number (exponent != 0): `+- 1.175,494,3 * 10^-38`
 - The maximal number: `+- 3.402,823,4 * 10^38`
 - Integers in `[-2^24, 2^24]` can be exactly represented
@@ -17,7 +17,7 @@
 
 ### Double
 - The double precision format uses 11 bit exponent and 52 bit fraction part
-- The minimal subnormal number (exponent = 0 => biased exponent = -1023): `+- 4.940,656,458,412 *·* 10^-324`
+- The minimal subnormal number (exponent = 0 => biased exponent = -1023): `+- 4.940,656,458,412 * 10^-324`
 - The minimal normal number (exponent != 0): `+- 2.225,073,858,507,201,4 * 10^-308`
 - The maximal number: `+- 1.797,693,134,862,315,7 * 10^308`
 - Integers in `[-2^53, 2^53]` can be exactly represented
