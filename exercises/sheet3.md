@@ -71,7 +71,7 @@ The Newton-method introduces an iteration $`x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n
 This calculation rule can be interpreted as a recursion in the sense:
 ```math
   T: x\mapsto x - f(x)/f'(x),\quad
-  x_n = T(x_{n-1}),\;
+  T(x_n) = T(T(x_{n-1})),\;
   x_0 = \text{\texttt{x0}}
 ```
 or it can be interpreted as in iteration starting from $`x_0`$ and iteratively calculating the next value.
@@ -96,6 +96,12 @@ How to check the error you have made? How to choose the initial value `x0` and t
 - Measure the time of your implementation and compare it against the time of the `std::sin` implementation. Therefore, either use the `Timer`
   in the lecture material folder, or user the Google micro benchmarking suite: https://github.com/google/benchmark
 - What happens if your change your type from `double` to `float`. Do you see any difference in accuracy and performance?
+
+### Material
+- [material/sheet3/exercise4.cc](/exercises/material/sheet3/exercise4.cc)
+
+### Resources
+- [std::sin](https://en.cppreference.com/w/cpp/numeric/math/sin)
 
 ## Exercise 5 (GotW-78: Operators, Operators Everywhere)
 See [GotW #78](http://www.gotw.ca/gotw/078.htm).
