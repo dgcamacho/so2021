@@ -9,7 +9,7 @@ What is the type of the following literals
 ```
 
 ### Hints
-To check the type, you can use `delctype` and `static_assert`:
+To check the type, you can use `decltype` and `static_assert`:
 ```c++
 #include <type_traits>
 // ...
@@ -92,8 +92,8 @@ How to check the error you have made? How to choose the initial value `x0` and t
 **>> Submit solution until 2019/11/13 ... (10 Points)**
 
 ### Notes and additional questions:
-- You can use the `std::sin` function from `<cmath>` as a comparison.
-- (optional) Measure the time of your implementation and compare it against the time of the `std::sin` implementation. Therefore, either use the `Timer`
+- You can use the `std::sqrt` function from `<cmath>` as a comparison.
+- (optional) Measure the time of your implementation and compare it against the time of the `std::sqrt` implementation. Therefore, either use the `Timer`
   in the lecture material folder, or user the Google micro benchmarking suite: https://github.com/google/benchmark
 - (optional) What happens if your change your type from `double` to `float`. Do you see any difference in accuracy and performance?
 
