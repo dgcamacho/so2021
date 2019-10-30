@@ -1,4 +1,4 @@
-# Exercise sheet 2 - 2019/10/23
+# Exercise sheet 3 - 2019/10/30
 
 ## Exercise 1 (Literals)
 What is the type of the following literals
@@ -93,15 +93,16 @@ How to check the error you have made? How to choose the initial value `x0` and t
 
 ### Notes and additional questions:
 - You can use the `std::sin` function from `<cmath>` as a comparison.
-- Measure the time of your implementation and compare it against the time of the `std::sin` implementation. Therefore, either use the `Timer`
+- (optional) Measure the time of your implementation and compare it against the time of the `std::sin` implementation. Therefore, either use the `Timer`
   in the lecture material folder, or user the Google micro benchmarking suite: https://github.com/google/benchmark
-- What happens if your change your type from `double` to `float`. Do you see any difference in accuracy and performance?
+- (optional) What happens if your change your type from `double` to `float`. Do you see any difference in accuracy and performance?
 
 ### Material
 - [material/sheet3/exercise4.cc](/exercises/material/sheet3/exercise4.cc)
 
 ### Resources
 - [std::sin](https://en.cppreference.com/w/cpp/numeric/math/sin)
+
 
 ## Exercise 5 (GotW-78: Operators, Operators Everywhere)
 See [GotW #78](http://www.gotw.ca/gotw/078.htm).
