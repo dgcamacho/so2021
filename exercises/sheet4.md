@@ -124,7 +124,7 @@ int func(std::vector<int> const& data)
     case 3: to += data[i++];
     case 2: to += data[i++];
     case 1: to += data[i++];
-    } while (−−n > 0);
+    } while (--n > 0);
   }
   return to;
 }
