@@ -10,7 +10,7 @@ TYPE & VARNAME = OBJECT;
 So, the reference variable `VARNAME` now binds to the aliased object `OBJECT`. References must be initialized
 directly and are always bound to one object.
 
-A data-type with the qualifier `const` is called a *constant* ans is immutable. It can be declared as
+A data-type with the qualifier `const` is called a *constant* and is immutable. It can be declared as
 ```c++
 TYPE const VARNAME = VALUE;
 ```
