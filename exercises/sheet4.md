@@ -26,6 +26,12 @@ Constants can not be modified and thus must be initialized directly.
 `49`, `3300`, `c`, `uc`, and `sc`, where `c` is a `char`, `uc` is an `unsigned char`, and `sc` is a `signed char` variable.
 Which calls are legal? Which calls cause the compiler to introduce a *temporary variable*?
 
+### Resources
+- [cppreference:reference](https://en.cppreference.com/w/cpp/language/reference),
+  [cppreference:const](https://en.cppreference.com/w/cpp/language/cv)
+- [Guidelines](https://www.modernescpp.com/index.php/c-core-guidelines-how-to-pass-function-parameters)
+- [const-correctness](https://isocpp.org/wiki/faq/const-correctness)
+
 
 ## Exercise 2 (Structs)
 A `struct` in C++ is one type of class encapsulating data and methods that act on this data.
