@@ -1,13 +1,42 @@
 # Exercise sheet 3 - 2019/10/30
 
-## Exercise 1 (Structs)
-A `struct` in C++ is one type of class container encapsulating data and methods that act on this data.
+## Exercise 1 (Work with references)
+References are aliases to existing objects or functions. In contrast to pointers, references are
+not just addresses, but refer to the data behind that addresses. They can be used like regular variables
+and are declared with the symbol `&`:
+```c++
+TYPE & VARNAME = OBJECT;
+```
+So, the reference variable `VARNAME` now binds to the alias object `OBJECT`. References must be initialized
+directly and are always bound to one object.
+
+A data-type with the qualifier `const` is called a constant ans is immutable. It can be declared as
+```c++
+TYPE const VARNAME = VALUE;
+```
+Constants can not be modified and thus must be initialized directly.
+
+1. Write a function `foo(...)` that gets one argument, either
+- `double` value
+- `double const` value
+- `double` reference,
+- `double const` reference,
+2. Change the value of the referenced data inside the function. Is it always possible?
+3. Try to change the reference.
+4. Define functions `f(char)`, `g(char&)`, and `h(char const&)`. Call them with the arguments `'a'`,
+`49`, `3300`, `c`, `uc`, and `sc`, where `c` is a `char`, `uc` is an `unsigned char`, and `sc` is a `signed char` variable.
+Which calls are legal? Which calls cause the compiler to introduce a *temporary variable*?
+
+
+## Exercise 2 (Structs)
+A `struct` in C++ is one type of class encapsulating data and methods that act on this data.
 The most simple structs are those just containing data. In this sense a `struct` is a compound data-type.
 Each data-type has a size in memory. This can be evaluated with `sizeof(TYPE)` or `sizeof(EXPRESSION)`.
-The actual total size of the data-type might depend on the order of its members.
+The actual total size of the data-type might depend on its members and the order of its members.
 
-Define a `struct` with a member of each of the types `bool`, `char`, `int`, `long`, `double`, and `long double`.
+1. Define a `struct` with a member of each of the types `bool`, `char`, `int`, `long`, `double`, and `long double`.
 Order the members so as to get the largest size of the struct and the smallest size of the struct.
+2. What is the size of an empty `struct` without any member variables? Why?
 
 ### Note
 - While you might get different sizes of the struct type when reordering the members, this saving seems to be small, but
@@ -18,33 +47,6 @@ Order the members so as to get the largest size of the struct and the smallest s
 ### Resources
 - [cppreference:class](https://en.cppreference.com/w/cpp/language/class)
 - https://jonasdevlieghere.com/order-your-members/
-
-
-
-## Exercise 2 (Duff's device)
-What does the following example do?
-```c++
-int func(std::vector<int> const& data)
-{
-  int to = 0;
-  int count = data.size();
-  int n = (count + 7)/8;
-  int i = 0;
-  switch (count % 8) {
-    case 0: do { to += data[i++];
-    case 7: to += data[i++];
-    case 6: to += data[i++];
-    case 5: to += data[i++];
-    case 4: to += data[i++];
-    case 3: to += data[i++];
-    case 2: to += data[i++];
-    case 1: to += data[i++];
-    } while (−−n > 0);
-  }
-  return to;
-}
-```
-Why would anyone write something like that? No, this is not recommended as good style!
 
 
 ## Exercise 3 (Code formatting)
@@ -105,20 +107,32 @@ with $`\text{denominator} > 0`$.
 - [GCD](https://en.wikipedia.org/wiki/Greatest_common_divisor)
 
 
-## Exercise 5 (GotW-78: Operators, Operators Everywhere)
-See [GotW #78](http://www.gotw.ca/gotw/078.htm).
+## Exercise 5 (Duff's device)
+What does the following example do?
+```c++
+int func(std::vector<int> const& data)
+{
+  int to = 0;
+  int count = data.size();
+  int n = (count + 7)/8;
+  int i = 0;
+  switch (count % 8) {
+    case 0: do { to += data[i++];
+    case 7: to += data[i++];
+    case 6: to += data[i++];
+    case 5: to += data[i++];
+    case 4: to += data[i++];
+    case 3: to += data[i++];
+    case 2: to += data[i++];
+    case 1: to += data[i++];
+    } while (−−n > 0);
+  }
+  return to;
+}
+```
+Why would anyone write something like that? No, this is not recommended as good style!
 
-1. What is the greatest number of plus signs (`+`) that can appear consecutively, without whitespace, in a
-valid C++-program?
-
-*Note:* Of course, plus signs in comments, preprocessor directives and macros, and literals don't count.
-That would be too easy.
-
-2. **Guru Question**: Similarly, what is the greatest number of each the following characters that can appear
-consecutively, without whitespace, outside comments in a valid C++-program?
-  - `&`,
-  - `<`,
-  - `|`.
-
-For example, the code `if( a && b )` trivially demonstrates two consecutive `&` characters in a
-valid C++-program.
+### Resources
+- [Wikipedia:Duffs_Device](https://en.wikipedia.org/wiki/Duff%27s_device)
+- [mailinglist post by Tom Duff](https://www.lysator.liu.se/c/duffs-device.html)
+- Search for Loop unrolling for more information.
