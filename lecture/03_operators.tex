@@ -1,85 +1,92 @@
-
 \section{Operators\label{sec:operator}}
-Schon im Einführungsbeispiel wurde eine Reihe von Operatoren\index{Operator} verwendet. Operatoren führen bestimmte Operationen auf einer Reihe von Operanden aus. Dabei sind mehr lexikalische Elemente Operatoren, als man vielleicht denkt. Im Beispiel: \texttt{+, -, *, ::, ., <<, = , ",", ()}. Operatoren können auf 1 - 3 Operanden operieren.
+We have see already in the initial example the usage of arithmetic and many other \emph{operators}. Operators are special
+functions with typically prefix-notation (for unary operators) and infix notation (for binary operators) and are written with
+the classical mathematical symbols. In the initial example, we had \texttt{+, -, *, ::, ., <<, = , ",", ()}.
 
-Operatoren werden nach drei Eigenschaften charakterisiert: Assoziativität, Präzedenz und Überladbarkeit. Als erstes ist zu bemerken, dass Operatoren in C++ nichts weiter als lexikalische Symbole sind, die eine Infix-Notation für eine Funktion erlauben, z.B. könnte \cpp{a + b} die Infix-Notation für die Funktion \cpp{Result plus(a,b);} sein.
+\begin{defn}
+We call operators acting on one operand \emph{unary operators} (like \texttt{-, *, \&}), acting on two operands \emph{binary operator}
+(like \texttt{+, -, *, /, =, +=, ...}) and even acting on three operands a \emph{ternary operators} (there is only \texttt{?:}).
+\end{defn}
 
+Operators are characterized by its properties: \emph{associativity}, \emph{precedence}, and whether they can be \emph{overloaded}.
+
+% -------------------------------------------------------------------------------------------------
 \subsection{Associativity\label{sec:operator-associativity}}
-Operatorassoziativität bezeichnet:
+\begin{defn}
+  Operator associativity means the property of an operator determining the order in which to evaluate multiple occurrences of this operator in an expression without changing the result of the evaluation.
+\end{defn}
 
-\begin{zitat}{Wikipedia}
-    die Eigenschaft eines Operators, dass die Reihenfolge, mit der mehrere Vorkommnisse dieses Operators in einem Ausdruck ausgewertet werden, keinen Einfluss auf das Ergebnis der Auswertung hat, das heißt, dass für ihn das Assoziativgesetz $(a \circ b) \circ c = a \circ (b \circ c)$ gilt.
-\end{zitat}
-
-Erst bei \emph{nicht assoziativen Verknüpfungen} hängt das Ergebnis von der Operatorassoziativität ab. Um zu vermeiden, dass Ausdrücke mit nebeneinander stehenden, gleichwertigen Operatoren ohne Klammerung mehrdeutig sind, wird eine Assoziativität per Konvention festgelegt:
+Only in \emph{associative compositions} the result depends on the associativity. In order to fix the meaning of expressions with multiple
+similar operators without brackets we introduce the convention
 \begin{itemize}
-\item Ein \textbf{Linksassoziativer Operator} wird von links nach rechts ausgewertet.
-\item Ein \textbf{Rechtsassoziativer Operator} wird von rechts nach links ausgewertet.
+\item A \emph{left-associative operator} is evaluated from left to right.
+\item A \emph{right-associative operator} is evaluated from right to left.
 \end{itemize}
 
-In C++ kann man Operatoren eine neue Bedeutung (Funktion) geben und damit ist die Assoziativität
-nicht mehr gewährleistet. D.h. alle Operatoren werden als links-/rechtsassoziativ klassifiziert.
+All (binary) operators are classified as left or right associative
 
 \begin{example}
-Binäre (mathematische) Operationen sind \textbf{linksassoziativ}: (\texttt{+, -, *, /, \%, <, >, \&\&, ||})
+  Binary arithmetic operations are \emph{left-associative}: (\texttt{+, -, *, /, \%, <, >, \&\&, ||})
 
-\cpp{a + b + c} wird zu \cpp{(a + b) + c}
+  \cpp{a + b + c} is equivalent to \cpp{(a + b) + c}
 \end{example}
 
 \begin{example}
-Zuweisungsoperatoren sind  \textbf{rechtsassoziativ}:  (\texttt{=, +=, <<=, ...}), d.h. der Ausdruck
+  Assignment operators are \emph{right-associative}:  (\texttt{=, +=, <<=, ...}), i.e. the expression
 
-\cpp{x= y= z} wird in folgender Reihenfolge interpretiert: \cpp{x= (y= z)}
+\cpp{x= y= z} is evaluated from right to left and thus equivalent to: \cpp{x= (y= z)}
 \end{example}
 
+% -------------------------------------------------------------------------------------------------
 \subsection{Precedence\label{sec:operator-precedence}}
-Operatoren besitzen eine Rangfolge (oder Präzedenz) gegenüber anderen Operatoren. Man definiert damit eine Halbordnung, in der die Operatoren eines in Infix-Schreibweise vorliegenden Ausdrucks auszuwerten sind. Operatoren mit niedriger Präzedenz sind enger an die Argumente gebunden (wie wenn man Klammern setzen würde), als Argumente mit höherer Präzedenz.
+Operators are ordered by its precedence. This defines a \emph{partial ordering} of the operators and specified which operators is evaluated first.
+The precedence can be overridden using brackets.
 
-Dies kann aber durch das Setzen von zusätzlichen (runden) Klammern modifiziert oder verdeutlicht werden. Klassischerweise gilt, wie in der Mathematik, Punktrechnung vor Strichrechnung, aber bei anderen Operatoren ist dies nicht immer so einfach übertragbar.
+From basic arithmetics you know the precedence of some arithmetic operators, especially \texttt{+, -, *, /}. This precedence is known in some countries as mnemonics:
+\begin{itemize}
+  \item Germany: \textit{Punktrechnung geht vor Strichrechnung}, meaning Multiplication/Division before Addition/Subtraction
+  \item United States: \textbf{PEMDAS}: Parentheses, Exponents, Multiplication/Division, Addition/Subtraction. PEMDAS is often expanded to the mnemonic ``\textit{Please Excuse My Dear Aunt Sally}''.
+  \item Canada and New Zealand: \textbf{BEDMAS}: Brackets, Exponents, Division/Multiplication, Addition/Subtraction.
+  \item UK, Pakistan, India, Bangladesh and Australia and some other English-speaking countries: \textbf{BODMAS}: Brackets, Order, Division/Multiplication, Addition/Subtraction or Brackets, Of/Division/Multiplication, Addition/Subtraction.
+\end{itemize}
 
 \begin{example}
-  Ein Beispiel mit klassischen mathematischen Operatorn:
+  An example with classical mathematical operators on integers:
 \[
 x = 2 * 2 + 2\, /\, 2 - 2\quad\Rightarrow\quad x = \left(\left(\left(2 * 2\right) + \left(2 / 2\right)\right) - 2\right)
 \]
 \end{example}
 
-\begin{example}
-\textbf{Achtung:} Der Operator \cpp{^} beschreibt nicht das Potenzieren, sondern ein logisches X-OR. In Matlab/Octave wird dieser Operator aber zum Potenzieren verwendet. Leider hat er in C++ eine andere Präzedenz, als der Potenz-Operator in Matlab (und das Potenzieren in der Mathematik), d.h. der Ausdruck
+\begin{rem}
+\textbf{Achtung:} The operator \cpp{^} does not mean exponentation or power, but the logical X-Or. In Matlab/Octave this operator has
+the expected meaning, but in C++ the operator has a different precedence than the power operator would have from a mathematical perspective.
+This means:
 \cppline{a = b^2 + c}
-wird NICHT zu
-\cppline{a = (b^2) + c}
-sondern zu
+is equivalent to
 \cppline{a = b^(2 + c)}
-Im Sinne des Potenzierens ist das natürlich nicht intuitiv und führt schnell zu Fehlern (die auch noch schwer zu finden sind). C++ bietet keinen Operator für das Potenzieren von Ausdrücken.
-\end{example}
+BUT NOT TO
+\cppline{a = (b^2) + c}
 
+There is no power operator in C++! You have to call the function \cpp{std::pow} instead.
+\end{rem}
 
-\subsection{Operators as functions}
-In C++ ist (fast) jeder Operator als eine Funktion darstellbar. Sei \texttt{\#} das Symbol des Operators, z.B. \texttt{\#$~\in$\{+,*,(),+=,<\}}, dann gibt es eine oder beide der folgenden Implementierungen (oder für manche Operatoren auch keine):
-
-\begin{minted}[frame=none]{c++}
-Result operator #(Arg1 a, Arg2 b, ...) // a # b
-Result Arg1::operator #(Arg2 b, ...) // Arg1 a; a # b
-\end{minted}
-Die Variante 1 implementiert den Operator als freie Funktion, in der Variante 2 als Memberfunktion einer Klasse, wobei das \texttt{Arg1} in diesem Fall die Name der Klasse selbst ist. Ob und wie konkret die zugehörigen Funktionen aussehen, findet sich auch in angehängter Tabelle.
-
-Wenn ein Operator als Funktion geschrieben werden kann, dann kann dieser auch überladen\index{Überladung} werden, also für einen eigenen Datentyp spezifiziert/implementiert werden. (Siehe auch Kapitel Funktionsüberladung)
-
-\subsection{Beispiele}
-In der Tabelle im Anhang an dieses Kapitel sind die Operatoren von C++, geordnet nach Präzedenz und mit Informationen zur Assoziativität, aufgelistet.
+% -------------------------------------------------------------------------------------------------
+\subsection{Examples of operators}
+In the table below, the operators are ordered by precedence and information about associativity is given. Here I give you a summary of most of the
+operators and its meaning. Most of the operators are defined for arithmetic types (integers or floating-point numbers), but some are also defined
+for library types, like \cpp{std::string}, \cpp{std::vector} and others.
 
 \subsubsection*{Arithmetic operators}
 \begin{tabular}{l|l}
-Operator & Aktion \\
+Operator & Action \\
 \hline
-\cpp{-} & Subtraktion (unäres Minus) \\
-\cpp{+} & Addition (unäres Plus) \\
-\cpp{*} & Multiplikation \\
+\cpp{-} & Subtraction (unary minus) \\
+\cpp{+} & Addition (unary plus) \\
+\cpp{*} & Multiplication \\
 \cpp{/} & Division \\
-\cpp{%} & Modulo = Rest bei Division, Für Integer: wenn \cpp{r = a % b}, dann existiert \cpp{c}, so dass \cpp{a=b*c + r}  \\
-\cpp{--} & Dekrement (Pre- und Postfix), d.h. \cpp{--a} ist äquivalent zu \cpp{a = a - 1}\\
-\cpp{++} & Inkrement (Pre- und Postfix), d.h. \cpp{++a} ist äquivalent zu \cpp{a = a + 1} \\
+\cpp{%} & Modulo = Reminder of division, i.e. for integers: if \cpp{r = a % b}, then there exists \cpp{c}, such that \cpp{a=b*c + r}  \\
+\cpp{--} & Decrement (Pre- and Postfix), i.e. \cpp{--a} is equivalent tu \cpp{a = a - 1}\\
+\cpp{++} & Increment (Pre- and Postfix), i.e. \cpp{++a} is equivalent tu \cpp{a = a + 1} \\
 \end{tabular}
 \begin{minted}{c++}
 int operator++(int& a, int) { // a++
@@ -94,118 +101,166 @@ int& operator++(int& a) { // ++a
 \end{minted}
 
 \subsubsection*{Boolean operators}
-Logische Operatoren und Vergleichsoperatoren
+Logical operators and comparison operators
 
 \begin{tabular}{l|l}
-Operator & Aktion \\
+Operator & Action \\
 \hline
-\cpp{>} & größer als \\
-\cpp{>=} & größer oder gleich \\
-\cpp{<} & kleiner als \\
-\cpp{<=} & kleiner oder gleich \\
-\cpp{==} & gleich \\
-\cpp{!=} & ungleich \\
+\cpp{>} & greater than \\
+\cpp{>=} & greater than or equal to \\
+\cpp{<} & less than \\
+\cpp{<=} & less than or equal to \\
+\cpp{==} & equal to \\
+\cpp{!=} & unequal to \\
 \cpp{&&} & AND \\
 \cpp{||} & OR \\
 \cpp{!} & NOT \\
 \end{tabular}
 
-Ergebnis einer boolschen Operation ist ein boolscher Wert, z.B.
-\cppline{bool out_of_bound = x < min_x || x > max_x}
+\begin{rem}
+  The result of a boolean expression is a \cpp{bool} value, e.g.
+  \cppline{bool out_of_bound = x < min_x || x > max_x}
+\end{rem}
+
+\begin{rem}
+With \cxx{20}\marginpar{[\cxx{20}]} a new comparison operator will be introduced, called \emph{three-way comparison operator}
+or sometimes also \emph{space-ship operator}. It is written as \cpp{<=>} and returns and object such that
+\begin{itemize}
+  \item \cpp{(a <=> b) < 0} if \cpp{lhs < rhs}
+  \item \cpp{(a <=> b) > 0} if \cpp{lhs > rhs}
+  \item \cpp{(a <=> b) == 0} if \cpp{lhs} and \cpp{rhs} are equal/equivalent.
+\end{itemize}
+and the returned object indicates the type of ordering (strong ordering, partial ordering, weak equality, ...).
+\end{rem}
 
 \subsubsection*{Bitwise operators}
-Ändern oder Testen von Bits von Integern
+Modify or test for the bits of integers
 
 \begin{tabular}{l|l}
-Operator & Aktion \\
+Operator & Action \\
 \hline
 \cpp{&} & AND \\
 \cpp{|} & OR \\
-\cpp{^} & exklusives OR \\
-\cpp{~} & 1-Komplement \\
-\cpp{>>} & Rechts-Shift \\
-\cpp{<<} & Links-Shift \\
+\cpp{^} & exclusive OR \\
+\cpp{~} & 1-complement \\
+\cpp{>>} & right-shift of the bits \\
+\cpp{<<} & left-shift of the bits \\
 \end{tabular}
+
 \begin{rem}
-Die logischen Operatoren \cpp{<<} und \cpp{>>} werden in C++ häufig zweckentfremdet. Man verwendet sie, um etwas in einen Stream hineinzuschieben oder herauszuholen. Streams sind eine Abstraktion von Geräten, die Ausgabe bzw. Eingabe als Operation erlauben. Der Operator \cpp{<<} wird bei Ausgabestreams auch als Einfügeoperator (insertion operator) bezeichnet, der Operator \cpp{>>} bei Eingabestreams als extraction-operator.
+  The logical operators \cpp{<<} and \cpp{>>} are used in C++ often in a different context, namely to \emph{shift} something into a \emph{stream}.
+  Streams are abstractions devices allowing input and output operations. The operator \cpp{<<} is therefore called \emph{insertion operator} and
+  is used with output streams, whereas the operator \cpp{>>} is called \emph{extraction operator} and is used with input streams.
 \end{rem}
 
-\begin{task}
-Obwohl Rechner oft effiziente Befehle zur Ausführung von arithmetischen und logischen Operationen eingebaut haben, können alle diese Operationen auch durch Kombinationen von bitweisen Operatoren und Nullvergleichen durchgeführt werden. Folgender Pseudocode zeigt beispielsweise, wie zwei beliebige Ganzzahlen a und b nur mithilfe von Verschiebungen und Additionen multipliziert werden können:
-\begin{minted}{pascal}
-c := 0
-solange b <> 0
-    falls (b und 1) <> 0
-        c := c + a
-    schiebe a um 1 nach links
-    schiebe b um 1 nach rechts
-return c
-\end{minted}
-Der Code führt eine schriftliche Multiplikation im Binärsystem aus, allerdings in der unüblichen Reihenfolge von hinten nach vorne (beginnend mit der letzten Ziffer von b).\footnote{Siehe \url{https://de.wikipedia.org/wiki/Bitweiser_Operator}}
+\begin{example}
+  While a modern CPU efficiently implements arithmetic and logical operators on integers, one could implement those manually, by using bitwise
+  operations and comparison with 0 only. The following pseudo code implements multiplication of two integers \texttt{a} and \texttt{b} with
+  bit shifts, comparison and addition:
+  \begin{minted}{pascal}
+  c := 0
+  solange b <> 0
+      falls (b und 1) <> 0
+          c := c + a
+      schiebe a um 1 nach links
+      schiebe b um 1 nach rechts
+  return c
+  \end{minted}
+  It implements kind of a manual multiplication in the binary base but in the uncommen order from right to left.
+  \footnote{See \url{https://de.wikipedia.org/wiki/Bitweiser_Operator}}
 
-Implementiere diesen Algorithmus in C++!
-\end{task}
+  As an exercise, you could implement this algorithm and compare the result with the classical multiplication.
+\end{example}
 
 \subsubsection*{Assignement operators}
-Compound-Zuweisungs-Operatoren wenden einen Operator auf den Operanden links- und rechts vom Zuweisungsoperator an und speichern das Ergebnis im linken Operanden, d.h.
-Operatoren \cpp{+=, -=, *=, /=, %= >>=, <<=, &=, ^=, |=}, mit
-\cppline{a += b  // entspricht  a = a + b}
-Eine einfache Zuweisung muss eventuell ein Objekt kopieren, also erzeuge \cpp{c = a + b} und weise dies dann \cpp{a} zu: \cpp{a = c}. Mit den kombinierten Zuweisungsoperatoren lässt sich dieser zusätzliche Kopier-Aufwand umgehen, denn
-\begin{minted}{c++}
-struct A { double value; };
+Compound-assignment operators like \cpp{+=, -=, *=, /=, %= >>=, <<=, &=, ^=, |=} apply an operator to the left and right-side of
+an assignment, and store the result in the left operand.
 
-A const operator+(A const& a, A const& b) {
-  A c(a); // create local copy of a
-  c += b;
-  return c;
-}
-\end{minted}
-aber
+Example:
+\cppline{a += b  // corresponds to  a = a + b}
+
+\begin{rem}
+Compared to the simple assignment, a compound-assignment does not need to create a temporary and maybe copy it to the left-hand side operand, but works with the operand directly.
+
 \begin{minted}{c++}
-A& operator+=(A& a, A const& b) {
-  a.value += b.value;
-  return a;
-}
+  struct A { double value; };
+
+  A operator+(A const& a, A const& b) {
+    A c(a); // create local copy of a
+    c += b;
+    return c;
+  }
 \end{minted}
+but
+\begin{minted}{c++}
+  A& operator+=(A& a, A const& b) {
+    a.value += b.value;
+    return a;
+  }
+\end{minted}
+\end{rem}
 
 \subsubsection*{Bracket-Access operators}
-Mit Hilfe der Klammer-Zugriffe \cpp{[]} kann man auf Array Elemente zugreifen und mit \cpp{()} Funktionen aufrufen. Beide Operatoren können überladen werden, um eigene Vektorklassen zu schreiben oder Funktionsobjekte (Funktoren) zu erzeugen.
-
-Mehr zu Funktoren später in der Vorlesung. Auch die Vektorklasse werden wir gesondert betrachten.
+The round brackets \cpp{()} and the square brackets \cpp{[]} also represent operators, namely \emph{bracket-access operators}. While the square bracket
+is typically used as vector access and allows only one argument, e.g. the vector element index, the round brackets represent a function call and thus
+allow any number of arguments \texttt{>= 0}.
 
 \subsection*{Sequence of evaluation and side effects}
-When an operation has side effects, C++ relies on sequence points rule to decide when side effects (such as increments, combined assignments, etc.) have to take effect. Logical and-then/or-else (\cpp{&&} and \cpp{||}) operators, ternary \cpp{?:} question mark operators, and commas \cpp{,} create sequence points; \cpp{+, -, <<} and so on do not!
+A sequence point defines any point in a computer program's execution at which it is guaranteed that all side effects of previous evaluations will have been performed, and no side effects from subsequent evaluations have yet been performed.
+
+A side effect is, for example, the change of a variable not directly involved in the computation.
+
+Logical and-then/or-else (\cpp{&&} and \cpp{||}) operators, ternary \cpp{?:} question mark operators, and commas \cpp{,} create sequence points; \cpp{+, -, <<} and so on do not!
+With \cxx{17}\marginpar{[\cxx{17}]} several more operations are now sequenced and are safe to include side effects. But in general, you should not that
 
 \begin{guideline}{Attention}
-When you use an expression with side effects multiple times in the absence of sequence points, the resulting behavior is \textbf{undefined} in C++. Any result is possible, including one that does not make logical sense.
+  When you use an expression with side effects multiple times in the absence of sequence points, the resulting behavior is \textbf{undefined} in C++.
+  Any result is possible, including one that does not make logical sense.
 \end{guideline}
 
 See also: \href{http://en.wikipedia.org/wiki/Sequence_point}{Wikipedia}, \href{http://en.cppreference.com/w/cpp/language/eval_order}{CppReference.com}
 
-Das bedeutet: bei den logischen Verknüpfungen wird zuerst das linke Argument ausgewertet und anhand dessen entschieden, ob das rechte Argument noch ausgewertet werden soll. Z.B. \cpp{A && B}: Zuerst \cpp{A} auswerten. Wenn \cpp{A == true}, dann \cpp{B} auswerten und Ergebnis zurück liefern, wenn \cpp{A == false} wird \cpp{B} nicht ausgewertet. Analog für \cpp{A || B} mit vertauschten Bedingungen. Beim ternären Operator \cpp{A ? B : C} wird zuerst die Bedingung \cpp{A} ausgewertet und anhand dessen Ausgang eines der beiden Ergebniswerte \cpp{B} oder \cpp{C} ausgewertet.
-
-Beim Komma-Operator wird der Reihenfolge nach von links nach rechts ausgewertet.
+For logical operators, at first the left operand is evaluated and based on its value it is decided whether to evaluate the right operand
+at all or not, i.e.
+\begin{minted}{c++}
+  A && B  // first evaluate A, if A == true evaluate B and return its value
+  A || B  // first evaluate A, if A == false, evaluate B andreturn its value
+  A ? B : C  // first evaluate A, if true, evaluate B, otherwise evaluate C
+  (A,B,C, ...) // first evaluate A, then evaluate B, then evaluate C, ...
+  f() + g() // it is not specified where f is evaluate first or g
+\end{minted}
 
 \begin{rem}
-Die Präzedenz hat nichts mit der Auswertungsreihenfolge zu tun, sondern etwas mit dem Vorrang von Operatoren untereinander. Bei einer beliebigen binären (ternären,...) Funktion ist undefiniert, welches der Argumente zuerst interpretiert wird und welches danach.
+  The precedence property is not related to the order of evaluation, but to the rank of the operator. F an arbitrary function \cpp{f(a,b,c,d)} it
+  is not specified in which order the expressions for a, b, c, d are evaluate.
 \end{rem}
 
 \begin{example}
-Die beiden folgenden Ausdrücke haben unterschiedliches Verhalten:
-\begin{minted}{c++}
-int foo(int a, int b) { return a + b; }
+  The following expressions have different behavior:
+  \begin{minted}{c++}
+  int foo(int a, int b) { return a + b; }
 
-int x = 1;
-foo(++x, x++); // Variante 1 (Verhalten undefiniert)
+  int x = 1;
+  foo(++x, x++); // Variant 1 (behavior undefiniert)
 
-x = 1;
-int a = ++x, b = x++;
-foo(a, b); // Variante 2 (Verhalten festgelegt)
-\end{minted}
+  x = 1;
+  int a = ++x, b = x++;
+  foo(a, b); // Variant 2 (behavior defined)
+  \end{minted}
 \end{example}
 
-\subsection*{Overview}
+\subsection{Operators as functions}
+In C++ nearly all operator can be written (and called) as a regular function. Let \texttt{\#} be the symbol of the operator, e.g. \texttt{\#$~\in$\{+,*,(),+=,<\}}, then there zero, one or both of the following implementations are available:
 
+\begin{minted}[frame=none]{c++}
+Result operator #(Arg1 a, Arg2 b, ...) // a # b
+Result Arg1::operator #(Arg2 b, ...) // Arg1 a; a # b
+\end{minted}
+The variant 1 implement the operator as a free function, whereas the variant 2 implements the operator as a member function of a class,
+where \texttt{Arg1} is the name of that class. Whether there is a function representation of the operator and whether it is allowed to \emph{overload}
+that function is specified in the table below.
+
+\subsection*{Overview}
 \begin{tabular}{c|l|l|l|l}
 \textbf{\small Precedence} & \textbf{Operator} & \textbf{Description} & \textbf{Associativity} & \textbf{\small Overload} \\
 \hline\hline
@@ -254,6 +309,12 @@ foo(a, b); // Variante 2 (Verhalten festgelegt)
 
 [note 1]: \#$~\in\{$\cpp{+, -, *, /, %, <<, >>, &, ^, |}$\}$
 
-In der Spalte \textit{Overload} bedeutet (K), dass der Operator nur als Memberfunktion einer Klasse überladen werden darf. $\checkmark$ hingegen erlaubt die Überladung als Memberfunktion und freie Funktion.
+In the column \textit{Overload} means (K), the operator can only be implemented as member function of a class, whereas $\checkmark$ allows to
+write the operator as member function or free function.
 
-Eine Übersicht über alle Operatoren, mit Assoziativität, Funktionsdeklaration und Rangfolge, findet sich z.B. auf Wikipedia, unter \url{http://en.wikipedia.org/w/index.php?title=C++\_operators}
+A more complete table can also be found at \url{http://en.wikipedia.org/w/index.php?title=C++\_operators}, or \url{https://en.cppreference.com/w/cpp/language/operator_precedence}.
+
+
+
+
+
