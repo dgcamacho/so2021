@@ -515,7 +515,7 @@ Literals, to indicate how to interpret a number, are \texttt{F,f,L,l} for \cpp{f
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #include <boost/math/constants/constants.hpp>
 
-// Typ-Alias für Gleitkommazahl mit 50 Dezimalstellen.
+// Type-alias for floating-point numbers with 50 decimal digits precision and int32_t to represent the exponent
 using float_50 = boost::multiprecision::cpp_dec_float_50;
 
 template <class T>
@@ -551,9 +551,9 @@ int main()
 
 \begin{rem}
   Arithmetic with floating-point number is not the same as arithmetic with real $\mathbb{R}$ numbers. There are effects of rounding,
-  finite representation, cancelation, non-associativity, $\ldots$. Details can be found in the standard document
+  finite representation, cancellation, non-associativity, $\ldots$. Details can be found in the standard document
   \href{https://standards.ieee.org/content/ieee-standards/en/standard/754-2019.html}{IEEE 754} and are explained in the lecture
-  \emph{Computer arithmetics} by Prof. W. Walter.
+  \emph{Computer Arithmetics} by Prof. W. Walter.
 \end{rem}
 
 
@@ -581,7 +581,7 @@ Maybe the compiler prints a warning, but not on all warning levels and this is n
   even set the flag \texttt{-Werror} to assert an error instead of warnings.
 \end{guideline}
 
-With\marginpar{[\cxx{11}]} \cxx{11} the compiler added the \emph{uniform initialization} using curly brackets, in order to assert an error
+With\marginpar{[\cxx{11}]} \cxx{11} the compiler added the \emph{uniform initialization} using curly brackets, in order to raise an error
 instead of silently accepting the code, in case of narrowing conversion. This means, almost always use
 \begin{minted}{c++}
   long l1{1234567890123}; // or
@@ -617,6 +617,14 @@ Some examples of narrowing conversions:
   auto x3{42};    // c++14: x3 is of type std::initializer_list<int>
   auto x4{42};    // c++17: x4 is of type int
   \end{minted}
+\end{rem}
+
+\begin{defn}
+  For floating point values we call a conversion to a smaller data type (e.g. \cpp{double -> float}) a \emph{floating-point conversion} (with possibly loss of precision) and otherwise a \emph{floating-point promotion} (represent the value exactly with the larger type).
+\end{defn}
+
+\begin{rem}
+  Note, in floating-point conversion, if a value of \cpp{T1 > T2} is between two floating point number of \cpp{T2}, the rounding to a one of the both values is implementation defined and might be controlled with some intrindic functions. If the value is out of range of \cpp{T2} the behavior is undefined.
 \end{rem}
 
 \subsection{Constants\label{sec:const}}
@@ -725,6 +733,8 @@ used to declare a new variable hiding the outer one with lifetime only in that n
   }
 \end{minted}
 
+
+% =================================================================================================
 \section{Library types}
 With the fundamental types and some language constructs we will learn later, you can already build powerful C++ programs. But it is possible
 to define your own types for more complex data-structures, like vectors, tuples, lists, associative maps and sets, and so on. The standard library
@@ -732,6 +742,7 @@ defines already some of these types thus allows to easily write more advanced pr
 
 Here, I just give an overview about some useful data-structures, later we will look more deeply into the standard library.
 
+% -------------------------------------------------------------------------------------------------
 \subsection{Strings}
 Character sequences were already mentioned at the beginning, when discussing the argument the function \cpp{main(int, char**)}. This
 functions accepts a low-level form of arrays of strings as second argument. But these low-level strings are hard to use right. Thus,
@@ -746,7 +757,9 @@ the standard library defines the type \cpp{std::string} instead:
   }
 \end{minted}
 
+% -------------------------------------------------------------------------------------------------
 \subsection{Container}
+\subsubsection{Sequence Container}
 In the header \cpp{<vector>} the standard library provides a contiguous resizable vector container with flexible element types:
 \begin{minted}{c++}
   #include <vector>
@@ -773,7 +786,7 @@ The storage of the vector is handled automatically, being expanded and contracte
 
 \begin{rem}
   The \cpp{main()} function needs two argument to represent an array of string, the size and the address. Instead, one could
-  store this in a vector of strings instead:
+  store this in a vector of strings:
   \begin{minted}{c++}
   int main(int argc, char** argv) {
     std::vector<std::string> args(argv, argv + argc);
@@ -783,6 +796,7 @@ The storage of the vector is handled automatically, being expanded and contracte
   \end{minted}
 \end{rem}
 
+\subsubsection{Associative Container}
 Apart from the \emph{sequence container} \cpp{std::vector}, there is also the associative container \cpp{std::map}, associating a value to a key:
 \begin{minted}{c++}
   #include <map>
@@ -808,6 +822,31 @@ This can be combined with vector and string:
   }
 \end{minted}
 
+\begin{rem}
+  Note that maps need more memory and the access is much slower than for a vector. So, if you have an integer key and know the min and max index, prefer a vector over a map, or just use the map as intermediate container to build up the container.
+\end{rem}
+
+\subsection{Iterating over container}
+All standard containers can be traversed using range-base for loops
+\begin{minted}{c++}
+  #include <map>
+  #include <string>
+  #include <vector>
+  int main()
+  {
+    std::map<int, double> m; // fill up the map
+    std::vector<double> v; // fill up the vector
+
+    for (auto i : m)
+      std::cout << i.first << ", " << i.second << std::endl; // (key, value) pair, see below
+
+    for (double d : v)
+      std::cout << d << std::endl;
+  }
+\end{minted}
+If you don't know the type of the elements in traversal or it is complicated to write (like for \cpp{std::map}), use (qualified) \cpp{auto} instead.
+
+% -------------------------------------------------------------------------------------------------
 \subsection{Tuples}
 A vector represents a tuple of values of the same type. If the type should be
 different for each element, one could use a \cpp{std::tuple} instead. There, the types of all elements must be given
@@ -877,9 +916,19 @@ This structured binding does not only work for tuple-like structures, but also f
 \begin{minted}{c++}
   std::pair<int, std::string> p {1, "pair"};
   auto [first,second] = p;
-  assert(first == 1 && second == "pair");
+  assert(first == p.first && second == p.second);
 
   Point point {0.0, 4.0};
   auto [x,y] = point;
-  assert(x == 0.0 && y == 2.0);
+  assert(x == point.x && y == point.y);
 \end{minted}
+
+\begin{rem}
+Tuples (and pairs) can not be traversed like other containers. The reason is that each element in a tuple has a different type and in a loop the elements must have the same type in each iteration. Currently the standard committee discusses and extended version of a loop, like \cpp{for...(auto t : tuple)} or \cpp{for constexpr(auto t : tuple)}. But this is not yet decided. We will see later in the chaper about meta-programming how to write a loop over tuples yourself. Then you get something like
+\begin{minted}{c++}
+  forEach(tuple, [](auto t) {
+    std::cout << t << std::endl;
+  });
+\end{minted}
+that looks quite similar to a regular loop but works with tuples and pairs and many more.
+\end{rem}

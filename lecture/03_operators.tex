@@ -1,0 +1,320 @@
+\section{Operators\label{sec:operator}}
+We have see already in the initial example the usage of arithmetic and many other \emph{operators}. Operators are special
+functions with typically prefix-notation (for unary operators) and infix notation (for binary operators) and are written with
+the classical mathematical symbols. In the initial example, we had \texttt{+, -, *, ::, ., <<, = , ",", ()}.
+
+\begin{defn}
+We call operators acting on one operand \emph{unary operators} (like \texttt{-, *, \&}), acting on two operands \emph{binary operator}
+(like \texttt{+, -, *, /, =, +=, ...}) and even acting on three operands a \emph{ternary operators} (there is only \texttt{?:}).
+\end{defn}
+
+Operators are characterized by its properties: \emph{associativity}, \emph{precedence}, and whether they can be \emph{overloaded}.
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Associativity\label{sec:operator-associativity}}
+\begin{defn}
+  Operator associativity means the property of an operator determining the order in which to evaluate multiple occurrences of this operator in an expression without changing the result of the evaluation.
+\end{defn}
+
+Only in \emph{associative compositions} the result depends on the associativity. In order to fix the meaning of expressions with multiple
+similar operators without brackets we introduce the convention
+\begin{itemize}
+\item A \emph{left-associative operator} is evaluated from left to right.
+\item A \emph{right-associative operator} is evaluated from right to left.
+\end{itemize}
+
+All (binary) operators are classified as left or right associative
+
+\begin{example}
+  Binary arithmetic operations are \emph{left-associative}: (\texttt{+, -, *, /, \%, <, >, \&\&, ||})
+
+  \cpp{a + b + c} is equivalent to \cpp{(a + b) + c}
+\end{example}
+
+\begin{example}
+  Assignment operators are \emph{right-associative}:  (\texttt{=, +=, <<=, ...}), i.e. the expression
+
+\cpp{x= y= z} is evaluated from right to left and thus equivalent to: \cpp{x= (y= z)}
+\end{example}
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Precedence\label{sec:operator-precedence}}
+Operators are ordered by its precedence. This defines a \emph{partial ordering} of the operators and specified which operators is evaluated first.
+The precedence can be overridden using brackets.
+
+From basic arithmetics you know the precedence of some arithmetic operators, especially \texttt{+, -, *, /}. This precedence is known in some countries as mnemonics:
+\begin{itemize}
+  \item Germany: \textit{Punktrechnung geht vor Strichrechnung}, meaning Multiplication/Division before Addition/Subtraction
+  \item United States: \textbf{PEMDAS}: Parentheses, Exponents, Multiplication/Division, Addition/Subtraction. PEMDAS is often expanded to the mnemonic ``\textit{Please Excuse My Dear Aunt Sally}''.
+  \item Canada and New Zealand: \textbf{BEDMAS}: Brackets, Exponents, Division/Multiplication, Addition/Subtraction.
+  \item UK, Pakistan, India, Bangladesh and Australia and some other English-speaking countries: \textbf{BODMAS}: Brackets, Order, Division/Multiplication, Addition/Subtraction or Brackets, Of/Division/Multiplication, Addition/Subtraction.
+\end{itemize}
+
+\begin{example}
+  An example with classical mathematical operators on integers:
+\[
+x = 2 * 2 + 2\, /\, 2 - 2\quad\Rightarrow\quad x = \left(\left(\left(2 * 2\right) + \left(2 / 2\right)\right) - 2\right)
+\]
+\end{example}
+
+\begin{rem}
+\textbf{Achtung:} The operator \cpp{^} does not mean exponentation or power, but the logical X-Or. In Matlab/Octave this operator has
+the expected meaning, but in C++ the operator has a different precedence than the power operator would have from a mathematical perspective.
+This means:
+\cppline{a = b^2 + c}
+is equivalent to
+\cppline{a = b^(2 + c)}
+BUT NOT TO
+\cppline{a = (b^2) + c}
+
+There is no power operator in C++! You have to call the function \cpp{std::pow} instead.
+\end{rem}
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Examples of operators}
+In the table below, the operators are ordered by precedence and information about associativity is given. Here I give you a summary of most of the
+operators and its meaning. Most of the operators are defined for arithmetic types (integers or floating-point numbers), but some are also defined
+for library types, like \cpp{std::string}, \cpp{std::vector} and others.
+
+\subsubsection*{Arithmetic operators}
+\begin{tabular}{l|l}
+Operator & Action \\
+\hline
+\cpp{-} & Subtraction (unary minus) \\
+\cpp{+} & Addition (unary plus) \\
+\cpp{*} & Multiplication \\
+\cpp{/} & Division \\
+\cpp{%} & Modulo = Reminder of division, i.e. for integers: if \cpp{r = a % b}, then there exists \cpp{c}, such that \cpp{a=b*c + r}  \\
+\cpp{--} & Decrement (Pre- and Postfix), i.e. \cpp{--a} is equivalent tu \cpp{a = a - 1}\\
+\cpp{++} & Increment (Pre- and Postfix), i.e. \cpp{++a} is equivalent tu \cpp{a = a + 1} \\
+\end{tabular}
+\begin{minted}{c++}
+int operator++(int& a, int) { // a++
+  int r = a;
+  a += 1;
+  return r;
+}
+int& operator++(int& a) { // ++a
+  a += 1
+  return a;
+}
+\end{minted}
+
+\subsubsection*{Boolean operators}
+Logical operators and comparison operators
+
+\begin{tabular}{l|l}
+Operator & Action \\
+\hline
+\cpp{>} & greater than \\
+\cpp{>=} & greater than or equal to \\
+\cpp{<} & less than \\
+\cpp{<=} & less than or equal to \\
+\cpp{==} & equal to \\
+\cpp{!=} & unequal to \\
+\cpp{&&} & AND \\
+\cpp{||} & OR \\
+\cpp{!} & NOT \\
+\end{tabular}
+
+\begin{rem}
+  The result of a boolean expression is a \cpp{bool} value, e.g.
+  \cppline{bool out_of_bound = x < min_x || x > max_x}
+\end{rem}
+
+\begin{rem}
+With \cxx{20}\marginpar{[\cxx{20}]} a new comparison operator will be introduced, called \emph{three-way comparison operator}
+or sometimes also \emph{space-ship operator}. It is written as \cpp{<=>} and returns and object such that
+\begin{itemize}
+  \item \cpp{(a <=> b) < 0} if \cpp{lhs < rhs}
+  \item \cpp{(a <=> b) > 0} if \cpp{lhs > rhs}
+  \item \cpp{(a <=> b) == 0} if \cpp{lhs} and \cpp{rhs} are equal/equivalent.
+\end{itemize}
+and the returned object indicates the type of ordering (strong ordering, partial ordering, weak equality, ...).
+\end{rem}
+
+\subsubsection*{Bitwise operators}
+Modify or test for the bits of integers
+
+\begin{tabular}{l|l}
+Operator & Action \\
+\hline
+\cpp{&} & AND \\
+\cpp{|} & OR \\
+\cpp{^} & exclusive OR \\
+\cpp{~} & 1-complement \\
+\cpp{>>} & right-shift of the bits \\
+\cpp{<<} & left-shift of the bits \\
+\end{tabular}
+
+\begin{rem}
+  The logical operators \cpp{<<} and \cpp{>>} are used in C++ often in a different context, namely to \emph{shift} something into a \emph{stream}.
+  Streams are abstractions devices allowing input and output operations. The operator \cpp{<<} is therefore called \emph{insertion operator} and
+  is used with output streams, whereas the operator \cpp{>>} is called \emph{extraction operator} and is used with input streams.
+\end{rem}
+
+\begin{example}
+  While a modern CPU efficiently implements arithmetic and logical operators on integers, one could implement those manually, by using bitwise
+  operations and comparison with 0 only. The following pseudo code implements multiplication of two integers \texttt{a} and \texttt{b} with
+  bit shifts, comparison and addition:
+  \begin{minted}{pascal}
+  c := 0
+  solange b <> 0
+      falls (b und 1) <> 0
+          c := c + a
+      schiebe a um 1 nach links
+      schiebe b um 1 nach rechts
+  return c
+  \end{minted}
+  It implements kind of a manual multiplication in the binary base but in the uncommen order from right to left.
+  \footnote{See \url{https://de.wikipedia.org/wiki/Bitweiser_Operator}}
+
+  As an exercise, you could implement this algorithm and compare the result with the classical multiplication.
+\end{example}
+
+\subsubsection*{Assignement operators}
+Compound-assignment operators like \cpp{+=, -=, *=, /=, %= >>=, <<=, &=, ^=, |=} apply an operator to the left and right-side of
+an assignment, and store the result in the left operand.
+
+Example:
+\cppline{a += b  // corresponds to  a = a + b}
+
+\begin{rem}
+Compared to the simple assignment, a compound-assignment does not need to create a temporary and maybe copy it to the left-hand side operand, but works with the operand directly.
+
+\begin{minted}{c++}
+  struct A { double value; };
+
+  A operator+(A const& a, A const& b) {
+    A c(a); // create local copy of a
+    c += b;
+    return c;
+  }
+\end{minted}
+but
+\begin{minted}{c++}
+  A& operator+=(A& a, A const& b) {
+    a.value += b.value;
+    return a;
+  }
+\end{minted}
+\end{rem}
+
+\subsubsection*{Bracket-Access operators}
+The round brackets \cpp{()} and the square brackets \cpp{[]} also represent operators, namely \emph{bracket-access operators}. While the square bracket
+is typically used as vector access and allows only one argument, e.g. the vector element index, the round brackets represent a function call and thus
+allow any number of arguments \texttt{>= 0}.
+
+\subsection*{Sequence of evaluation and side effects}
+A sequence point defines any point in a computer program's execution at which it is guaranteed that all side effects of previous evaluations will have been performed, and no side effects from subsequent evaluations have yet been performed.
+
+A side effect is, for example, the change of a variable not directly involved in the computation.
+
+Logical and-then/or-else (\cpp{&&} and \cpp{||}) operators, ternary \cpp{?:} question mark operators, and commas \cpp{,} create sequence points; \cpp{+, -, <<} and so on do not!
+With \cxx{17}\marginpar{[\cxx{17}]} several more operations are now sequenced and are safe to include side effects. But in general, you should not that
+
+\begin{guideline}{Attention}
+  When you use an expression with side effects multiple times in the absence of sequence points, the resulting behavior is \textbf{undefined} in C++.
+  Any result is possible, including one that does not make logical sense.
+\end{guideline}
+
+See also: \href{http://en.wikipedia.org/wiki/Sequence_point}{Wikipedia}, \href{http://en.cppreference.com/w/cpp/language/eval_order}{CppReference.com}
+
+For logical operators, at first the left operand is evaluated and based on its value it is decided whether to evaluate the right operand
+at all or not, i.e.
+\begin{minted}{c++}
+  A && B  // first evaluate A, if A == true evaluate B and return its value
+  A || B  // first evaluate A, if A == false, evaluate B andreturn its value
+  A ? B : C  // first evaluate A, if true, evaluate B, otherwise evaluate C
+  (A,B,C, ...) // first evaluate A, then evaluate B, then evaluate C, ...
+  f() + g() // it is not specified where f is evaluate first or g
+\end{minted}
+
+\begin{rem}
+  The precedence property is not related to the order of evaluation, but to the rank of the operator. F an arbitrary function \cpp{f(a,b,c,d)} it
+  is not specified in which order the expressions for a, b, c, d are evaluate.
+\end{rem}
+
+\begin{example}
+  The following expressions have different behavior:
+  \begin{minted}{c++}
+  int foo(int a, int b) { return a + b; }
+
+  int x = 1;
+  foo(++x, x++); // Variant 1 (behavior undefiniert)
+
+  x = 1;
+  int a = ++x, b = x++;
+  foo(a, b); // Variant 2 (behavior defined)
+  \end{minted}
+\end{example}
+
+\subsection{Operators as functions}
+In C++ nearly all operator can be written (and called) as a regular function. Let \texttt{\#} be the symbol of the operator, e.g. \texttt{\#$~\in$\{+,*,(),+=,<\}}, then there zero, one or both of the following implementations are available:
+
+\begin{minted}[frame=none]{c++}
+Result operator #(Arg1 a, Arg2 b, ...) // a # b
+Result Arg1::operator #(Arg2 b, ...) // Arg1 a; a # b
+\end{minted}
+The variant 1 implement the operator as a free function, whereas the variant 2 implements the operator as a member function of a class,
+where \texttt{Arg1} is the name of that class. Whether there is a function representation of the operator and whether it is allowed to \emph{overload}
+that function is specified in the table below.
+
+\subsection*{Overview}
+\begin{tabular}{c|l|l|l|l}
+\textbf{\small Precedence} & \textbf{Operator} & \textbf{Description} & \textbf{Associativity} & \textbf{\small Overload} \\
+\hline\hline
+1 = highest & \cpp{::}&	Scope resolution                       & Left-to-right & ---\\
+\hline
+2 & \cpp{++} \cpp{--} &	Suffix/postfix increment and decrement & Left-to-right & $\checkmark$ $\checkmark$ \\
+  & \cpp{()}          &	Function call                          & & (K)\\
+  & \cpp{[]}          &	Subscript                              & & (K)\\
+  & \cpp{. ->}        &	Member access                          & & --- (K)\\
+\hline
+3 & \cpp{++ --}       & Prefix increment and decrement         &	 Right-to-left & $\checkmark$ $\checkmark$ \\
+  & \cpp{+ -}         &	Unary plus and minus                   &   & $\checkmark$ $\checkmark$\\
+  & \cpp{! ~}         & Logical NOT and bitwise NOT            &   & $\checkmark$ $\checkmark$\\
+  & \cpp{*}           &	Indirection (dereference)              &   & $\checkmark$\\
+  & \cpp{&}           &	Address-of                             &   & $\checkmark$\\
+\hline
+4 & \cpp{.* ->*}      & Pointer-to-member                      & Left-to-right & --- $\checkmark$ \\
+\hline
+5 & \cpp{* / %}      &	Multiplication, division, and remainder& & $\checkmark$ $\checkmark$ $\checkmark$ \\
+\hline
+6 & \cpp{+ -}         & Addition and subtraction               & & $\checkmark$ $\checkmark$\\
+\hline
+7 & \cpp{<< >>}       & Bitwise left shift and right shift     & & $\checkmark$ $\checkmark$\\
+\hline
+8 & \cpp{< <=}        & For relational operators $<$ and $\leq$ respectively & & $\checkmark$ $\checkmark$\\
+  & \cpp{> >=}        &	For relational operators $>$ and $\geq$ respectively & & $\checkmark$ $\checkmark$\\
+\hline
+9 & \cpp{== !=}       & For relational operators $=$ and $\neq$ respectively & & $\checkmark$ $\checkmark$\\
+\hline
+10 & \cpp{&}          &	Bitwise AND                            & & $\checkmark$\\
+\hline
+11 & \cpp{^}          &	Bitwise XOR (exclusive or)             & & $\checkmark$\\
+\hline
+12 & \cpp{|}          &	Bitwise OR (inclusive or)              & & $\checkmark$\\
+\hline
+13 & \cpp{&&}         &	Logical AND                            & & $\checkmark$\\
+\hline
+14 & \cpp{||}         &	Logical OR                             & & $\checkmark$\\
+\hline
+15 & \cpp{?:}         &	Ternary conditional                    & Right-to-left & ---\\
+   & \cpp{=}          &	Direct assignment                      & & (K)\\
+   & \cpp{#=}         & Compound assignment operators [note 1] & & $\checkmark$\\
+\hline
+16 = lowest & \cpp{,}          &	Comma                                  & Left-to-right & $\checkmark$
+\end{tabular}
+
+[note 1]: \#$~\in\{$\cpp{+, -, *, /, %, <<, >>, &, ^, |}$\}$
+
+In the column \textit{Overload} means (K), the operator can only be implemented as member function of a class, whereas $\checkmark$ allows to
+write the operator as member function or free function.
+
+A more complete table can also be found at \url{http://en.wikipedia.org/w/index.php?title=C++\_operators}, or \url{https://en.cppreference.com/w/cpp/language/operator_precedence}.
+
+
+
+
+
