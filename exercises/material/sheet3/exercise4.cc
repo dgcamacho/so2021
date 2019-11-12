@@ -32,5 +32,5 @@ double sqrt_iter(double a, double x0, int N)
 int main()
 {
   // test for a=10, x0=3, and N={5,10,100}
-  // compare against std::sin
+  // compare against std::sqrt
 }
