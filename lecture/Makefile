@@ -1,4 +1,4 @@
-all: lecture.pdf
+all: lecture.pdf lecture_01.pdf lecture_02.pdf lecture_03.pdf lecture_04.pdf
 
 # CUSTOM BUILD RULES
 %.tex: %.raw
