@@ -20,7 +20,7 @@ all: lecture.pdf
 
 # MAIN LATEXMK RULE
 
-%.pdf: %.tex declarations.tex 01_introduction.tex 02_basics.tex 03_operators.tex
+%.pdf: %.tex declarations.tex 01_introduction.tex 02_basics.tex 03_operators.tex 04_functions.tex
 	latexmk -pdf -pdflatex="pdflatex -shell-escape" -use-make $< #  -silent -interaction=nonstopmode
 
 clean:

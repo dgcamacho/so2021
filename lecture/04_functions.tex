@@ -1,0 +1,407 @@
+\section{Functions\label{sec:function}}
+A function declaration consists (in the simplest case) of a return type, the function name and comma separated list of argument types (zero or more):
+%
+\cppline{ReturnType function_name(Type1 arg1, Type2 arg2,...);}
+%
+A declaration (or prototype) introduces this name into the current scope and tells the compiler that you intend to define it. The
+implementation of the body of the function makes a declaration to a definition. Both can be combined or separated. You can even provide
+the definition in a separate source file, or even link it dynamically at runtime in your program.
+
+functions that do not return a value have the return type \cpp{void} --- a fundamental type representing the empty set of values.
+
+\begin{rem}
+  With \cxx{11}\marginpar{[\cxx{11}]} an alternate syntax for the function declaration is introduced, utilizing the \cpp{auto} keyword:
+  %
+  \cppline{auto function_name(Type1 arg1, Type2 arg2,...) -> ReturnType;}
+  %
+  It's call a function with trailing return type. Here the return type might directly depend on the arguments (argument types not values).
+
+  With \cxx{14}\marginpar{[\cxx{14}]} one can even omit the trailing type:
+  %
+  \cppline{auto function_name(Type1 arg1, Type2 arg2,...) { ... };}
+  %
+  Here, the declaration must be a definition, since the actual return type is deduced from the \cpp{return} expression of the function.
+\end{rem}
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Argument passing and return values\label{sec:function-arguments}}
+There are essentially two ways how to pass values/arguments to functions:
+\begin{description}
+  \item[pass-by-value] The passed values initialized a new local variable, that is destroyed at the end of the function body:
+  \begin{minted}{c++}
+  void foo(int i) {
+    i = 5; // the local variable i is changed
+  }
+
+  int main() {
+    int j = 4;
+    foo(j);     // j is not changed
+    return 0;
+  }
+  \end{minted}
+
+  \item[pass-by-reference] Arguments are references to the passed variables and build a local alias of that:
+  \begin{minted}{c++}
+  void foo(int& i) {
+    i = 5; // changes the alias i, thus changing the passed variable j
+  }
+  int main() {
+    int j = 4;
+    foo(j);     // j is changed by the function foo
+    return 0;
+  }
+  \end{minted}
+
+  \item[pass-by-const-reference] Similar to \emph{pass-by-reference}, but does not allow to change the value of the alias:
+  \begin{minted}{c++}
+  void foo(int const& i) {
+    /* i = 5; */ // a change of the local reference i is not allowed
+  }
+
+  // or
+  void foo2(const int& i) {...}
+
+  int main() {
+    int j = 4;
+    foo(j);     // j can not be changed by foo
+    return 0;
+  }
+  \end{minted}
+\end{description}
+
+\begin{rem}
+  For small types \cpp{T}, e.g. \cpp{int}, \cpp{double}, ..., it is recommended to simple pass-by-value. Larger objects should be passed by
+  reference instead, to reduce the cost of copies:
+  \begin{enumerate}[1)]
+  \item If the function intends to change the argument as a side effect, take it \emph{by non-const reference}.
+  \item If the function doesn't modify its argument and the argument is of primitive type, take it \emph{by value}. (``Primitive'' basically means
+  small data types that are a few bytes long and aren't polymorphic (iterators, function objects, etc...) )
+  \item Otherwise take it \emph{by const reference}, except in the following case:\begin{itemize}
+        \item If the function would then need to make a copy of the const reference anyway, take it \emph{by value}.
+  \end{itemize}
+  \end{enumerate}
+\end{rem}
+
+\begin{example}
+  Assume, you have a type \cpp{A} that implements a \texttt{+=} operator. In order to implement the plus operator, one can use that. Two implementations
+  are possible:
+  \begin{minted}{c++}
+  // instead of
+  A const operator+(A const& a, A const& b) {
+    A tmp = a; // create a copy of a
+    return tmp += b;
+  }
+
+  // write:
+  A const operator+(A a, A const& b) {
+    return a += b;
+  }
+  \end{minted}
+  The plus operator can be most cases be implemented as \texttt{+=} and this should be the way to go! Don't repeat yourself.
+\end{example}
+
+
+
+\subsubsection{Default values}
+Arguments can be given a default value, that is taken if the argument is not passed to the function. Since parameters are passed in order, default values
+must be set to arguments starting from the last one.
+\begin{example}
+  The following example defines a function with 3 arguments, where the last two are optional:
+  \begin{minted}{c++}
+  void foo(int a, double b = 2.0, char c = 'c') { /* ... */ }
+
+  int main()
+  {
+    foo(1); // OK
+    foo(1, 5.0); // OK
+    foo(1, 5.0, 'x'); // OK
+  }
+  \end{minted}
+\end{example}
+
+\begin{rem}
+  One can not directly set a default value for the first argument and no default value for the second argument. If a default is set, for argument $n$, all
+  following arguments also must have a default value.
+
+  An alternative to these default values, are \emph{optional} values. This is a library extension in \cxx{17}\marginpar{[\cxx{17}]}, where the actual default
+  value is set when you use it:
+  \begin{minted}{c++}
+  #include <optional>
+  void foo(std::optional<int> a_, double b, char c)
+  {
+    int a = a_.value_or(1);
+    /* ... */
+  }
+
+  int main()
+  {
+    foo(1, 5.0, 'x'); // OK
+    foo(1, 5.0); // ERROR, char c not passed to function
+    foo(std::nullopt, 5.0, 'x'); // OK, a = 1
+    foo({}, 5.0, 'x'); // OK, same as above
+  }
+  \end{minted}
+\end{rem}
+
+
+\subsubsection{Return values}
+For the return values it is similar to the argument passing. You can return by value, or return by reference (where for the latter case there
+are some pitfalls, see below). But, you can also return a value, by providing an additional output argument, e.g.
+%
+\cppline{void function_name(Type1 arg1, Type2 arg, ..., OutputType& output, ...) { ... }}
+%
+where the order of the function arguments does not matter, i.e. you could also start with the output argument. The important aspect is, that
+output arguments must be passed by (non-const) reference. The intend is that you create the output variable outside of the function, pass it by
+reference to the function where it is filled with values.
+
+\begin{rem}
+  There is no only-output parameter type in c++, you can always read from the output variable. This is a source of errors so that some people prefer
+  not to use output arguments, or use pointer arguments exclusively for this purpose, so that access to the value must be done explicitly.
+\end{rem}
+
+A common mistake is to return a reference to a local variable of the function:
+\begin{minted}{c++}
+std::vector<int>& foo(int input) {
+  std::vector<int> temp; // local variable
+  // ...
+  return temp; // PROBLEM!!!
+}
+\end{minted}
+At the end of the function scope, the local variable is destroyed and thus the reference is referring to some destroyed memory. This is also
+called a \emph{dangling reference} and results in an error that is very hard to detect. So, don't do that!
+
+If you return by reference, make sure the object you return outlives the lifetime of the function.
+
+Positive examples:
+\begin{minted}{c++}
+int& foo1(int& input) {
+  return input; // input references an existing object living outside of the function
+}
+int& foo2() {
+  static int i = 5; // a static variable is not destroyed at the end of the function scope
+  return i;
+}
+\end{minted}
+
+\begin{rem}
+  Using \cpp{auto} return type might lead to unexpected behavior, if combined with references. The type that is returned is the raw type
+  of the expression in the return statement, removing all top-level const and reference qualifiers:
+  \begin{minted}{c++}
+  auto           f0(int i) { return i; }  // -> int
+  auto           f1(int& i){ return i; }  // -> int
+  auto&          f2(int& i){ return i; }  // -> int&
+  \end{minted}
+
+  The new language keyword \cpp{decltype(auto)}\marginpar{[\cxx{14}]} is introduced, to overcome the problem that returning a reference does not return a reference:
+  \begin{minted}{c++}
+  decltype(auto) f3(int i) { return i; }  // -> int
+  decltype(auto) f4(int& i){ return i; }  // -> int&
+  \end{minted}
+  It is a placeholder type, as \cpp{auto}, but does not remove top-level const and references.
+\end{rem}
+
+
+\subsubsection{Guidelines}
+The CppCoreGuidelines provide a guideline how to pass parameters and how to return values, depending on the type of the arguments:
+
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=.8\linewidth]{images/param-passing-normal}
+\end{center}
+\caption{From \href{https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md}{CppCoreGuidelines} secion F.15}
+\end{figure}
+
+
+\subsubsection{Return value optimization / Copy elision}
+Returning a local value created inside the function by value means naively the same as in argument passing: when the returned value is assigned to a
+new variable, this is created as copy of that return value.
+
+This is not completely true. Instead of the procedure  1. create / allocate space for the local variable, 2. create the target variable,
+3. copy the function return from the local variable to the target variable, 4. destroy the local variable, the compiler is allowed to use the
+fact that the local variable is destroyed at the end of the function, so not used any more, and the target variable is created only to hold
+the returned function value. Instead of allocating two variables, it allocates only one and works in both cases with this variable.
+With \cxx{17}\marginpar{[\cxx{17}]} this behavior is guaranteed by the standard. Before, if was a compiler optimization.
+
+Example 1:
+\begin{minted}{c++}
+double f() { return 42; }
+int main()
+{
+  double x = f();
+  // translates to
+  double x = 42;
+}
+\end{minted}
+
+Example 2:
+\begin{minted}{c++}
+double f()
+{
+  double y = 42;
+  return y;
+}
+
+int main()
+{
+  double x = f();
+  // translates to
+  double x = 42;
+}
+\end{minted}
+
+Some people prefer the naming \emph{deferred temporary materialization}, i.e. the materialization of the value 42 happens in the \cpp{main()} when
+assigned to the variable \cpp{x}.
+
+This optimization or guarantee is especially important, if you want to return large objects created inside of the function. It is thus
+guaranteed that no expensive copy operation must be performed. (not even a move operation). The create objects simply materializes outside of
+the function in the target variable.
+
+
+%--------------------------------------------------------------------------------------------------
+\subsection{References\label{sec:references}}
+Although used already, the references need a revisit. References can be understood as alias to (existing) objects. Compared to classical
+pointer, they do not represent the address of the references object, but the data of the objects directly.
+
+A reference can be declared like a regular variable, using the reference qualifier \texttt{\&}:
+\begin{minted}{c++}
+TYPE & VARNAME = aliased_bjekt; // (1)
+TYPE && VARNAME= aliased_bjekt; // (2) ... since C++11
+\end{minted}
+Where (1) is called a lvalue-reference \index{Reference!lvalue reference} and (2) a rvalue-reference \index{Reference!rvalue reference}. A reference
+must be initialized directly.
+
+\begin{minted}{c++}
+int i = 0;
+int& r = i; // r references i
+r = 1;      // changes the value of i => i == 1
+i = 2;      // also r == 2
+\end{minted}
+
+References itself are no objects and do not need own memory. That is why there are no arrays of references and not references of references!
+\begin{minted}{c++}
+int& a[3]; // error
+int& &r;   // error
+\end{minted}
+
+
+\subsubsection{lvalues and rvalues / value categories}
+See \url{https://en.cppreference.com/w/cpp/language/value_category}:
+
+Each C++ expression (an operator with its operands, a literal, a variable name, etc.) is characterized by two independent properties:
+a \emph{type} and a \emph{value category}. Each expression has some non-reference type, and each expression belongs to exactly one of the three
+primary value categories: \emph{prvalue}, \emph{xvalue}, and \emph{lvalue}.
+\begin{itemize}
+  \item a \emph{glvalue} (``generalized'' lvalue) is an expression whose evaluation determines the identity of an object, bit-field, or function;
+  \item a \emph{prvalue} (``pure'' rvalue) is an expression whose evaluation either \begin{itemize}
+      \item computes the value of the operand of an operator (such prvalue has no result object), or
+      \item initializes an object or a bit-field (such prvalue is said to have a result object). All class and array prvalues have a result object
+            even if it is discarded. In certain contexts, temporary materialization occurs to create a temporary as the result object;
+  \end{itemize}
+  \item an \emph{xvalue} (an ``eXpiring'' value) is a \emph{glvalue} that denotes an object or bit-field whose resources can be reused;
+  \item an \emph{lvalue} (so-called, historically, because lvalues could appear on the left-hand side of an assignment expression) is a
+        \emph{glvalue} that is not an \emph{xvalue};
+  \item an \emph{rvalue} (so-called, historically, because rvalues could appear on the right-hand side of an assignment expression) is a
+        \emph{prvalue} or an \emph{xvalue}.
+\end{itemize}
+
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=.5\textwidth]{images/value_categories}
+\end{center}
+\end{figure}
+
+This categorization results from the idea that every expression can be characterized by two orthogonal properties:
+\begin{enumerate}
+\item[i] \textbf{has identity}: Object that has an address, a pointer, the user can determine whether 2 copies are identical
+\item[m] \textbf{can be moved from}: We are allowed to leave the source of a ``copy'' in some indetermined, but valid, state.
+\item[$\sim$] has not the property.
+\end{enumerate}
+
+The combination \texttt{($\sim$i)($\sim$m)} does not really exists and thus, we have three leaf categories, see Figure.
+
+Examples for lvalues, rvalues, and prvalues:
+\begin{minted}{c++}
+int i = 3;
+int j = 4;
+
+i              // the name of a variable is an lvalue
+123, bool, 'c' // literals (except for string literals) are prvalues
+
+// a + b, a % b, a & b, a << b, and all other built-in arithmetic expressions are prvalues
+
+int c = i * j; // OK, (p)rvalue on the right-hand side of an assignment
+i * j = 42;    // ERROR, rvalue not allowed on the left-hand side of an assignment
+
+// more on lvalues:
+i = 43;           // OK, i is an lvalue
+int* p = &i;      // OK, i is an lvalue
+
+int& foo();       // a function call, whose return type is lvalue reference is an lvalue
+foo() = 42;       // OK, foo() is an lvalue
+int* p1 = &foo(); // OK, foo() is an lvalue
+
+// more on rvalues:
+int foobar();        // a function call, whose return type is non-reference is an prvalue
+int j = 0;
+j = foobar();        // OK, foobar() is an rvalue
+int* p2 = &foobar(); // ERROR, cannot take the address of an rvalue
+j = 42;              // OK, 42 is an rvalue
+\end{minted}
+
+
+\subsubsection{lvalue- and rvalue references}
+We distinguish references to lvalues and rvalues as lvalue-references and rvalue-references, denoted by one or two \texttt{\&}, respectively. So,
+lvalue-references refer to existing objects with an identity, i.e. lvalues, whereas rvalues typically refer to something that goes out of scope, who's
+lifetime ends. Rvalue references can be used to extend the lifetimes of temporary objects:
+
+\begin{tabular}{p{0.35\textwidth}|p{0.65\textwidth}}
+\begin{minted}{c++}
+int f() { return 42; }
+int& g(int& a) { return a; }
+
+// f() is prvalue expr.
+int i = f();  // OK
+f()   = 7;    // ERROR
+
+// g() is lvalue expr.
+int j = g(i); // OK
+g(i)  = 3;    // OK => i == 3
+\end{minted}
+&
+\begin{minted}{c++}
+int&  k1 = f(); // ERROR
+int&& k2 = f(); // OK
+k2 += 1;        // OK, rvalue-Reference extends lifetime
+
+int&  l1 = g(i);      // OK
+int&& l2 = g(i);      // ERROR, cannot bind lvalue to
+                      // rvalue-References.
+
+// const-References
+int const& k3 = f();  // OK
+k3 += 1;              // ERROR, const-ref. is non-mutable
+int const& l3 = g(i); // OK
+\end{minted}
+\end{tabular}
+
+In the example, the function \cpp{f()} only returns a temporary object (a number), that is not yet assigned to a variable. Rvalue-references can now
+be used to refer to this value with a variable before it is finally destroyed. (This only works for prvalues)
+
+\begin{example}
+Example from \href{https://stackoverflow.com/questions/3716277/do-rvalue-references-allow-dangling-references}{Stackoverflow}:
+\begin{minted}{c++}
+T&  lvalue();
+T   prvalue();
+T&& xvalue();
+
+T&& does_not_compile = lvalue();
+T&& well_behaved = prvalue();
+T&& problematic = xvalue();
+\end{minted}
+\end{example}
+
+\begin{rem}
+  The ultimate usage of rvalue-references is, that you know that the object refereed to is going out of scope or is deleted afterwards, or is a
+  temporary at all, thus one can directly take the ownership of that object, without copying its content. This is called a move operation.
+\end{rem}
+
