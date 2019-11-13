@@ -120,7 +120,7 @@ ERROR: Linear system could not be solved.
 Aborted (core dumped)
 ```
   This is now of different nature. It is a meaningful error message: "Linear system could not be solved". Inspecting the output gives already the idea:
-  there are not iterations performed in the cg method.
+  there are no iterations performed in the cg method.
 
   The solution to this problem is to read the documentation in `linear_Algebra:459`:
 ```c++
