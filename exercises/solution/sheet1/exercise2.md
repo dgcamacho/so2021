@@ -12,7 +12,7 @@ arguments:
 The compiler `g++` is from the family `GCC` - the GNU compiler collection. `clang` has very similar flags than `g++`, whereas the
 Microsoft Visual C++ compiler `VC` is quite different.
 
-You can find a documentation of all the argument by inspecting the manual pages:
+You can find a documentation of all the arguments by inspecting the manual pages:
 ```bash
 man g++
 ```
@@ -45,7 +45,7 @@ This documentation is copied from the man pages of g++.
   Unrecognized input files, not requiring compilation or assembly, are ignored.
 
 - `-o FILE`:
-  Place output in file file.  This applies to whatever sort of output is being produced, whether it be an executable file, an object
+  Place output in file `FILE`.  This applies to whatever sort of output is being produced, whether it be an executable file, an object
   file, an assembler file or preprocessed C code.
 
   If `-o` is not specified, the default is to put an executable file in `a.out`, the object file for `source.suffix` in `source.o`, its
@@ -60,14 +60,13 @@ This documentation is copied from the man pages of g++.
       The 2011 ISO C++ standard plus amendments.  The name `c++0x` is deprecated.
     * `c++14`, `c++1y`:
       The 2014 ISO C++ standard plus amendments.  The name `c++1y` is deprecated.
-    * `c++1z`:
-      The next revision of the ISO C++ standard, tentatively planned for 2017.  Support is highly experimental, and will almost certainly
+    * `c++17`, `c++1z`:
+      The 2017 ISO C++ standard plus amendments.  The name `c++1z` is deprecated.
+    * `c++2a`:
+      The next revision of the ISO C++ standard, tentatively planned for 2020.  Support is highly experimental, and will almost certainly
       change in incompatible ways in future releases.
     * `gnu++XYZ`:
       GNU dialect of `-std=c++XYZ`.
-
-  (This is for g++ 7.3, more recent versions support the standards `c++17` and `c++2a` for the c++2017 standard and the upcomming c++2020
-  standard)
 
 - `-W`:
   Warnings are diagnostic messages that report constructions that are not inherently erroneous but that are risky or suggest there may have
@@ -106,7 +105,7 @@ This documentation is copied from the man pages of g++.
   The compiler performs optimization based on the knowledge it has of the program.  Compiling multiple files at once to a single output file
   mode allows the compiler to use information gained from all of the files when compiling each of them.
 
-    * `-O0` Reduce compilation time and make debugging produce the expected results.  This is the default.
+    * `-O0`: Reduce compilation time and make debugging produce the expected results.  This is the default.
     * `-O`, `-O1`:
       Optimize.  Optimizing compilation takes somewhat more time, and a lot more memory for a large function.
 
@@ -124,6 +123,35 @@ This documentation is copied from the man pages of g++.
       Optimize debugging experience.  `-Og` enables optimizations that do not interfere with debugging. It should be the optimization level
       of choice for the standard edit-compile-debug cycle, offering a reasonable level of optimization while maintaining fast compilation
       and a good debugging experience.
+
+  Other optimization options that you may consider:
+
+    * `-flto`:
+    This option runs the standard link-time optimizer. This can result in improved performance and smaller code, but may interfere
+    with debugging. It may also reveal conformance issues in the source code that were previously hidden by separate compilations.
+    * `-DNDEBUG`:
+    This sets a preprocessor variable `NDEBUG`. Some libraries use this to implement additional debugging tests that can be turned
+    off by setting this variable.
+    * `-march=native`:
+    Generate instructions for the machine type of your current CPU architecture. This may result in faster code if your CPU supports
+    better instructions.
+
+
+### Recommended set of Flags
+We distinguish at least two different build types: build during development phase and release/production phase.
+
+During development, it may be that you want to debug your code, detect and correct errors, so use
+```
+g++ -Og -g -Wall [-Wextra] -pedantic -std=[c++17|c++1z] ...
+```
+
+When the code development is finished or you want to do benchmarking and profiling runs, use optimization flags
+```
+g++ -O3 -DNDEBUG [-march=native] [-flto] -Werror -pedantic -std=[c++17|c++1z] ...
+```
+The option `-march` may or may not result in faster code, sometimes it is even slower. The option `-flto` may lead to very slow build
+due to the additional global optimization phase.
+
 
 ## Output of the code
 Compile the code with
