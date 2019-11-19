@@ -245,12 +245,12 @@ With \cxx{17}\marginpar{[\cxx{17}]} this behavior is guaranteed by the standard.
 
 Example 1:
 \begin{minted}{c++}
-double f() { return 42; }
+double f() { return 42.0; }
 int main()
 {
   double x = f();
   // translates to
-  double x = 42;
+  double x = 42.0;
 }
 \end{minted}
 
@@ -259,14 +259,14 @@ Example 2:
 double f()
 {
   double y = 42;
-  return y;
+  return y; // copy is not guaranteed to be elided, but a common optimization
 }
 
 int main()
 {
   double x = f();
-  // translates to
-  double x = 42;
+  // may translate to (named return value optimization)
+  double x = 42.0;
 }
 \end{minted}
 
@@ -406,7 +406,7 @@ int const& l3 = g(i); // OK
 \end{tabular}
 
 In the example, the function \cpp{f()} only returns a temporary object (a number), that is not yet assigned to a variable. Rvalue-references can now
-be used to refer to this value with a variable before it is finally destroyed. (This only works for prvalues)
+be used to refer to this value with a variable before it is finally destroyed.
 
 \begin{example}
 Example from \href{https://stackoverflow.com/questions/3716277/do-rvalue-references-allow-dangling-references}{Stackoverflow}:
@@ -532,7 +532,7 @@ In order to resolve a function call, i.e. to find the right function to evaluate
 \end{enumerate}
 
 \begin{example}
-  In the followign example the function \texttt{foo()} is overloaded 4 times:
+  In the following example the function \texttt{foo()} is overloaded 4 times:
   %
   \begin{minted}{c++}
   #include <iostream>
