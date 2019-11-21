@@ -7,41 +7,41 @@ The following output is produced with g++ and no optimization:
 ```
 comparison for type: f and order: default
 exp:    1096.63318
-kahan:	1096.63318	 |kahan-exp|:   0
-simple:	1096.63342	 |simple-exp|:	0.000244140625
+kahan:  1096.63318  |kahan-exp|:  0
+simple: 1096.63342  |simple-exp|: 0.000244140625
 |kahan-simple|: 0.000244140625
 
 comparison for type: f and order: reverse
 exp:    1096.63318
-kahan:	1096.63318	 |kahan-exp|:   0
-simple:	1096.63318	 |simple-exp|:	0
+kahan:  1096.63318  |kahan-exp|:  0
+simple: 1096.63318  |simple-exp|: 0
 |kahan-simple|: 0
 
 comparison for type: f and order: random
 exp:    1096.63318
-kahan:	1096.63318	 |kahan-exp|:   0
-simple:	1096.63306	 |simple-exp|:	0.000122070312
+kahan:  1096.63318  |kahan-exp|:  0
+simple: 1096.63306  |simple-exp|: 0.000122070312
 |kahan-simple|: 0.000122070312
 ```
 
 ### double
 ```
 comparison for type d and order default
-exp:	  1096.6331584284585
-kahan:	1096.6331584284585	 |kahan-exp|:	  0
-simple:	1096.6331584284576	 |simple-exp|:	9.0949470177292824e-13
+exp:    1096.6331584284585
+kahan:  1096.6331584284585  |kahan-exp|:  0
+simple: 1096.6331584284576  |simple-exp|: 9.0949470177292824e-13
 |kahan-simple|: 9.0949470177292824e-13
 
 comparison for type d and order reverse
-exp:	  1096.6331584284585
-kahan:	1096.6331584284585	 |kahan-exp|:	  0
-simple:	1096.6331584284585	 |simple-exp|:	0
+exp:    1096.6331584284585
+kahan:  1096.6331584284585  |kahan-exp|:  0
+simple: 1096.6331584284585  |simple-exp|: 0
 |kahan-simple|: 0
 
 comparison for type d and order random
-exp:	  1096.6331584284585
-kahan:	1096.6331584284585	 |kahan-exp|:	  0
-simple:	1096.6331584284583	 |simple-exp|:	2.2737367544323206e-13
+exp:    1096.6331584284585
+kahan:  1096.6331584284585  |kahan-exp|:  0
+simple: 1096.6331584284583  |simple-exp|: 2.2737367544323206e-13
 |kahan-simple|: 2.2737367544323206e-13
 ```
 
