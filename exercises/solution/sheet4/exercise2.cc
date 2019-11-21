@@ -22,7 +22,7 @@ struct A1
   long l;
 };
 
-// force the compiler to packe the data as dense as possible
+// force the compiler to pack the data as dense as possible
 // Don't do that if you do not exactly know the consequences
 struct __attribute__((packed)) A2
 {
