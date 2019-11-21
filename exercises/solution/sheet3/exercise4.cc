@@ -1,96 +1,98 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <iomanip>
 #include <limits>
-
-#include <benchmark/benchmark.h>
 
 using T = double;
 
-T f(T a, T x)
+// anonymous namespace, since just implementation details
+namespace
 {
-  return x*x - a;
+  // implementation of f(x)
+  T f(T const a, T const x) { return x*x - a; }
+
+  // implementation of f'(x)
+  T df(T const a, T const x) { return 2*x; }
+
+  // the Newton fixed-point operator
+  T newton(T const a, T const x)
+  {
+    // Note: for a == 0 and x == 0 the result should be 0
+    // This is not enforced here, for simplicity
+    return x - f(a,x) / df(a,x);
+  }
+
+  // compute the sign of a value
+  int sgn(T value)
+  {
+    return (T(0) < value) - (value < T(0));
+  }
 }
 
-T df(T a, T x)
+
+/// Return the square-root of a calculated recursively with break condition x0 and recursion depth n
+T sqrt_recu(T const a, T const x0, int const n)
 {
-  return 2*x;
+  // these asserts check for valid input
+  assert(a >= 0);
+  assert(sgn(a) == sgn(x0));
+  assert(n >= 0);
+  return n == 0 ? x0 : newton(a, sqrt_recu(a,x0,n-1));
 }
 
-T newton(T a, T x)
+/// Return the square-root of a calculated iteratively, starting from initial value x0 with n iterations
+T sqrt_iter(T const a, T x, int const n)
 {
-  return x - f(a,x) / df(a,x);
-}
-
-
-// Return the square-root of a calculated recursively with break condition x0 and recursion depth N
-/**
- * Recursion defined by
- * x_n := x_{n-1} - f(x_{n-1})/f'(x_{n-1})
- * with x_0 = x0
- * for f(x) = x*x - a and f'(x) = df(x)/dx
- *
- * Return the value x_N.
- **/
-T sqrt_recu(T a, T x0, int N)
-{
-  assert(N >= 0);
-  return N == 0 ? x0 : newton(a, sqrt_recu(a,x0,N-1));
-}
-
-// Return the square-root of a calculated iteratively, starting from initial value x0 with N iterations
-/**
- * Iteration defined by
- * x_{n+1} := x_{n} - f(x_{n})/f'(x_{n})
- * with x_0 = x0
- * for f(x) = x*x - a and f'(x) = df(x)/dx
- *
- * Return the value x_N.
- **/
-T sqrt_iter(T a, T x, int N)
-{
-  for (int i = 1; i <= N; ++i)
+  // these asserts check for valid input
+  assert(a >= 0);
+  assert(sgn(a) == sgn(x));
+  assert(n >= 0);
+  for (int i = 0; i < n; ++i)
     x = newton(a,x);
   return x;
 }
 
 
-T my_sqrt(T a)
+/// Implementation of a sqrt function using the Newton step as break condition
+std::pair<T,int> sqrt1(T a)
 {
-  T x1 = a, x2 = 0;
-  for (int i = 1; i <= 16; ++i)
-    x1 = newton(a,x1);
-
-  for (int i = 1; i <= 100; ++i, x1 = x2) {
+  // this is some upper bound for the number of iteration
+  int const n = std::numeric_limits<T>::max_exponent;
+  // a break tolerance for |x_n - x_{n-1}| < TOL
+  T const tol = 4*std::numeric_limits<T>::epsilon();
+  // use a bas initial condition
+  T x1 = a, x2 = a;
+  for (int i = 0; i < n; ++i, x1 = x2) {
     x2 = newton(a,x1);
-    if (std::abs(x1 - x2) < 4*std::numeric_limits<T>::epsilon())
-      break;
+    if (std::abs(x1 - x2) < tol)
+      return {x2, i};
   }
 
-  return x2;
+  return {x2, n};
 }
 
 
-static void benchmark_mysqrt(benchmark::State& state)
+/// Implementation of a sqrt function using error f(x_n) < TOL as break condition
+/// where TOL = 4 * eps
+std::pair<T,int> sqrt2(T a)
 {
-  double a = 37345.0;
-  for (auto _ : state)
-    benchmark::DoNotOptimize( my_sqrt(a) );
+  // this is some upper bound for the number of iteration
+  int const n = std::numeric_limits<T>::max_exponent;
+  // a break tolerance for f(x_n) < TOL
+  T const tol = 4*std::numeric_limits<T>::epsilon();
+  // use a bas initial condition
+  T x1 = a, x2 = a;
+  for (int i = 0; i < n; ++i, x1 = x2) {
+    x2 = newton(a,x1);
+    if (f(a,x2) < tol)
+      return {x2, i};
+  }
+
+  return {x2, n};
 }
-BENCHMARK(benchmark_mysqrt);
-
-static void benchmark_stdsqrt(benchmark::State& state)
-{
-  double a = 37345.0;
-  for (auto _ : state)
-    benchmark::DoNotOptimize( std::sqrt(a) );
-}
-BENCHMARK(benchmark_stdsqrt);
-
-BENCHMARK_MAIN();
 
 
-#if 0
 int main()
 {
   // test for a=10, x0=3, and N={5,10,100}
@@ -100,9 +102,18 @@ int main()
   T x0 = 3.0;
 
   T sqrt_a = std::sqrt(a);
-  T my_sqrt_a = my_sqrt(a);
-  std::cout << "error(sqrt) = " << std::abs(sqrt_a - my_sqrt_a) << std::endl;
-  for (int N : {1,2,3,4,5,6,7,8,9,10})
-    std::cout << N << ") error(iter) = " << std::abs(sqrt_a - sqrt_iter(a,x0,N)) << std::endl;
+  auto sqrt1_a = sqrt1(a);
+  auto sqrt2_a = sqrt2(a);
+
+  std::cout << std::setprecision(std::numeric_limits<T>::max_digits10);
+
+  // print the errors of the sqrt implementations compared to std::sqrt
+  std::cout << "error(sqrt1) = " << std::abs(sqrt_a - sqrt1_a.first) << ", iterations: " << sqrt1_a.second << std::endl;
+  std::cout << "error(sqrt2) = " << std::abs(sqrt_a - sqrt2_a.first) << ", iterations: " << sqrt2_a.second << std::endl;
+
+  // print the values for the test set
+  for (int n : {1, 2, 3, 4, 5, 10, 100}) {
+    assert(sqrt_iter(a,x0,n) == sqrt_recu(a,x0,n));
+    std::cout << n << ") error(iter) = " << std::abs(sqrt_a - sqrt_iter(a,x0,n)) << std::endl;
+  }
 }
-#endif
