@@ -1,0 +1,202 @@
+
+\section{References and Pointers\label{sec:references}}
+Although used already, the references need a revisit. References can be understood as alias to (existing) objects. Compared to classical
+pointer, they do not represent the address of the references object, but the data of the objects directly.
+
+A reference can be declared like a regular variable, using the reference qualifier \texttt{\&}:
+\begin{minted}{c++}
+TYPE & var2  = aliased_objekt; // (1)
+TYPE && var2 = aliased_objekt; // (2) ... since C++11
+\end{minted}
+Where (1) is called a lvalue-reference \index{Reference!lvalue reference} and (2) a rvalue-reference \index{Reference!rvalue reference}. A reference
+must be initialized directly and since it is not possible to change where reference refers to.
+
+\begin{minted}{c++}
+int i = 0;
+int& r = i; // r references i
+r = 1;      // changes the value of i => i == 1
+i = 2;      // also r == 2
+\end{minted}
+
+References itself are no objects and do not need own memory. That is why there are no arrays of references and no references of references!
+\begin{minted}{c++}
+int& a[3]; // error
+int& &r;   // error
+\end{minted}
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{lvalues and rvalues / value categories}
+See \url{https://en.cppreference.com/w/cpp/language/value_category}:
+
+Each C++ expression (an operator with its operands, a literal, a variable name, etc.) is characterized by two independent properties:
+a \emph{type} and a \emph{value category}. Each expression has some non-reference type, and each expression belongs to exactly one of the three
+primary value categories: \emph{prvalue}, \emph{xvalue}, and \emph{lvalue}.
+\begin{itemize}
+  \item a \emph{glvalue} (``generalized'' lvalue) is an expression whose evaluation determines the identity of an object, bit-field, or function;
+  \item a \emph{prvalue} (``pure'' rvalue) is an expression whose evaluation either \begin{itemize}
+      \item computes the value of the operand of an operator (such prvalue has no result object), or
+      \item initializes an object or a bit-field (such prvalue is said to have a result object). All class and array prvalues have a result object
+            even if it is discarded. In certain contexts, temporary materialization occurs to create a temporary as the result object;
+  \end{itemize}
+  \item an \emph{xvalue} (an ``eXpiring'' value) is a \emph{glvalue} that denotes an object or bit-field whose resources can be reused;
+  \item an \emph{lvalue} (so-called, historically, because lvalues could appear on the left-hand side of an assignment expression) is a
+        \emph{glvalue} that is not an \emph{xvalue};
+  \item an \emph{rvalue} (so-called, historically, because rvalues could appear on the right-hand side of an assignment expression) is a
+        \emph{prvalue} or an \emph{xvalue}.
+\end{itemize}
+
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=.5\textwidth]{images/value_categories}
+\end{center}
+\end{figure}
+
+This categorization results from the idea that every expression can be characterized by two orthogonal properties:
+\begin{enumerate}
+\item[i] \textbf{has identity}: Object that has an address, a pointer, the user can determine whether 2 copies are identical
+\item[m] \textbf{can be moved from}: We are allowed to leave the source of a ``copy'' in some indetermined, but valid, state.
+\item[$\sim$] has not the property.
+\end{enumerate}
+
+The combination \texttt{($\sim$i)($\sim$m)} does not really exists and thus, we have three leaf categories, see Figure.
+
+Examples for lvalues, rvalues, and prvalues:
+\begin{minted}{c++}
+int i = 3;
+int j = 4;
+
+i              // the name of a variable is an lvalue
+123, bool, 'c' // literals (except for string literals) are prvalues
+
+// a + b, a % b, a & b, a << b, and all other built-in arithmetic expressions are prvalues
+
+int c = i * j; // OK, (p)rvalue on the right-hand side of an assignment
+i * j = 42;    // ERROR, rvalue not allowed on the left-hand side of an assignment
+
+// more on lvalues:
+i = 43;           // OK, i is an lvalue
+int* p = &i;      // OK, i is an lvalue
+
+int& foo();       // a function call, whose return type is lvalue reference is an lvalue
+foo() = 42;       // OK, foo() is an lvalue
+int* p1 = &foo(); // OK, foo() is an lvalue
+
+// more on rvalues:
+int foobar();        // a function call, whose return type is non-reference is an prvalue
+int j = 0;
+j = foobar();        // OK, foobar() is an rvalue
+int* p2 = &foobar(); // ERROR, cannot take the address of an rvalue
+j = 42;              // OK, 42 is an rvalue
+\end{minted}
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{lvalue- and rvalue references}
+We distinguish references to lvalues and rvalues as lvalue-references and rvalue-references, denoted by one or two \texttt{\&}, respectively. So,
+lvalue-references refer to existing objects with an identity, i.e. lvalues, whereas rvalues typically refer to something that goes out of scope, who's
+lifetime ends. Rvalue references can be used to extend the lifetimes of temporary objects:
+
+\begin{tabular}{p{0.35\textwidth}|p{0.65\textwidth}}
+\begin{minted}{c++}
+int f() { return 42; }
+int& g(int& a) { return a; }
+
+// f() is prvalue expr.
+int i = f();  // OK
+f()   = 7;    // ERROR
+
+// g() is lvalue expr.
+int j = g(i); // OK
+g(i)  = 3;    // OK => i == 3
+\end{minted}
+&
+\begin{minted}{c++}
+int&  k1 = f(); // ERROR
+int&& k2 = f(); // OK
+k2 += 1;        // OK, rvalue-Reference extends lifetime
+
+int&  l1 = g(i);      // OK
+int&& l2 = g(i);      // ERROR, cannot bind lvalue to
+                      // rvalue-References.
+
+// const-References
+int const& k3 = f();  // OK
+k3 += 1;              // ERROR, const-ref. is non-mutable
+int const& l3 = g(i); // OK
+\end{minted}
+\end{tabular}
+
+In the example, the function \cpp{f()} only returns a temporary object (a number), that is not yet assigned to a variable. Rvalue-references can now
+be used to refer to this value with a variable before it is finally destroyed.
+
+\begin{example}
+Example from \href{https://stackoverflow.com/questions/3716277/do-rvalue-references-allow-dangling-references}{Stackoverflow}:
+\begin{minted}{c++}
+T&  lvalue();
+T   prvalue();
+T&& xvalue();
+
+T&& does_not_compile = lvalue();
+T&& well_behaved = prvalue();
+T&& problematic = xvalue();
+\end{minted}
+\end{example}
+
+\begin{rem}
+  The ultimate usage of rvalue-references is, that you know that the object refereed to is going out of scope or is deleted afterwards, or is a
+  temporary at all, thus one can directly take the ownership of that object, without copying its content. This is called a move operation.
+\end{rem}
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Pointers}
+Referencing to something in memory could be understood as just storing the address of that memory. An address ist just an integer indicating
+the position in memory relative to some initial address. But, we need more than just the adress, we need the type of the data that we are
+referring to, to that we can give the memory a meaning. This is called a pointer:
+%
+\cppline{TYPE * pointer = &OBJECT;}
+%
+where \texttt{OBJECT} is any \underline{lvalue-reference} type.
+We have used the \texttt{\&} symbol before, to qualify/indicate a reference. In the context of pointers, this symbol is an (unary) operator, the
+address-of operator, returning a pointer to the object in memory. A pointer type is indicated by the \texttt{*} qualifier.
+
+The \textit{dual} operator to the address-of operator is the de-reference operator, giving a reference to the object, a pointer points to:
+%
+\cppline{TYPE & reference = *POINTER;}
+%
+where \texttt{POINTER} must be any object of pointer type. So, the dereferenced pointer is again an lvalue.
+
+Pointers can be combined with \cpp{const} qualifiers, to either indicate that the addressed data is immutable or the the address value is constant.
+Which one you mean is determined by the position of the \cpp{const} qualifier, i.e.
+%
+\begin{minted}{c++}
+  int data = 42, data2 = 1234;
+
+  int const* i1 = &data;
+  *i1 = 7;                // ERROR: can not modify constant data
+  i1 = &data2;            // OK: i1 now points to data2
+
+  int* const i2 = &data;
+  *i2 = 7;                // OK: data is not const
+  i2 = &data2;            // ERROR: can not change address of const pointer
+
+  int const* const i3 = &data; // completely imutable
+\end{minted}
+
+Since one can not have a reference of a reference, one can also not declare a pointer to a reference (something like \cpp{int&*}), but a
+pointer is a regular type representing an address, it can be referenced, i.e.
+%
+\begin{minted}{c++}
+  int data = 42, data2 = 1234;
+  int* p = &data;
+  int*& r = p;  // reference to pointer p
+
+  *r = 7;       // changes value of data;
+  r = &data2;   // changes stored address of p
+\end{minted}
+
+\begin{guideline}{Guideline}
+  Don't use pointers to pass data to functions, only if you have a strong reason to do so. Some style-guides use pointers as output arguments
+  in functions to not mix it up with input arguments. This is, because you have to explicitly de-reference the pointer in order to use it.
+\end{guideline}

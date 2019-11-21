@@ -87,13 +87,13 @@ There are essentially two ways how to pass values/arguments to functions:
   are possible:
   \begin{minted}{c++}
   // instead of
-  A const operator+(A const& a, A const& b) {
+  A operator+(A const& a, A const& b) {
     A tmp = a; // create a copy of a
     return tmp += b;
   }
 
   // write:
-  A const operator+(A a, A const& b) {
+  A operator+(A a, A const& b) {
     return a += b;
   }
   \end{minted}
@@ -167,12 +167,12 @@ must return the same type (or at least all return values are implicitly cast to 
 \end{guideline}
 
 For the return types it is similar to the argument passing. You can return by value, or return by reference (where for the latter case there
-are some pitfalls, see below). But, you can also return a value, by providing an additional output argument, e.g.
+are some pitfalls, see below). But, you can also return a value, by providing an additional \emph{output argument}, e.g.
 %
 \cppline{void function_name(Type1 arg1, Type2 arg, ..., OutputType& output, ...) { ... }}
 %
-where the order of the function arguments does not matter, i.e. you could also start with the output argument. The important aspect is, that
-output arguments must be passed by (non-const) reference. The intend is that you create the output variable outside of the function, pass it by
+where the order of the function arguments does not matter, i.e. you could also start with the output argument. The important aspect is that
+output arguments must be passed by (non-const) reference. The intend is that you create the output variable outside of the function and pass it by
 reference to the function where it is filled with values.
 
 \begin{rem}
@@ -278,155 +278,6 @@ guaranteed that no expensive copy operation must be performed. (not even a move 
 the function in the target variable.
 
 
-%--------------------------------------------------------------------------------------------------
-\subsection{References\label{sec:references}}
-Although used already, the references need a revisit. References can be understood as alias to (existing) objects. Compared to classical
-pointer, they do not represent the address of the references object, but the data of the objects directly.
-
-A reference can be declared like a regular variable, using the reference qualifier \texttt{\&}:
-\begin{minted}{c++}
-TYPE & VARNAME = aliased_bjekt; // (1)
-TYPE && VARNAME= aliased_bjekt; // (2) ... since C++11
-\end{minted}
-Where (1) is called a lvalue-reference \index{Reference!lvalue reference} and (2) a rvalue-reference \index{Reference!rvalue reference}. A reference
-must be initialized directly.
-
-\begin{minted}{c++}
-int i = 0;
-int& r = i; // r references i
-r = 1;      // changes the value of i => i == 1
-i = 2;      // also r == 2
-\end{minted}
-
-References itself are no objects and do not need own memory. That is why there are no arrays of references and not references of references!
-\begin{minted}{c++}
-int& a[3]; // error
-int& &r;   // error
-\end{minted}
-
-
-\subsubsection{lvalues and rvalues / value categories}
-See \url{https://en.cppreference.com/w/cpp/language/value_category}:
-
-Each C++ expression (an operator with its operands, a literal, a variable name, etc.) is characterized by two independent properties:
-a \emph{type} and a \emph{value category}. Each expression has some non-reference type, and each expression belongs to exactly one of the three
-primary value categories: \emph{prvalue}, \emph{xvalue}, and \emph{lvalue}.
-\begin{itemize}
-  \item a \emph{glvalue} (``generalized'' lvalue) is an expression whose evaluation determines the identity of an object, bit-field, or function;
-  \item a \emph{prvalue} (``pure'' rvalue) is an expression whose evaluation either \begin{itemize}
-      \item computes the value of the operand of an operator (such prvalue has no result object), or
-      \item initializes an object or a bit-field (such prvalue is said to have a result object). All class and array prvalues have a result object
-            even if it is discarded. In certain contexts, temporary materialization occurs to create a temporary as the result object;
-  \end{itemize}
-  \item an \emph{xvalue} (an ``eXpiring'' value) is a \emph{glvalue} that denotes an object or bit-field whose resources can be reused;
-  \item an \emph{lvalue} (so-called, historically, because lvalues could appear on the left-hand side of an assignment expression) is a
-        \emph{glvalue} that is not an \emph{xvalue};
-  \item an \emph{rvalue} (so-called, historically, because rvalues could appear on the right-hand side of an assignment expression) is a
-        \emph{prvalue} or an \emph{xvalue}.
-\end{itemize}
-
-\begin{figure}[ht]
-\begin{center}
-\includegraphics[width=.5\textwidth]{images/value_categories}
-\end{center}
-\end{figure}
-
-This categorization results from the idea that every expression can be characterized by two orthogonal properties:
-\begin{enumerate}
-\item[i] \textbf{has identity}: Object that has an address, a pointer, the user can determine whether 2 copies are identical
-\item[m] \textbf{can be moved from}: We are allowed to leave the source of a ``copy'' in some indetermined, but valid, state.
-\item[$\sim$] has not the property.
-\end{enumerate}
-
-The combination \texttt{($\sim$i)($\sim$m)} does not really exists and thus, we have three leaf categories, see Figure.
-
-Examples for lvalues, rvalues, and prvalues:
-\begin{minted}{c++}
-int i = 3;
-int j = 4;
-
-i              // the name of a variable is an lvalue
-123, bool, 'c' // literals (except for string literals) are prvalues
-
-// a + b, a % b, a & b, a << b, and all other built-in arithmetic expressions are prvalues
-
-int c = i * j; // OK, (p)rvalue on the right-hand side of an assignment
-i * j = 42;    // ERROR, rvalue not allowed on the left-hand side of an assignment
-
-// more on lvalues:
-i = 43;           // OK, i is an lvalue
-int* p = &i;      // OK, i is an lvalue
-
-int& foo();       // a function call, whose return type is lvalue reference is an lvalue
-foo() = 42;       // OK, foo() is an lvalue
-int* p1 = &foo(); // OK, foo() is an lvalue
-
-// more on rvalues:
-int foobar();        // a function call, whose return type is non-reference is an prvalue
-int j = 0;
-j = foobar();        // OK, foobar() is an rvalue
-int* p2 = &foobar(); // ERROR, cannot take the address of an rvalue
-j = 42;              // OK, 42 is an rvalue
-\end{minted}
-
-
-\subsubsection{lvalue- and rvalue references}
-We distinguish references to lvalues and rvalues as lvalue-references and rvalue-references, denoted by one or two \texttt{\&}, respectively. So,
-lvalue-references refer to existing objects with an identity, i.e. lvalues, whereas rvalues typically refer to something that goes out of scope, who's
-lifetime ends. Rvalue references can be used to extend the lifetimes of temporary objects:
-
-\begin{tabular}{p{0.35\textwidth}|p{0.65\textwidth}}
-\begin{minted}{c++}
-int f() { return 42; }
-int& g(int& a) { return a; }
-
-// f() is prvalue expr.
-int i = f();  // OK
-f()   = 7;    // ERROR
-
-// g() is lvalue expr.
-int j = g(i); // OK
-g(i)  = 3;    // OK => i == 3
-\end{minted}
-&
-\begin{minted}{c++}
-int&  k1 = f(); // ERROR
-int&& k2 = f(); // OK
-k2 += 1;        // OK, rvalue-Reference extends lifetime
-
-int&  l1 = g(i);      // OK
-int&& l2 = g(i);      // ERROR, cannot bind lvalue to
-                      // rvalue-References.
-
-// const-References
-int const& k3 = f();  // OK
-k3 += 1;              // ERROR, const-ref. is non-mutable
-int const& l3 = g(i); // OK
-\end{minted}
-\end{tabular}
-
-In the example, the function \cpp{f()} only returns a temporary object (a number), that is not yet assigned to a variable. Rvalue-references can now
-be used to refer to this value with a variable before it is finally destroyed.
-
-\begin{example}
-Example from \href{https://stackoverflow.com/questions/3716277/do-rvalue-references-allow-dangling-references}{Stackoverflow}:
-\begin{minted}{c++}
-T&  lvalue();
-T   prvalue();
-T&& xvalue();
-
-T&& does_not_compile = lvalue();
-T&& well_behaved = prvalue();
-T&& problematic = xvalue();
-\end{minted}
-\end{example}
-
-\begin{rem}
-  The ultimate usage of rvalue-references is, that you know that the object refereed to is going out of scope or is deleted afterwards, or is a
-  temporary at all, thus one can directly take the ownership of that object, without copying its content. This is called a move operation.
-\end{rem}
-
-
 % -------------------------------------------------------------------------------------------------
 \subsection{Signature\label{sec:function-signature}}
 The signature of the function is used to select a function to call. For simple functions, the signature is build of
@@ -448,6 +299,7 @@ The signature + return type defines the type of the function.
 \begin{rem}
   An empty parameter list is equivalent to a single parameter of type \cpp{void}. (This is typical in some C programs).
 \end{rem}
+
 
 %--------------------------------------------------------------------------------------------------
 \subsection{Function overloading\label{sec:function-overloading}}
@@ -503,7 +355,7 @@ name for that algorithm.
 
 \begin{rem}
   In the example above there even is the whole body of the function very similar, except for the used value types. In the chapter \emph{Generic Programming}
-  we will look into this an instead of writing explicit functions, we will write a function template parameterized with the value type.
+  we will look into this and instead of writing explicit functions, we will write a function template, parameterized with the value type.
 \end{rem}
 
 \begin{guideline}{Principle}
@@ -513,17 +365,17 @@ name for that algorithm.
 In order to resolve a function call, i.e. to find the right function to evaluate, the compiler has to follow some common steps:
 \begin{enumerate}
   \item Look for all functions with the given function name (\emph{name lookup}). All visible function (and names introduced by a \cpp{using}
-        declaration/directive) are considered. Thereby the function namespace is important. If the arguments are defined in some names also this
-        is considered a viable scope for lookup (\emph{Argument Dependent Lookup, ADL} -- see below).
+        declaration/directive) are considered. Thereby the function namespace is important. If the arguments are defined in some namespace also this
+        is considered a viable scope for lookup (\emph{Argument Dependent Lookup, ADL}).
   \item If there is more than one viable function found in the name lookup, the compiler tries to resolve the function overload to select a
         function to call (\emph{overload resolution}). Therefore it is considered which parameter-type-list matches best the passed arguments.
   \item All non-matching functions are eliminated from the list of viable candidates (e.g. wrong number of arguments or non-matching types). All
         remaining functions are ordered by the property which one is a ``better'' match for the arguments. At first position in that list is the exact
         match (if it exists).
-  \item Each pair of viable functions $F_1$ and $F_2$ is ranked by the implicit casts of of its arguments, to decide the order. Thereby we have the rule:
+  \item Each pair of viable functions $F_1$ and $F_2$ is ranked by the implicit casts of its arguments, to decide the order. Thereby we have the rule:
         $F_1$ is determined to be a better function than $F_2$ if implicit conversions for all arguments of $F_1$ are not worse than the implicit
         conversions for all arguments of $F_2$, and there is at least one argument of $F_1$ whose implicit conversion is better than the corresponding
-        implicit conversion for that argument of $F_2$. Therefor we have the three conversion ranks
+        implicit conversion for that argument of $F_2$. Therefore we have the three conversion ranks
         \begin{enumerate}
           \item exact match: no conversion required, lvalue-to-rvalue conversion, qualification conversion (e.g. add \cpp{const})
           \item Type promotion: integral promotion, floating-point promotion
@@ -549,8 +401,9 @@ In order to resolve a function call, i.e. to find the right function to evaluate
   }
   \end{minted}
   %
-  This overload-set generates a compiler error, since (0) is equivalent to (1) or (2). Removing (0) resolves this error. Then (1) is called, since
-  \texttt{a} is a mutable object and thus (1) represents and exact match. (3) is ignored because of the wrong number of arguments.
+  This overload-set generates a compiler error, since (0) is equivalent to (1) or (2), i.e. all three are exact matches. Removing (0) resolves this error.
+  Then (1) is called, since \texttt{a} is a mutable object and thus (1) represents an exact match and no const-qualification is needed.
+  (3) is ignored because of the wrong number of arguments.
 \end{example}
 
 \begin{example}
