@@ -142,7 +142,7 @@ next test? In your `main()` call each test and throw an error if the test failed
 ## Exercise 4 (GotW-1: Variable initialization -- or is it?)
 See [GotW #1](https://herbsutter.com/2013/05/09/gotw-1-solution/).
 
-hat is the difference, if any, among the following?
+What is the difference, if any, among the following?
 ```c++
 widget w;                   // (a)
 
