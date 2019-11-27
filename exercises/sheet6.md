@@ -2,7 +2,7 @@
 
 ## Exercise 1
 In the following there are various overloads of `foo(.)` and `bar(.,.)` provided. Which of the function is called in the
-main program, correspondingly. Are there ambiguities? First think about is, then implement and check yourself.
+main program, correspondingly. Are there ambiguities? First think about it, then implement and check yourself.
 ```c++
 void foo(int a) {...};            // (a)
 void foo(int& a) {...};           // (b)
