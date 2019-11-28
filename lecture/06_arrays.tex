@@ -46,7 +46,7 @@ double A[2][3] =
 \end{minted}
 
 \begin{rem}
-  An array can be pre-initialized with less elements that the given size. In that case the remaining entries are default-initialized, i.e.
+  An array can be pre-initialized with less elements than the given size. In that case the remaining entries are default-initialized, i.e.
   number types are initialized to zero and class-types using the default-constructor.
 
   Example:
@@ -311,6 +311,43 @@ The difference between both types is the criterion when to deallocate the memory
   \end{itemize}
 \end{itemize}
 
+You can have multiple pointers pointing to the same object, i.e. to the same memory location. Since a pointer is a simple type, it can directly be copied
+to create a new pointer with the same address:
+%
+\begin{minted}{c++}
+int data = 7;
+
+int* p = &data;
+int* q = &data; // second pointer pointing to the same object
+
+int* p2 = p;    // copy of the first pointer creates a new pointer
+                // pointing to the same object
+\end{minted}
+%
+The same can be done with \cpp{shared_ptr}. They share the same resource, i.e. can point to the same object. Whenever you copy a \cpp{shared_ptr}, an internal
+counter is increased that counts how many pointers are pointing to the same object. Only if this counter is zero, the \cpp{shared_ptr} is destroyed at the
+end of a scope:
+ %
+\begin{minted}{c++}
+{
+  std::shared_ptr<int> p{ new int(7) };
+  std::shared_ptr<int> q{ new int(7) }; // independent new pointer to another memory location
+
+  {
+    std::shared_ptr<int> p2 = p; // copy of the first pointer creates a new pointer
+                                 // pointing to the same object, the internal counter
+                                 // is increased
+
+  } // at the end of scope, the second pointer is released -> decrease of the internal
+    // counter
+
+  std::shared_ptr<int> p3 = p; // another copy of the first pointer, increases the counter
+
+} // at the end of scope, p and p3 are released, decreasing the counter by 2 -> 0. The
+  // memory is finally deallocated.
+\end{minted}
+
 \begin{guideline}{Guideline}
-  Don’t use explicit \cpp{new}, \cpp{delete}, and owning * pointers, except in rare cases encapsulated inside the implementation of a low-level data structure. (Herb Sutter)
+  Don’t use explicit \cpp{new}, \cpp{delete}, and owning * pointers, except in rare cases encapsulated inside the implementation of a
+  low-level data structure. (Herb Sutter)
 \end{guideline}

@@ -5,7 +5,7 @@ pointer, they do not represent the address of the references object, but the dat
 
 A reference can be declared like a regular variable, using the reference qualifier \texttt{\&}:
 \begin{minted}{c++}
-TYPE & var2  = aliased_objekt; // (1)
+TYPE & var1  = aliased_objekt; // (1)
 TYPE && var2 = aliased_objekt; // (2) ... since C++11
 \end{minted}
 Where (1) is called a lvalue-reference \index{Reference!lvalue reference} and (2) a rvalue-reference \index{Reference!rvalue reference}. A reference
@@ -153,7 +153,7 @@ T&& problematic = xvalue();
 \subsection{Pointers}
 Referencing to something in memory could be understood as just storing the address of that memory. An address ist just an integer indicating
 the position in memory relative to some initial address. But, we need more than just the adress, we need the type of the data that we are
-referring to, to that we can give the memory a meaning. This is called a pointer:
+referring to, so that we can give the memory a meaning. This is called a pointer:
 %
 \cppline{TYPE * pointer = &OBJECT;}
 %
@@ -167,7 +167,7 @@ The \textit{dual} operator to the address-of operator is the de-reference operat
 %
 where \texttt{POINTER} must be any object of pointer type. So, the dereferenced pointer is again an lvalue.
 
-Pointers can be combined with \cpp{const} qualifiers, to either indicate that the addressed data is immutable or the the address value is constant.
+Pointers can be combined with \cpp{const} qualifiers, to either indicate that the addressed data is immutable or that the address value is constant.
 Which one you mean is determined by the position of the \cpp{const} qualifier, i.e.
 %
 \begin{minted}{c++}
