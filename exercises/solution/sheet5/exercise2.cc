@@ -1,3 +1,4 @@
+#include <cassert>
 #include <vector>
 
 struct Matrix
@@ -6,9 +7,9 @@ struct Matrix
 };
 
 // Initialize the Matrix
-void init(Matrix& matrix, std::size_t r, std::size_t c, double value)
+void init(Matrix& matrix, std::size_t r, std::size_t c, double value = 0.0)
 {
-  matrix.clear();           // empty all rows
+  matrix.rows.clear();      // empty all rows
   matrix.rows.resize(r);    // set the number of rows
   for (auto& row : matrix.rows)
     row.resize(c, value);   // set the number of columns and the default value
@@ -28,8 +29,8 @@ Matrix add(Matrix const& A, Matrix const& B)
 
   for (std::size_t i = 0; i < A.rows.size(); ++i) {
     assert(A.rows[i].size() == B.rows[i].size());
-    for (std::size_t j = 0; j < B.rows.size(); ++j) {
-      C.rows[i][j] = A.rows[i][j] + B.rows[i][j];
+    for (std::size_t j = 0; j < A.rows[i].size(); ++j) {
+      C.rows[i][j] += B.rows[i][j];
     }
   }
 
