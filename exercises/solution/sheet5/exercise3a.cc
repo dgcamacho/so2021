@@ -3,13 +3,6 @@
 
 #include "exercise3a.hh"
 
-// Add the two matrices A and B and return the sum
-Matrix1 operator+(Matrix1 lhs, Matrix1 const& rhs)
-{
-  return lhs += rhs;
-}
-
-
 // NOTE:
 // - default values for function parameters should not be repeated in the function definition.
 // - in the constructor, all class members are (default) initialized, if not specified otherwise. Thus
@@ -25,14 +18,14 @@ Matrix1::Matrix1(std::size_t r, std::size_t c, double value)
 // NOTE:
 // - assignment operators should always return a reference, since one wants to
 //   chain those operators, e.g. A += B += C += D ...
-Matrix1& Matrix1::operator+=(Matrix1 const& B)
+Matrix1& Matrix1::operator+=(Matrix1 const& rhs)
 {
-  assert(rows.size() == B.rows.size());
+  assert(rows.size() == rhs.rows.size());
 
   for (std::size_t i = 0; i < rows.size(); ++i) {
-    assert(rows[i].size() == B.rows[i].size());
+    assert(rows[i].size() == rhs.rows[i].size());
     for (std::size_t j = 0; j < rows[i].size(); ++j) {
-      rows[i][j] += B.rows[i][j];
+      rows[i][j] += rhs.rows[i][j];
     }
   }
 

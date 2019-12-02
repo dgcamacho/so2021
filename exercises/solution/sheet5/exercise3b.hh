@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cassert>
 #include <vector>
 
@@ -65,4 +67,7 @@ struct Matrix2
 // - Here, the first argument is taken by value, since we need to create a copy anyway
 // - An alternative signature would be (Matrix2 const& lhs, Matrix2 const& rhs)
 // - Always try to implement the binary operators in terms of the compound assignment operators!
-Matrix2 operator+(Matrix2 lhs, Matrix2 const& rhs);
+inline Matrix2 operator+(Matrix2 lhs, Matrix2 const& rhs)
+{
+  return lhs += rhs;
+}

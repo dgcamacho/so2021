@@ -3,13 +3,6 @@
 
 #include "exercise3b.hh"
 
-// Add the two matrices A and B and return the sum
-Matrix2 operator+(Matrix2 lhs, Matrix2 const& rhs)
-{
-  return lhs += rhs;
-}
-
-
 // NOTE:
 // - default values for function parameters should not be repeated in the function definition.
 // - in the constructor, all class members are (default) initialized, if not specified otherwise. Thus

@@ -36,3 +36,22 @@ Matrix add(Matrix const& A, Matrix const& B)
 
   return C;
 }
+
+/* alternative add implementation:
+
+// Pass the first argument by value
+Matrix add(Matrix A, Matrix const& B)
+{
+  assert(A.rows.size() == B.rows.size());
+
+  for (std::size_t i = 0; i < A.rows.size(); ++i) {
+    assert(A.rows[i].size() == B.rows[i].size());
+    for (std::size_t j = 0; j < A.rows[i].size(); ++j) {
+      A.rows[i][j] += B.rows[i][j];
+    }
+  }
+
+  return A;
+}
+
+*/

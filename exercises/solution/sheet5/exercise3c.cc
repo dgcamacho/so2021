@@ -3,13 +3,6 @@
 
 #include "exercise3c.hh"
 
-// Add the two matrices A and B and return the sum
-Matrix3 operator+(Matrix3 lhs, Matrix3 const& rhs)
-{
-  return lhs += rhs;
-}
-
-
 // NOTE:
 // - in the constructor, all class members are (default) initialized, if not specified otherwise. Thus
 //   not clear of the rows is necessary
