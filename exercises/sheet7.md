@@ -69,7 +69,7 @@ templates.
 Test your polynomial arithmetic on some reference polynomials:
 - The null-polynomial
 - The constant function
-- Polynomials with just 1 coefficient unequal to zero
+- Polynomials with just one coefficient unequal to zero
 - All coefficients = 1
 
 **>> Submit solution until 2019/12/18 ... (10 Points)**
@@ -77,9 +77,10 @@ Test your polynomial arithmetic on some reference polynomials:
 ### Hint:
 - Implement an overload for the function `operator<<` for your type:
 ```c++
-std::ostream& operator<<(std::ostream& out, POLYNOMIAL_TYPE  const& in);
+std::ostream& operator<<(std::ostream& out, POLYNOMIAL_TYPE const& in);
 ```
-- The evaluation function should be an `operator()`, getting a `value_type` and returning a `value_type`
+- The evaluation function should be an `operator()`, getting a `value_type` and returning a `value_type`. Use `std::pow` for the
+  power of the arguments, or better: write a recursive or iterative implementation yourself, just relying on multiplication.
 - The coefficient access function should be implement with const and non-const reference as return type.
 
 ### Resources:
@@ -91,7 +92,7 @@ std::ostream& operator<<(std::ostream& out, POLYNOMIAL_TYPE  const& in);
 ## Exercise 4 (GotW-4: Class Mechanics)
 See [GotW #4](https://herbsutter.com/2013/05/20/gotw-4-class-mechanics).
 
-1. What makes interfaces “easy to use correctly, hard to use incorrectly”? Explain.
+1. What makes interfaces "easy to use correctly, hard to use incorrectly"? Explain.
 2. You are doing a code review. A programmer has written the following class, which shows some poor style and has some real errors. How many can you find, and how would you fix them?
 ```c++
 class complex {
