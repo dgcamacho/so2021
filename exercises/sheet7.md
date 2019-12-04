@@ -57,10 +57,10 @@ Write a class for polynomials that should at least contain:
 - An evaluation function, that makes the polynomial to a *polynomial function*.
 
 The coefficient type of the coefficients $`a_i`$ should be a *typedef* in the class, i.e. `using coeff_type = CONCRETE_TYPE;`.
-Use that type to create the vector. (Mathematically, the coefficients must be from a *ring* `R`, e.g. a *field* or
+Use that type to create the vector. (Mathematically, the coefficients must be from a *ring* $`\mathbf{R}`$, e.g. a *field* or
 a *quotient ring*).
 
-The argument type to the polynomial $`x`$ must be an *R-Algebra*, i.e. something that can be multiplied with
+The argument type to the polynomial $`x`$ must be an $`\mathbf{R}`$*-Algebra*, i.e. something that can be multiplied with
 the coefficients. Fix this type in the class as well, i.e. `using value_type = CONCRETE_TYPE;`.
 
 For simplicity here, we use `double` for both. Later we will learn, how to make both flexible, by using placeholders /
