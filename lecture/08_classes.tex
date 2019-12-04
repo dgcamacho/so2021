@@ -6,6 +6,7 @@ a class are called \emph{members}. All members can be qualified with an access r
 \begin{example}
 The following class generalizes the point - vector we have seen in the first lecture. It provides functions for the initialization and for
 the access and some data:
+\end{example}
 \begin{minted}{c++}
   class MyPoint
   {
@@ -28,7 +29,6 @@ the access and some data:
     static const int dim_ = 2;      // Static member variable
   };
 \end{minted}
-\end{example}
 
 \subsection{Objects\label{sec:class-object}}
 Objects are instances of classes, i.e. concrete realizations of a class at runtime. Via an object one gets access to the individual (public) members
@@ -40,14 +40,15 @@ The following statement declares a new object \texttt{p} as an instance of the c
 \begin{minted}{c++}
   MyPoint p{1.0, 2.0}; // or
   MyPoint q(1.0, 2.0);
-  %
-  This declaration is also a definition, since memory is allocated. The initialization (construction) of that object is done by the constructor of the class.
-  In this example, the constructor gets two doubles, and sets the values of the member variables \texttt{\_x} and \texttt{\_y}.
+\end{minted}
+%
+This declaration is also a definition, since memory is allocated. The initialization (construction) of that object is done by the constructor of the class.
+In this example, the constructor gets two doubles, and sets the values of the member variables \texttt{\_x} and \texttt{\_y}.
 
-  The definition as above creates an object with automatic storage duration (i.e. the object is created on the ``stack''). An analogy to fundamental types,
-  the object can also be allocated on the ``heap'':
-  %
-  \begin{minted}{c++}
+The definition as above creates an object with automatic storage duration (i.e. the object is created on the ``stack''). An analogy to fundamental types,
+the object can also be allocated on the ``heap'':
+%
+\begin{minted}{c++}
   MyPoint* p = new MyPoint{1.0, 2.0};
   // ...
   delete p;
@@ -115,8 +116,9 @@ Variables, declared in a class, can be used to provide data that is distinct in 
 it must be initialized directly in each constructor, since const and reference require direct initialization.
 %
 \begin{minted}{c++}
-  struct MyPoint
+  class MyPoint
   {
+  public:
     MyPoint(...) : ..., dim(2) {}
   //...
     double x;
@@ -198,7 +200,7 @@ Static variables must be defined outside of the class. Since they are independen
   int MyPoint::nPoints = 0;
 \end{minted}
 
-Since \cxx{17}\marginpar{[\cxx{17}]}, static variables can be marked \cpp{inline} that allowed to initialize them inside the class, like regular member
+Since \cxx{17}\marginpar{[\cxx{17}]}, static variables can be marked \cpp{inline} that allows to initialize them inside the class, like regular member
 variables, e.g. \cpp{inline static int nPoints = 42;}
 
 Static variables can have the qualifier \cpp{const}. In this way one can define constant properties of a class. If the static constant is additionally an
