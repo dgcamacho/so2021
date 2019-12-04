@@ -1,0 +1,283 @@
+\chapter{Classes\label{sec:class}}
+Object types are called \emph{classes} in C++ and are introduced with the keywords \cpp{class} or \cpp{struct}. A class defines a new data type and is a
+collection of data (attributes, member variables), functions (member functions and class functions), and \textit{associated} types. The individual parts of
+a class are called \emph{members}. All members can be qualified with an access restriction (\cpp{public}, \cpp{protected}, or \cpp{private})
+
+\begin{example}
+The following class generalizes the point - vector we have seen in the first lecture. It provides functions for the initialization and for
+the access and some data:
+\begin{minted}{c++}
+  class MyPoint
+  {
+    using value_type = double;      // Associated type
+
+  public:
+    MyPoint() = default;            // Default-Constructor
+
+    MyPoint(double x, double y)     // Constructor
+      : x_(x), y_(y)                // Initializer-List
+    { }
+
+    void set(double x, double y);   // Member function
+    double norm() const;            // (constant) member function
+
+    static int dim() { return dim_; }  // Class-function, or static member function
+
+  private:
+    double x_ = 0.0, y_ = 0.0;      // Member variables (with default initialization)
+    static const int dim_ = 2;      // Static member variable
+  };
+\end{minted}
+\end{example}
+
+\subsection{Objects\label{sec:class-object}}
+Objects are instances of classes, i.e. concrete realizations of a class at runtime. Via an object one gets access to the individual (public) members
+(variables, functions) of a class. Each new object allocates new memory for all the class members and fill the initial values by using a constructor.
+So, after construction of a new instance of a class, the object is in a valid state.
+
+The following statement declares a new object \texttt{p} as an instance of the class \texttt{MyPoint}:
+%
+\begin{minted}{c++}
+  MyPoint p{1.0, 2.0}; // or
+  MyPoint q(1.0, 2.0);
+  %
+  This declaration is also a definition, since memory is allocated. The initialization (construction) of that object is done by the constructor of the class.
+  In this example, the constructor gets two doubles, and sets the values of the member variables \texttt{\_x} and \texttt{\_y}.
+
+  The definition as above creates an object with automatic storage duration (i.e. the object is created on the ``stack''). An analogy to fundamental types,
+  the object can also be allocated on the ``heap'':
+  %
+  \begin{minted}{c++}
+  MyPoint* p = new MyPoint{1.0, 2.0};
+  // ...
+  delete p;
+\end{minted}
+The operator \cpp{new} returns a pointer to the allocated memory. At first the memory is allocated for all member variables, then the constructor initializes
+the variables. Similar to all other dynamic memory allocation, the object must be deleted manually.
+
+Objects creates with the \cpp{new}-operator have to be destroyed with the \cpp{delete}-operator to release the memory. At destruction, whether at the end of
+a scope for objects with automatic storage duration, or when calling \cpp{delete}, the \emph{destructor} of the class is called (see below). It is responsible
+for any cleanup to do.
+
+\begin{rem}
+  Similar to fundamental types and arrays you should not work with raw pointers. Instead, use \emph{smart-pointers} like \cpp{std::unique_ptr} or \cpp{std::shared_ptr}!
+\end{rem}
+
+\begin{rem}
+  When constructing an object using a constructor without arguments, one can either use empty curly braces, i.e.
+  %
+  \cppline{MyPoint p{};}
+  %
+  or omit any braces, i.e.
+  %
+  \cppline{MyPoint p;}
+  %
+
+  It is, contrariwise, not allowed to use round empty braces \cpp{MyPoint p()}. This would declare a function \texttt{p} returning a \texttt{MyPoint}, instead.
+\end{rem}
+
+
+% =================================================================================================
+\section{Access to class members}
+To access the data of a constructed class object, one can either use the \textit{dot}-access operator \texttt{a.b},
+or the \textit{pointer}-access operator \texttt{a->b}. The former can be used on expressions of \emph{class type} and the latter
+or \emph{pointer to class type}. Static member or properties of the class can be accessed using the name-resolution operator \texttt{A::B}.
+
+Examples:
+\begin{minted}{c++}
+  MyPoint  p1{1.0, 2.0};
+  MyPoint* p2 = new MyPoint(1.0, 2.0);
+  std::unique_ptr<MyPoint> p3 { new MyPoint(1.0, 2.0) };
+
+  double n = p1.norm();   // access on class type
+  p2->set(2.0, 1.0);      // access on pointer to class type
+  double n2 = p3->norm(); // access on pointer to class type
+
+  int dimension = MyPoint::dim(); // access of static members
+
+  delete p2;              // raw pointers must be deleted
+\end{minted}
+
+\begin{rem}
+  The access functions \cpp{.}, \cpp{->}, and \cpp{::} are operators in C++ and thus have a precedence and an associativity.
+\end{rem}
+
+% =================================================================================================
+\section{Class Data\label{sec:class-attributes}}
+Attributes of a class are declared in a class definition and include \emph{methods}, \emph{variables}, \emph{types}, and even sub-classes or \emph{types}.
+
+Each instance of a class gets its own copy of all attributes, except for static attributes. Those exist exactly once for each class type and are bound
+to the type and not to the instance.
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Member variables}
+Variables, declared in a class, can be used to provide data that is distinct in each instance of a class. Is a variables qualified with \cpp{const} or \cpp{&},
+it must be initialized directly in each constructor, since const and reference require direct initialization.
+%
+\begin{minted}{c++}
+  struct MyPoint
+  {
+    MyPoint(...) : ..., dim(2) {}
+  //...
+    double x;
+    double y;
+    bool const valid = true;
+    int const dim;
+  };
+\end{minted}
+
+If member variables are supposed to be initialized with a default value in all constructors if not specified otherwise, the initial value can be
+prescribed directly on declaration, like \cpp{bool const value = true;}
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Methods}
+Methods or member functions of a class are functions defined in the scope of the class that have access to all member variables of the instance of that class.
+Member functions can be defined inline or outside of the class:
+%
+\begin{minted}{c++}
+  // in header file:
+  class MyPoint
+  {
+  //...
+    void set(double x, double y) // inline definition
+    {
+      x_ = x;
+      y_ = y;
+    }
+
+    double norm() const;  // just declaration
+  };
+
+  // in .cpp-file
+  double MyPoint::norm() const
+  {
+    return std::sqrt(x_*x_ + y_*y_);
+  }
+\end{minted}
+
+If you intend to include the header file with the class definition multiple times, you need to define all functions in a source file, i.e. a separate
+translation unit. This prevents from multiple definitions of the same function. Function defined directly in the class automatically are classified as
+\cpp{inline} functions and thus can exist multiple times.
+
+Within a class method, one gets direct access to all class members (functions, variables, types...). Additionally, there is a special pointer, pointing to
+the address of the current instance of that class in memory. This can be used to access the members as well (see pointer-access operator):
+%
+\begin{minted}{c++}
+  double MyPoint::norm() const
+  {
+    return std::sqrt(x_*x_ + y_*y_);
+  }
+  // or
+  double MyPoint::norm() const
+  {
+    return std::sqrt(this->x_*this->x_ + this->y_*this->y_);
+  }
+\end{minted}
+
+The keyword \cpp{const} in the member function declaration means, that 1. no member of the class is changed and 2. only other \cpp{const} functions are called
+in that function. If you have a \cpp{const} class object or a \cpp{const&} to a class object, only \cpp{const} member functions can be called:
+%
+\begin{minted}{c++}
+  MyPoint const& q = p;
+  q.set(3.0, 4.0);               // ERROR
+  std::cout << q.norm() << "\n"; // OK, norm is const-function
+\end{minted}
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Static Members}
+Static variables (class variables) or static function (class functions) are shared by all instances of that class and are introduced with the keyword \cpp{static}.
+Static variables must be defined outside of the class. Since they are independent of any instance, static members can not be initialized in a constructor.
+%
+\begin{minted}{c++}
+  class MyPoint
+  {
+  public:
+    static int nPoints;
+  };
+  ...
+  int MyPoint::nPoints = 0;
+\end{minted}
+
+Since \cxx{17}\marginpar{[\cxx{17}]}, static variables can be marked \cpp{inline} that allowed to initialize them inside the class, like regular member
+variables, e.g. \cpp{inline static int nPoints = 42;}
+
+Static variables can have the qualifier \cpp{const}. In this way one can define constant properties of a class. If the static constant is additionally an
+integral type it can always be defined in the class directly:
+%
+\begin{minted}{c++}
+  class MyPoint
+  {
+  public:
+    static const int dim_ = 2;
+  };
+\end{minted}
+
+Static members can be accessed by the class name and the name resolution operator \texttt{::}. Within any other class member function or static function in the
+class this can be omitted.
+
+\begin{rem}
+  The definition of a static class member variable must be put into a source file (not in a header file). Otherwise it would be defined multiple times.
+\end{rem}
+
+Also functions can have the \cpp{static} keyword, indicating that they are bound to the class type and not to any instance of the class. Within static
+function, only static member variables of the class can be accessed:
+%
+\begin{minted}{c++}
+  // in header file
+  class MyPoint
+  {
+  public:
+    static int dim() { return dim_; }
+    static int dim_;
+  };
+  ...
+  // in source file
+  int MyPoint::dim_ = 2;
+  ...
+  int main() {
+    std::cout << MyPoint::dim();
+  }
+\end{minted}
+
+Static member function must be defined inline in the class and are automatically \cpp{inline}.
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Class member types / associated types}
+Within a class local typedef or type aliases can be introduced. This allows to have a central place in the class definition where to fix types used
+somewhere in the class. And it allows to give that information to the user of the class.
+
+We call those types \emph{associated types} since they are associated with the class type (and thus shared by all instances of that class). Types
+are introduced using the keyword \cpp{typedef} or \cpp{using}:
+%
+\begin{minted}{c++}
+  class MyPoint
+  {
+  public:
+    typedef int     size_type; // old syntax
+    using value_type = double; // C++11 syntax
+  };
+\end{minted}
+(where I would prefer the new syntax)
+
+In containers of the standard library (and of many other libraries) some generic type names are used:
+\begin{itemize}
+  \item \cpp{size_type} An integer type that can be used for the size of a container (and for indices)
+  \item \cpp{value_type} The type of the elements stored in a container
+  \item \cpp{reference}, \cpp{pointer}, \cpp{iterator}, \cpp{const_iterator} Types used to defined the return type of access methods and iteration methods.
+\end{itemize}
+%
+\begin{minted}{c++}
+  class MyPoint
+  {
+  public:
+    using size_type  = int;
+    using value_type = double;
+
+    value_type& operator[](size_type i) { return i == 0 ? x : y; }
+
+  private:
+    value_type x, y;
+  };
+\end{minted}
+
+Types can be accessed like other static properties, using the name resolution operator: \cpp{MyPoint::value_type}.
