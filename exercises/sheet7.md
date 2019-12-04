@@ -42,13 +42,13 @@ int main()
 ## Exercise 3 (Polynomials) :pencil2:
 This exercise is about a user-defined type representing polynomials
 ```math
-  P(x) = a_0 + a_1 x + a_2 x^2 + \ldots + a_n x^n (n \geq 0)
+  P(x) = a_0 + a_1 x + a_2 x^2 + \ldots + a_n x^n\quad (n \geq 0)
 ```
 
 Write a class for polynomials that should at least contain:
 - A constructor receiving the degree of the polynomial;
 - A dynamic vector of `coeff_type` (see below) to store the coefficients as member variable;
-- A constructor receiving a vector of coefficients;
+- A constructor receiving a vector of coefficients `$(a_0,a_1,\ldots)$`;
 - An `operator[]` for the access to the individual coefficients;
 - A member function (or a free function) returning the degree of the polynomial;
 - Arithmetic operations plus and minus (`operator+` and `operator-`);
@@ -56,7 +56,7 @@ Write a class for polynomials that should at least contain:
 - An output function for `std::ostream`, i.e. `operator<<`;
 - An evaluation function, that makes the polynomial to a *polynomial function*.
 
-The coefficient type of the coefficients `$a_i$` should be a *typedef* in the class, i.e. `using coeff_type = CONCRETE_TYPE;`.
+The coefficient type of the coefficients $`a_i`$ should be a *typedef* in the class, i.e. `using coeff_type = CONCRETE_TYPE;`.
 Use that type to create the vector. (Mathematically, the coefficients must be from a *ring* `R`, e.g. a *field* or
 a *quotient ring*).
 
