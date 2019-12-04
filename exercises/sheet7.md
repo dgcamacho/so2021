@@ -48,7 +48,7 @@ This exercise is about a user-defined type representing polynomials
 Write a class for polynomials that should at least contain:
 - A constructor receiving the degree of the polynomial;
 - A dynamic vector of `coeff_type` (see below) to store the coefficients as member variable;
-- A constructor receiving a vector of coefficients `$(a_0,a_1,\ldots)$`;
+- A constructor receiving a vector of coefficients $`(a_0,a_1,\ldots)`$;
 - An `operator[]` for the access to the individual coefficients;
 - A member function (or a free function) returning the degree of the polynomial;
 - Arithmetic operations plus and minus (`operator+` and `operator-`);
@@ -60,7 +60,7 @@ The coefficient type of the coefficients $`a_i`$ should be a *typedef* in the cl
 Use that type to create the vector. (Mathematically, the coefficients must be from a *ring* `R`, e.g. a *field* or
 a *quotient ring*).
 
-The argument type to the polynomial `$x$` must be an *R-Algebra*, i.e. something that can be multiplied with
+The argument type to the polynomial $`x`$ must be an *R-Algebra*, i.e. something that can be multiplied with
 the coefficients. Fix this type in the class as well, i.e. `using value_type = CONCRETE_TYPE;`.
 
 For simplicity here, we use `double` for both. Later we will learn, how to make both flexible, by using placeholders /
