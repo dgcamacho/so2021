@@ -136,7 +136,7 @@ at compile-time and are fixed to exactly one size. It is not allowed to pass arr
 % -------------------------------------------------------------------------------------------------
 \subsection{Standard Arrays}
 The problem with the size of the arrays, the argument passing to functions (and some more restriction) motivates to introduce a library type
-that overcomes those problems. With \cxx{11}\marginpar{[\cxx{11}]} the type \cpp{std::arrays<T, Size>}\index{Array} was added to the standard
+that overcomes those problems. With \cxx{11}\marginpar{[\cxx{11}]} the type \cpp{std::array<T, Size>}\index{Array} was added to the standard
 library:
 \begin{minted}{c++}
   #include <array>
@@ -161,7 +161,7 @@ We have seen that arrays can be implicitly converted to pointers and pointers ca
 a pointer? Is it possible to have an array of dynamic size? One needs to initialize a pointer with the address of a memory block large enough to hold
 the wanted array. This is accomplished by \emph{dynamic memory management}: memory of arbitrary size can be allocated and deallocated at runtime!
 
-In C++ this is done with the operator \cpp{new} and \cpp{new[]} to allocate memory and \cpp{delete} and \cpp{delete[]} to deallocate memory.
+In C++ this is done with the operator \cpp{new} and \cpp{new[]} to allocate memory and construct objects in the newly allocated memory, and \cpp{delete} and \cpp{delete[]} to destruct the objects and deallocate memory.
 
 For a single element:
 \begin{minted}{c++}
@@ -232,7 +232,7 @@ Otherwise you have a \emph{memory leak}. The aftermath of a pointer related bug,
 \end{guideline}
 
 
-\subsubsection{Pointerarithmetics}
+\subsubsection{Pointer arithmetics}
 Pointers used as addresses of arrays, i.e. the address to the first element of the array, have its one arithmetic. Since addresses are like integers,
 they can be incremented and decremented, meaning a movement of the pointer in memory.
 
@@ -280,15 +280,15 @@ We have (static) arrays and dynamic arrays. The difference is that static arrays
 have a dynamic size but also dynamic storage duration. Both can be represented by pointers. What if we want to have a dynamic size, but an automatic
 storage duration?
 
-This is possible using the special pointer type \cpp{std::unique_ptr} or \cpp{std::shared_ptr}, sometimes refereed to as ``smart pointers''. Both are library
-type defined in the header \cpp{<memory>}.
+This is possible using the special pointer type \cpp{std::unique_ptr} or \cpp{std::shared_ptr}, sometimes referred to as ``smart pointers''. Both are library
+types defined in the header \cpp{<memory>}.
 
 Example:
 \begin{minted}{c++}
   #include <memory>
   //...
-  std::shared_ptr<int> ip{ new int };
-  std::unique_ptr<int[]> vec{ new int[10] };
+  std::shared_ptr<int> ip = std::make_shared<int>();        // calls `new` internally
+  std::unique_ptr<int[]> vec = std::make_unique<int[]>(10);
   std::cout << *ip << vec[5];
 \end{minted}
 %
