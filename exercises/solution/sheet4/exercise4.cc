@@ -121,22 +121,22 @@ private:
 // binary arithmetic operators
 // NOTE: all implemented using the compound assignment operators
 
-Rational operator*(Rational lhs, Rational const& rhs)
+inline Rational operator*(Rational lhs, Rational const& rhs)
 {
   return lhs *= rhs;
 }
 
-Rational operator/(Rational lhs, Rational const& rhs)
+inline Rational operator/(Rational lhs, Rational const& rhs)
 {
   return lhs /= rhs;
 }
 
-Rational operator+(Rational lhs, Rational const& rhs)
+inline Rational operator+(Rational lhs, Rational const& rhs)
 {
   return lhs += rhs;
 }
 
-Rational operator-(Rational lhs, Rational const& rhs)
+inline Rational operator-(Rational lhs, Rational const& rhs)
 {
   return lhs -= rhs;
 }
@@ -144,7 +144,7 @@ Rational operator-(Rational lhs, Rational const& rhs)
 // The output operator << can be overloaded like any other function
 // It gets as first argument the output stream by mutable reference and returns
 // this reference. This is like a classical assignment operator.
-std::ostream& operator<<(std::ostream& out, Rational const& r)
+inline std::ostream& operator<<(std::ostream& out, Rational const& r)
 {
   return out << r.numerator() << '/' << r.denominator();
 }
