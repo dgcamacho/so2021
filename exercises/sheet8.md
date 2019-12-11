@@ -23,7 +23,7 @@ def allocate(n):
 
 
 All these three steps contain memory-related errors. Here they are obvious, but in other cases it might be hard to see it from just looking at the code.
-Therefore, there are tool that help finding the errors. One such tools, we have already tried out: *GDB*. Another tool that we want to look at is
+Therefore, there are tools that help finding the errors. One such tool, we have already tried out: *GDB*. Another tool that we want to look at is
 *Valgrind*.
 
 The *Valgrind* tool suite provides a number of debugging and profiling tools that help you make your programs faster and more correct.
