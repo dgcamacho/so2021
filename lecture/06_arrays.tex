@@ -280,8 +280,8 @@ We have (static) arrays and dynamic arrays. The difference is that static arrays
 have a dynamic size but also dynamic storage duration. Both can be represented by pointers. What if we want to have a dynamic size, but an automatic
 storage duration?
 
-This is possible using the special pointer type \cpp{std::unique_ptr} or \cpp{std::shared_ptr}, sometimes refereed to as ``smart pointers''. Both are library
-type defined in the header \cpp{<memory>}.
+This is possible by using the special pointer types \cpp{std::unique_ptr} or \cpp{std::shared_ptr}, sometimes refereed to as ``smart pointers''. Both are library
+types defined in the header \cpp{<memory>}.
 
 Example:
 \begin{minted}{c++}
