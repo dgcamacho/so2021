@@ -72,7 +72,7 @@ int main()
 - Can you replace `shared_ptr` by `unique_ptr` in this code? Why (not)?
 
 
-## Exercise 3 (Combination of Tests)
+## Exercise 3 (Combination of Tests) :pencil2:
 On exercise sheet 4, we had to implement a rational number type (with some arithmetic), on sheet 5+6 a
 matrix type with some arithmetic and on sheet 7 a polynomial type, again with some arithmetic. All these
 types have in common that we can add them up (`operator+`) and there is a null-element of the plus-operation
