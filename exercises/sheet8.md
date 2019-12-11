@@ -97,6 +97,10 @@ Therefore, we need to
 - Create a *Makefile* that describes how to compile your code. Therefore, list *targets* for each class type implementation, e.g. `Rational.o`
   depending on the corresponding source code and a target for the executable that depend on the `main.cc` source code and on the other targets.
 
+### Bonus questions:
+- Can you generalize the test to not just test for the group properties, w.r.t. `operator+` but for a type plus any binary operation? What
+  needs to be specified or abstracted in the test functions?
+- Can you list all syntactic requirements for an Abelian Group type? Any idea how to test for requirements on types? Keywords: concepts, `enable_if`, SFINAE.
 
 ### Hints
 In order to implement the functions `identity<T>` and `random<T>`, you have to specify the type for which you want to implement
