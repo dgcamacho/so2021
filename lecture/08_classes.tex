@@ -31,7 +31,9 @@ the access and some data:
   };
 \end{minted}
 
-\subsection{Objects\label{sec:class-object}}
+
+% =================================================================================================
+\section{Objects\label{sec:class-object}}
 Objects are instances of classes, i.e. concrete realizations of a class at runtime. Via an object one gets access to the individual (public) members
 (variables, functions) of a class. Each new object allocates new memory for all the class members and fill the initial values by using a constructor.
 So, after construction of a new instance of a class, the object is in a valid state.
@@ -588,96 +590,111 @@ are good replacements for your manual management, like \cpp{std::shared_ptr}, \c
 
 % =================================================================================================
 \section{Access restriction\label{sec:access-restriction}}
-\marginpar{\footnotesize\cite[2.2.2]{gottschling2016}}C++ bietet die Möglichkeit einzuschränken wer auf welche Attribute (Membervariablen, Methoden, Typen) zugreifen darf. Insbesondere, ob von direkt Member aufgerufen und gelesen werden darf. Es gibt dazu erstmal zwei Schlüsselworte:
+In C++ it is possible to restrict in classes who can access the members of that class. There are two access groups:
 \begin{itemize}
-	\item \cpp{public}: Jeder darf auf die Attribute zugreifen.
-	\item \cpp{private}: Nur die Klassenmember selbst dürfen auf diese Attribute zugreifen.
+	\item \cpp{public}: Everyone can access the members.
+	\item \cpp{private}: Only other class members are allowed to access this attribute.
 \end{itemize}
-Zusätzlich gibt es eine Zugriffseinschränkung zwischen Klassen: \cpp{protected} (siehe unten, im Kapitel Vererbung).
+Additionally, there is the access restriction \cpp{protected} that we will see later.
 
 \begin{example}
-Zur Illustration der Zugriffseinschränkung ein Beispiel:
-\begin{minted}{c++}
-class Point {
-public:
-  double x,y;
-  void foo() {
-    a = ...;  // erlaubt
-    bar();    // erlaubt
-  }
-private:
-  double a;
-  void bar();
-};
-// ...
-Point p{1.0, 2.0}; // Aggregate-initialisierung
+  For the illustration of access restrictions, consider the following example:
+  \begin{minted}{c++}
+  class Point {
+  public:
+    double x,y;
+    void foo() {
+      a = 2.0;  // OK: in a member function of the class we can access private data
+      bar();    // OK: in a member function of the class we can call private methods
+    }
+  private:
+    double a;
+    void bar();
+  };
+  // ...
+  Point p{1.0, 2.0}; // Initialization
 
-p.x;   // erlaubt (public)
-p.a:   // NICHT erlaubt (private)
+  p.x;   // OK: x is a public member variable
+  p.a:   // ERROR: a ist a private member and can not be accessed from outside the class
 
-p.foo(); // erlaubt
-p.bar(); // NICHT erlaubt
-\end{minted}
+  p.foo(); // OK: foo is a public member function
+  p.bar(); // ERROR: bar is a private member function
+  \end{minted}
 \end{example}
 
-Die Schlüsselwörter \cpp{public}, \cpp{protected}, \cpp{private} gefolgt von einem Doppelpunkt definieren einen Bereich, in dem alle nachfolgenden Memberobjekte eine Zugriffseinschränkung bekommen.
+The keywords \cpp{public}, \cpp{private} (and \cpp{protected}) followed by a colon \texttt{:} introduces a block in which all following members
+have this access restriction.
 
 \begin{rem}
-In Klassen, die mit dem Schlüsselwort \cpp{class} deklariert wurden, sind per Default alle Member \cpp{private}, wohingegen in einer Struktur (Klasse deklariert mit \cpp{struct}) alle Member standardmäßig \cpp{public} sind.
+  In classes introduced with \cpp{class}, the default access restriction is \cpp{private}, whereas in \cpp{struct}, the default access restriction is
+  \cpp{public}.
 \end{rem}
 
-\begin{rem} Konstruktoren können auch mit Zugriffseinschränkungen versehen werden. Damit ist es möglich zu verhindern, dass ein Objekt einer Klasse direkt instanziiert wird. Dafür sollte aber eine Methode bereitgestellt werden, die eine (neue) Instanz der Klasse zurück gibt. Dies nennt man auch \emph{factory} oder \emph{creator} Methode.\end{rem}
+\begin{rem}
+  Also constructors can be restricted. This allows to instantiate a class (or copy/move a class) in a specific way only. If there are no public
+  constructors available, the class can not be instantiated directly and one has to provide a ``factory''-function instead, i.e. a static public
+  member function that constructs and returns the instantiated class.
+\end{rem}
 
 
 % =================================================================================================
-\section{Inheritance\label{sec:vererbung}}
-Das Thema Vererbung soll hier nur minimal angerissen werden. Viele Details dazu kann man in der Java-Vorlesung hören, bzw. nachlesen in C++ kurz\&gut, Kapitel 9.
+\section{Inheritance\label{sec:inheritance}}
+(The chapter inheritance is touched here only slightly, see other lectures about object oriented design for more details)
 
-Im Kopf der Klasse kann man angeben von welcher Klasse man Methoden und Variablen erben möchte und diese dann in eigenen Methoden verwenden. Dabei werden nur \cpp{public} und \cpp{protected} Member vererbt. Man kann außerdem angeben wie die geerbten Objekte in der eigenen Klasse sichtbar sein sollen.
+Classes characterize properties and methods of a specific space of objects. An example is a class representing a vector space. Instances of that
+class are vectors. But, there are other spaces, with more or less properties, like a normed vector space that additionally has a norm function, or
+a scalar-product space that additionally has a scalar-product. So, we can find a hierarchy of classes with a general class and more and more specialized
+classes. The more specialized ones can inherit properties / members of the more general class, like a normed vector space inherits all methods from a
+vector space. This principle is call inheritance in C++.
+
+In the head of a class, one can list other classes we want to inherit properties and members from. Thereby, we can specify how those inherited members
+are visible (can be accessed) (Either they are just properties we want to use internally: \cpp{private}, or all properties are made visible to the outside:
+\cpp{public}).
+
 \begin{minted}{c++}
-class Point {
+class VectorSpace {                     // Base class
 public:
-  double x;
+  VectorSpace();
+  VectorSpace operator+(VectorSpace const& rhs) const;
+  VectorSpace operator-(VectorSpace const& rhs) const;
+  // ...
+
+  int dimension_;                       // is public to the outside and derived classes
+
 protected:
-  void bar();    // nur von abgeleiteten Klassen zugreifbar
+  double component(int i);              // is accessible from derived classes, but not public
+
 private:
-  double y;
+  std::vector<double> components_;      // is private to this class
 };
 
-class MyPoint : public Point
+class NormedVectorSpace : public VectorSpace
 {
 public:
-  void foo() {
-    x = ...;   // erlaubt (public, geerbt)
-    bar();     // erlaubt (protected, geerbt)
-    y = ...;   // NICHT erlaubt (private)
+  double norm() const
+  {
+    double n = 0.0;
+    for (int i = 0; i < dimension_; ++i)  // we can access public members of base class
+      n += component(i)*component(i);     // we can access protected functions of base class
+    return std::sqrt(n);
   }
 };
 // ...
-MyPoint p;
-p.foo(); // erlaubt
-p.bar(); // NICHT erlaubt (protected)
-p.x = 1.0; // erlaubt (public, geerbt)
+VectorSpace vec1;
+vec1.dimension_     // OK: public member
+vec1.component()    // ERROR: protected members not accessible
+vec1.components_    // ERROR: private members not accessible
+vec1.norm()         // ERROR: VectorSpace has no method norm()
+
+NormedVectorSpace vec2;
+vec2.dimension_     // OK: public derived member
+vec2.component()    // ERROR: protected member of VectorSpace
+vec2.norm()         // OK: public function
 \end{minted}
 
-Deklariert man in der eigenen Klasse eine Methode oder Variable mit der gleichen Signatur wie die der Basisklasse wird die Methode oder Variable \emph{überdeckt}. Die entsprechende Methode der Basisklasse kann nur noch mittels expliziter Angabe der Basis-Klassennamens angesprochen werden:
-\begin{minted}{c++}
-class Point {
-public:
-  double x,y;
-  void foo();    // (1)
-};
-class MyPoint : public Point
-{
-public:
-  void foo() {    // (2) ueberdeckt Point::foo()
-    Point::foo(); // expliziter Aufruf von (1)
-    ...
-  }
-};
-...
-MyPoint p;
-p.foo(); // Aufruf von (2)
-Point p0;
-p0.foo(); // Aufruf von (1)
-\end{minted}
+The derived class can call protected and public members of the base class, and can even call its constructors.
+
+\begin{rem}
+  Again, the difference between \cpp{class} and \cpp{struct} is that for class the inheritance is \cpp{private} by default and for struct
+  it is \cpp{public} by default.
+\end{rem}
