@@ -287,8 +287,12 @@ Example:
 \begin{minted}{c++}
   #include <memory>
   //...
-  std::shared_ptr<int> ip = std::make_shared<int>();        // calls `new` internally
-  std::unique_ptr<int[]> vec = std::make_unique<int[]>(10);
+  std::shared_ptr<int> ip{ new int };
+  std::unique_ptr<int[]> vec{ new int[10] };
+  // or
+  std::shared_ptr<int> ip2 = std::make_shared<int>();        // calls `new` internally
+  std::unique_ptr<int[]> vec2 = std::make_unique<int[]>(10);
+
   std::cout << *ip << vec[5];
 \end{minted}
 %
