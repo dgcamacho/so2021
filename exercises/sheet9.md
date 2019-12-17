@@ -62,7 +62,7 @@ void main()
 
 ## Exercise 2 (Vector class 2)
 Write your own numerical vector class `Vector`, maybe inspired by the corrected version of
-exercise 2, but instead of manual dynamic memory management, use a `std::vector<double>`
+exercise 1, but instead of manual dynamic memory management use a `std::vector<double>`
 for the storage of the vector coefficients.
 
 The vector class should support at least the following operations
@@ -104,3 +104,5 @@ can be used to construct a matrix from values in curly braces)
 
 - The benchmarks can be performed using the `Time` class from the lecture material, or
   using the google (micro) benchmarking suite.
+
+- Perform the benchmarks with optimization flags enabled for your compiler.
