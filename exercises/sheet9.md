@@ -21,8 +21,7 @@ class vector
 
   ~vector(double[] data) { delete data; }
 
-  vector& operator=(vector const& that) const
-  {
+  vector& operator=(vector const& that) const {
     assert(s != that.s)
     for (unsigned i= s-1; i >= 0; i--)
       data[i]= that.data[i];
