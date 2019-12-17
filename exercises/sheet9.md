@@ -105,3 +105,32 @@ can be used to construct a matrix from values in curly braces)
   using the google (micro) benchmarking suite.
 
 - Perform the benchmarks with optimization flags enabled for your compiler.
+
+
+## Exercise 3 (GotW-30: Koenig Lookup)
+See [GotW #30](http://www.gotw.ca/gotw/030.htm).
+
+Recapitulation Name Lookup: In the following code, which functions are called? Why? Analyze the implications.
+```c++
+namespace A {
+  struct X;
+  struct Y;
+  void f(int); // (a)
+  void g(X);   // (b)
+}
+
+namespace B {
+  void f(int i) {  // (c)
+    f(i);   // which f()?
+  }
+  void g(A::X x) { // (d)
+    g(x);   // which g()?
+  }
+  void h(A::Y y) { // (e)
+    h(y);   // which h()?
+  }
+}
+```
+
+### Resources
+- Koenig Lookup or [Argument dependent name lookup](https://de.wikipedia.org/wiki/Argument_dependent_name_lookup)
