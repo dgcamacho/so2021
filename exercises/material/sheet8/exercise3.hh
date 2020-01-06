@@ -52,7 +52,7 @@ bool test_inverse(T const& a)
 
 
 template <class T>
-void test()
+bool test()
 {
   bool has_closure = true;
   bool has_associativity = true;
@@ -79,4 +79,5 @@ void test()
   std::cout << "  commutativity: "  << has_commutativity << std::endl;
   std::cout << "  identity: "       << has_identity << std::endl;
   std::cout << "  inverse: "        << has_inverse << std::endl;
+  return has_associativity and has_closure and has_inverse and has_identity and has_commutativity;
 }
