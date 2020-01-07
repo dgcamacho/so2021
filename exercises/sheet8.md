@@ -121,7 +121,7 @@ For the `random<T>` function, use `std::srand(12345)` in your `main()` and `std:
 ### Remarks
 The test suite makes some assumptions on the functionality of the tested types. Maybe some operations are not yet implemented. Then you will
 get a compiler error.Read the code and understand the requirements on the types. Correct or extend your implementation to conform to the test suite.
-**Do not modify the test suite!**
+**Do not modify the test suite!** (except if there are errors in the provided code).
 
 ### References
 - [Makefile](https://www.gnu.org/software/make/manual/html_node/Makefiles.html),
