@@ -66,11 +66,11 @@ bool test()
     T b{ random<T>() };
     T c{ random<T>() };
 
-    has_closure = has_closure || test_closure(a,b);
-    has_associativity = has_associativity || test_associativity(a,b,c);
-    has_commutativity = has_commutativity || test_commutativity(a,b);
-    has_identity = has_identity || test_identity(a);
-    has_inverse = has_inverse || test_inverse(a);
+    has_closure = has_closure && test_closure(a,b);
+    has_associativity = has_associativity && test_associativity(a,b,c);
+    has_commutativity = has_commutativity && test_commutativity(a,b);
+    has_identity = has_identity && test_identity(a);
+    has_inverse = has_inverse && test_inverse(a);
   }
 
   std::cout << "The type T=" << typeid(T).name() << " has the following properties:" << std::endl;
