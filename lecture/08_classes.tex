@@ -300,7 +300,7 @@ If no constructor is defined at all, the compiler tries to generate one automati
 
 It is allowed to declare multiple constructors, while following the rules of regular function overloading, i.e. the constructors must have different signatures.
 
-The construction of a class happens in three stages: 1. memory for all member variables (and all base-classes) is allocated, 2. all members (ans base-classes) are
+The construction of a class happens in three stages: 1. memory for all member variables (and all base-classes) is allocated, 2. all members (and base-classes) are
 initialized by the constructor initializer-lists, 3. the constructor body is executed to finalize any initialization.
 
 % -------------------------------------------------------------------------------------------------
@@ -334,14 +334,14 @@ public:
 \end{minted}
 %
 In the first class \texttt{MyPoint}, two member variables \texttt{x\_} and \texttt{y\_} are initializes with the values of the constructor arguments. Thereby,
-one can use the initialization brackets similar to regular variables, i.e. curly or round brackets. The second constructor delegates the initialization to
+one can use the initialization brackets similar to regular variables, i.\,e.\ curly or round brackets. The second constructor delegates the initialization to
 the first constructor, by calling the class-constructor with some fixed arguments. The second class \texttt{MyPoint2} has a variable of user-defined type
 that is also initialized by a constructor call passing two arguments.
 
 \textbf{Note}: The order of the initialization should follow the order of the declaration of the member variables in the class (and is independent of the order
 of the constructor arguments).
 
-\textbf{Node}: If some member variables have default initializers, like \cpp{int dim = 2;} those initializations are appended to \underline{all} constructor
+\textbf{Note}: If some member variables have default initializers, like \cpp{int dim = 2;} those initializations are appended to \underline{all} constructor
 initializer lists, if no other value for that variable is prescribed.
 
 
