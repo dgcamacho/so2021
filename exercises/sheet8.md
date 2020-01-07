@@ -76,12 +76,12 @@ int main()
 On exercise sheet 4, we had to implement a rational number type (with some arithmetic), on sheet 5+6 a
 matrix type with some arithmetic and on sheet 7 a polynomial type, again with some arithmetic. All these
 types have in common that we can add them up (`operator+`) and there is a null-element of the plus-operation
-that is an identity element. Also, the associativity law should hold for all these types ad some more properties.
+that is an identity element. Also, the associativity law should hold for all these types and some more properties.
 Mathematically speaking, all these type build a *group* w.r.t. to plus operation. Maybe even an *Abelian group*.
 (Note: this is not absolutely correct, since, e.g., integers can overflow, floating point values do not cover
 the whole real numbers, so the totality property is not fulfilled in general)
 
-We want to combine all the code from the 3/4 exercises and build one common test suite that tests for all
+We want to combine all the code from the 3 to 4 exercises and build one common test suite that tests for all
 the mathematical properties.
 
 Therefore, we need to
@@ -93,7 +93,7 @@ Therefore, we need to
   * includes the `exercise3.hh` header file
   * implements for all three types the functions `identity<T>` and `random<T>`, returning the identity element w.r.t. addition and
     a random element of that type, see below.
-  * calls the `test<T>()` function with `T` your class types, e.g. `test<Random>()`, and also some builtin types, like `int` or `double`.
+  * calls the `test<T>()` function with `T` your class types, e.g. `test<Rational>()`, and also some builtin types, like `int` or `double`.
 - Create a *Makefile* that describes how to compile your code. Therefore, list *targets* for each class type implementation, e.g. `Rational.o`
   depending on the corresponding source code and a target for the executable that depend on the `main.cc` source code and on the other targets.
 
