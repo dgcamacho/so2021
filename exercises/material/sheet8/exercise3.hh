@@ -79,5 +79,6 @@ bool test()
   std::cout << "  commutativity: "  << has_commutativity << std::endl;
   std::cout << "  identity: "       << has_identity << std::endl;
   std::cout << "  inverse: "        << has_inverse << std::endl;
-  return has_associativity and has_closure and has_inverse and has_identity and has_commutativity;
+
+  return has_associativity && has_closure && has_inverse && has_identity && has_commutativity;
 }
