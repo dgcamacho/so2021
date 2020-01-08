@@ -1,10 +1,10 @@
 # Exercise sheet 10 - 2020/01/08
 
 ## Exercise 1 (Standard Containers)
-The C++ standardlibrary provides implementations of several common data-structures: vector, list, deques, queues,...
+The C++ standard library provides implementations of several common data-structures: vector, list, deques, queues,...
 We want to compare some of them for performance of insertion and sorting algorithms:
 
-- Create an empty Container of type `std::list, std::vector, std::deque, ...` with value type one of {`int, double, A`},
+1. Create an empty Container of type `std::list, std::vector, std::deque, ...` with value type one of {`char, double, A`},
   where `A` is a class
 ```c++
 struct A {
@@ -13,14 +13,9 @@ struct A {
 };
 ```
   and fill the container with `1,000,000` elements (or more) of random values using the function `push_back`, or `push_front`
-  and `emplace_back` or `emplace_front`, respectively. Therefore call the functions
-```c++
-std::srand(std::time(0)); // time from <ctime>
-std::rand() % 250 - 125;  // in <cstdlib>
-```
-to produce the random values in the range `[-125,125)`. (See [CppReference](http://en.cppreference.com/w/cpp/numeric/random/rand))
+  and `emplace_back` or `emplace_front`, respectively.
 
-- Add a comparison operator for objects of type `A`, i.e.,
+2. Add a comparison operator for objects of type `A`, i.e.,
 ```c++
 // lexicographical comparison
 inline bool operator<(A const& lhs, A const& rhs)
@@ -30,7 +25,15 @@ inline bool operator<(A const& lhs, A const& rhs)
 ```
   and sort the containers using a function like `std::sort` (from `<algorithm>`) or a member function `container.sort()`.
 
-- Measure the time needed for each of the above steps. Therefore use the class `Timer` provided in the lecture material folder.
+3. Measure the time needed for each of the above steps. Therefore use the class `Timer` provided in the lecture material folder.
+
+### Hints
+- Use the functions `std::rand()` or functions / classes from `<random>` (e.g. `uniform_int_distribution`) to produce the
+  random numbers. See [cppreference:rand](https://en.cppreference.com/w/cpp/numeric/random/rand),
+  [cppreference:random](https://en.cppreference.com/w/cpp/numeric/random).
+
+- In case the data-structure provides such a function, use `reserve()` or `resize()` before inserting or filling with the values.
+  Compare to the time without previous reservation of space.
 
 
 ## Exercise 2 (Inheritance and Composition)
@@ -42,8 +45,8 @@ should not be a `std::vector<double>`!
 
 Design two implementations of this class, both of which store the values in a `std::vector<double>`.
 The first implementation has to be derived from `std::vector<double>` and the second one should
-not use inheritance. Use two different header files for this, and only include one of them at a time
-when testing with the programs below.
+not use inheritance. Use two different header files for this (e.g. `NumVector[1/2].hh`), and only include
+one of them at a time when testing with the programs below.
 
 Test your implementation as follows:
 
@@ -130,3 +133,29 @@ int main()
   test(leaf);
 }
 ```
+
+
+## Exercise 4 (External Libraries):pencil2:
+We have implemented our own matrix and vector classes in the last exercises. For most of the
+data-structures there is an efficient implementation already available. Especially for linear
+algebra containers and algorithms there exist a large variety of libraries, all with a different focus
+or intention, often with a similar syntax.
+
+We want to explore some of the external libraries in this exercise. The task is as follows:
+- Choose one of the libraries below
+- Download and install (compile) the library (if necessary)
+- Create a source file `main.cc` that performs the following steps:
+  * Create a dense matrix `A` of size 100 x 100 and a vector `b` of size 100.
+  * Fill the matrix with the 1d finite-difference 3-point laplace stencil, i.e. on the diagonal the value `+2` and on
+    the first lower and upper off-diagonal the value `-1`.
+  * Fill the vector with all entries `1`.
+  * Solve the linear system `A*x = b` for the unknown vector `x`
+- Provide a `Makefile` or a compile script that links or includes the external library
+
+### Possible external libraries
+- [MTL4](http://www.simunova.com/de/mtl4)
+- [Eigen3](eigen.tuxfamily.org)
+- [Blaze](https://bitbucket.org/blaze-lib/blaze)
+- [Armadillo](http://arma.sourceforge.net)
+
+**>> Submit solution until 2020/01/22 ... (10 Points)**
