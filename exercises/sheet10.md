@@ -154,7 +154,7 @@ We want to explore some of the external libraries in this exercise. The task is 
 
 ### Possible external libraries
 - [MTL4](http://www.simunova.com/de/mtl4)
-- [Eigen3](eigen.tuxfamily.org)
+- [Eigen3](http://eigen.tuxfamily.org)
 - [Blaze](https://bitbucket.org/blaze-lib/blaze)
 - [Armadillo](http://arma.sourceforge.net)
 
