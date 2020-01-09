@@ -1,0 +1,343 @@
+\chapter{Generic programming}
+If you have an algorithm or function that can be expressed independent of the representation details of the arguments and without complicated case-by-case
+variations, it should be written in a generic form. Thereby, instead of implementing a concrete function (or class), just a template for the function (or class)
+is provided that is later filled with concrete realizations of types. This is called \emph{generic programming}.
+
+\begin{zitat}{Musser, David R.; Stepanov, Alexander A., Generic Programming (1989)}
+  Generic programming centers around the idea of abstracting from concrete, efficient algorithms to obtain generic algorithms that can be combined with
+  different data representations to produce a wide variety of useful software.
+\end{zitat}
+
+
+% =================================================================================================
+\section{Templates}
+Generic programming in C++ allows to parametrize functions and classes not just with values (function parameters, or constructor arguments), but with types.
+A \emph{template parameter} thereby is a special kind of parameter passed to the function, class, or even variable. Inside of the realization of the function
+or class, this type parameter, represented by its name, can be used as any other regular type, e.g. to declare variables, to specify function parameter lists
+or return types, or to parametrize other function or class templates.
+
+An introductory example illustrates the usage of function and class templates:
+\begin{minted}{c++}
+  #include <cmath>
+
+  // class template
+  template <typename T> // T is type for coordinates, e.g. T=double
+  struct MyPoint
+  {
+    using value_type = T; // introduction of a type alias
+    T x, y;               // type T used here to declare a variable
+                          // alternatively: value_type x,y;
+  };
+
+  // function template
+  template <typename P>   // P is type for the vectors to calculate the distance of
+  auto distance(P const& a, P const& b) // type P in the argumentlist, both arguments
+  {                                     // should have the same type.
+    using T = typename P::value_type;   // access to a class type
+    T dx = a.x - b.x;
+    T dy = a.y - b.y;                   // Or: auto dy = a.y - b.y
+    return std::sqrt(dx * dx + dy * dy);
+  }
+\end{minted}
+
+The call to the (generic) function \texttt{distance}, i.e. the \emph{instantiation} of that function with a concrete type, is
+initiated by passing concrete arguments to that function, or by specifying the type explicitly
+\begin{minted}{c++}
+  int main()
+  {
+    // Type for MyPoint explicitly specified
+    MyPoint<double> a{1.0, 2.0}, b{7.0,-1.5};
+
+    // Or implicit deduction of the type (C++17)
+    MyPoint c{2.0, 3.0};   // double coordinates
+    MyPoint d{3.0f, 4.0f}; // float coordinates
+
+    // Type for the arguments of distance( , ) automatically deduced
+    std::cout << "Distance of a and b (double) = "
+              << distance(a,b) << std::endl;
+
+    // Similarly, by explicit specification:
+    std::cout << "Distance of a and b (double) = "
+              << distance<MyPoint<double>>(a,b) << std::endl;
+
+    // Call the function with different type
+    MyPoint<float> a2{1.0f, 2.0f}, b2{7.0f,-1.5f};
+    std::cout << "Distance of a and b (float) = "
+              << distance(a2,b2) << std::endl;
+
+    // invalid argument types
+    distance(1.0, 2.0); // ERROR: `double` has no `value_type` and access to
+                        // the members x and y not possible
+
+    // incompatible argument types MyPoint<double> and MyPoint<float>
+    distance(c, d);  // ERROR
+  }
+\end{minted}
+
+
+% =================================================================================================
+\section{Generic functions}
+Generic functions extend the concept of function overloading. The generic functions are called \emph{function templates} (and sometimes also
+\emph{templated functions}).
+
+The basic idea is that instead of a function with concrete types, we parametrize the function with a type parameter that can be used
+instead of the concrete type.
+
+The syntax to declare a function template:
+\begin{minted}{c++}
+  template <typename NAME1, typename NAME2, (...)> FUNCTION_DECLARATION;
+  template <class NAME, (...)> FUNCTION_DECLARATION;
+\end{minted}
+It simply starts with the keyword \texttt{template} and in angular brackets \texttt{<...>} a comma separated list of template parameters.
+
+The argument \texttt{NAMEx} is called \emph{template parameter} and must be a valid name in c++. The argument is introduced with either the
+additional keyword \texttt{typename} or \texttt{class} for type-parameters (there is no difference of these two keywords).
+
+\begin{rem}
+  Also, \texttt{NAME} can be a \emph{nontype}-parameter, a \emph{template}-parameter, or a \emph{parameter-pack}. We will focus here on type parameters and later introduce nontype parameters.
+\end{rem}
+
+\begin{rem}
+  The number of template parameters is restricted only by compiler-specific limits.
+\end{rem}
+
+The call of a function template is a two-phase procedure:
+\begin{enumerate}
+  \item Template instantiation $\rightarrow$ concrete function
+  \item Invocation of that concrete function
+\end{enumerate}
+
+\emph{Template instantiation} is the process of filling the placeholder template parameters with concrete types (or values, see below). This can be achieved
+in two ways. 1. Explicit specification of the types:
+%
+\cppline{FUNCTION_NAME<TYPES...>(PARAMETERS);}
+%
+where \texttt{TYPES} must be replaced with concrete types in the order of the template parameter declaration (without the keywords \texttt{typename} or
+\texttt{class}).
+
+Or the template instantiation can be obtained by implicit deduction of the template parameter types from the function arguments
+(\emph{argument type deduction} (ATD)):
+%
+\cppline{FUNCTION_NAME(PARAMETERS);}
+%
+Thereby, the function parameter must be dependent on all the template parameter types.
+
+\begin{example}
+  We have the function template \texttt{abs\_difference} defined as follow:
+  \begin{minted}{c++}
+  template <typename T>
+  T abs_difference(T value1, T value2)
+  {
+    return std::abs(value1 - value2);
+  }
+  \end{minted}
+  Explicit instantiation of this function template:
+  \begin{minted}{c++}
+  abs_difference<double>(1.0, 2.0);
+  abs_difference<float>(1.0f, 2.0f);
+  \end{minted}
+  and implicit instantiation by argument type deduction:
+  \begin{minted}{c++}
+  abs_difference(1.0, 2.0); // -> T = double
+  abs_difference(3, 4);     // -> T = int
+  \end{minted}
+\end{example}
+
+The type deduction thereby is very similar to the \cpp{auto} type deduction from the auto-placeholder syntax introduced before.
+Actually, in C++ first the template parameter deduction was invented and later the auto-type deduction was added with \cxx{11}.
+
+\begin{rem}
+  Argument type deduction only works, if all the types can be deduced uniquely from the function parameters. In the example above, we have
+  declared a function template with two parameters and have specified both with the same template parameter \texttt{T}. Thus, we have to
+  pass two arguments of the same type to the function template in order to allow the template parameters to be deduced from the
+  function parameters:
+  %
+  \begin{minted}{c++}
+  double a = 1.0;
+  float b = 2.0f;
+  abs_difference(a,b); // ERROR: can not deduce template parameters
+  \end{minted}
+  %
+  The parameter \texttt{T} could be either deduced to \cpp{double} or to \cpp{float}.
+
+  But, if the template is instantiated with an explicit type, no automatic deduction needs to be done and thus we have a regular
+  function that can be called with different argument that are automatically converted:
+  %
+  \begin{minted}{c++}
+    abs_difference<double>(a, b); // OK => generates function 'double(double,double)' and
+                                  // calls this function with parameters double and float
+                                  // -> implicit conversion of float to double
+  \end{minted}
+\end{rem}
+
+Since function templates can be ``called'' like regular functions, name and overload resolution must be considered. This will be discussed in detail
+later. Here just an example:
+\begin{minted}{c++}
+  // non-template function
+  double abs_difference(double a, double b); // (a)
+
+  // function template
+  template <class T>
+  T abs_difference(T a, T b);                // (b)
+
+  double a=1.0, b=2.0;
+  abs_difference(a,b);         // (1) calls (a)
+  abs_difference<double>(a,b); // (2) calls (b)
+  abs_difference<>(a,b);       // (3) calls (b)
+\end{minted}
+If there is an exact match of a non-templated function, this is always preferred (1). If the explicit instantiation with empty template parameter list,
+it asks for argument type deduction, but enforces a call to the instantiated template, instead of the non-template (3).
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Templates as placeholders}
+Similar to the \cpp{auto} placeholder, template parameter can be equipped with qualifiers, like \cpp{const}, reference (or pointer).
+But additionally, template parameters can be used just like regular types, as parameters to other templates, like class templates:
+%
+\begin{minted}{c++}
+  // accept all std::vector arguments only
+  template <class T>
+  double norm1(std::vector<T> const& vec); // (a)
+
+  // accept any type, and pass it by reference
+  template <class T>
+  double norm2(T const& vec);         // (b)
+
+  // accept any type, and pass it by value
+  template <class T>
+  double norm3(T vec);                // (c)
+\end{minted}
+%
+The rules how to deduce a type \texttt{T} from the arguments is just like the deduction rules of \cpp{auto}, plus a pattern matching
+in case the parameter is used in another template.
+%
+\begin{minted}{c++}
+std::vector<double> vec = {...};
+
+norm1(vec); // T = double
+norm2(vec); // T = std::vector<double>
+norm3(vec); // T = std::vector<double>
+\end{minted}
+
+
+% =================================================================================================
+\section{Generic Classes}
+A generic class, or \emph{class template} (or templated class) is a user-defined type, parameterized with other types (and values). This
+allows to specify the internal data-type during the \emph{instantiation} of the outer class type. Important examples of class templates
+are containers, where the type of the elements that are stored in the container are passed as template parameters to the class template
+(like \texttt{std::vector<double>}).
+
+The syntax is similar to that of generic functions:
+\begin{minted}{c++}
+  template <typename NAME1, typename NAME2, (...)> CLASS_DECLARATION;
+  template <class NAME1, (...)> CLASS_DECLARATION;
+\end{minted}
+We call this a \emph{template declaration} (or \emph{template definition} in case of class definition) with \texttt{NAMEx} the \emph{template parameters}.
+\texttt{CLASS\_DECLARATION} is thereby either \cpp{struct CLASS_NAME} or \cpp{class CLASS_NAME} (similar to regular classes).
+Again, there is no difference between \texttt{typename} and \texttt{class} of the template parameter declaration, for type parameters.
+
+\begin{rem}
+  Analogously to function parameters, template parameters can have default ``values'' (or default types), specified starting from the right-most template
+  parameter:
+  \cppline{template <class T1, class T2, class T3 = int> class CLASS_NAME { ... };}
+\end{rem}
+
+The \emph{template instantiation} of a class template, i.e. the replacement of a template parameter with a concrete type (or value), follows the syntax
+\begin{minted}{c++}
+  CLASS_NAME<TYPES...> variable(CONSTRUCTOR_ARGUMENTS); // or...
+  CLASS_NAME<TYPES...> variable{CONSTRUCTOR_ARGUMENTS}; // Uniform initialization, or
+                                                        // initializer lists
+\end{minted}
+where \texttt{TYPES...} is a list of concrete types (without the keyword \texttt{typename} or \texttt{class}).
+
+\begin{rem}
+  With \marginpar{[\cxx{17}]}\cxx{17} the class template parameters can be automatically deduced from the class constructor arguments. This
+  is called \emph{class template argument deduction}. Similar to argument type deduction for function templates the template parameters
+  are deduced from the arguments passed to a constructor of the class template. This works, if all class template parameters are related to
+  a constructor parameter:
+  %
+  \begin{minted}{c++}
+  std::pair p(2, 4.5);      // deduces to std::pair<int, double> p(2, 4.5);
+  std::tuple t(4, 3, 2.5);  // same as auto t = std::make_tuple(4, 3, 2.5);
+  std::vector v{1,2,3,4,5}; // deduces to std::vector<int> v{1,2,3,4,5};
+  \end{minted}
+  %
+  but
+  %
+  \begin{minted}{c++}
+  std::vector v2(7);      // ERROR: type can not be deduced. The constructor argument is
+                          // just the size of the vector, no value.
+  \end{minted}
+
+  See also \href{https://en.cppreference.com/w/cpp/language/class_template_argument_deduction}{cppreference:class\_template\_argument\_deduction}.
+\end{rem}
+
+
+
+% =================================================================================================
+\section{Non-type parameters}\label{sec:non_type_parameters}
+Apart from type parameters, template parameters can represent integral values. Instead of specifying the template parameter with \texttt{typename} or
+\texttt{class}, it is declared with any integral value type, e.g. \cpp{int}.
+
+The following example defines a class template of a container with fixed number of elements that is given as non-type template parameter:
+\begin{minted}{c++}
+  template <class T, int N>
+  struct fixed_size_array
+  {
+    T& operator[](int i) { return data[i]; }
+    const T& operator[](int i) const { return data[i]; }
+
+  private:
+    T data[N];  // size is fixed by template parameter
+  };
+
+  int main()
+  {
+    fixed_size_array<double, 3> point3D;
+    point3D[2] = 7.0;
+  }
+\end{minted}
+
+\begin{rem}
+  Not all types are allowed as non-type template parameters. It must be possible to uniquely evaluate those types at compile-type. Therefore the c++
+  standard has restricted non-type template parameters to integral types, enums, characters, and pointer types.
+\end{rem}
+
+Similar to type parameters, default values are possible:
+\begin{minted}{c++}
+  template <class T, int N = 3>
+  struct fixed_size_array { ... };
+\end{minted}
+
+Since non-type parameters must be specified at compile-time to instantiate that template, it must be a \cpp{constexpr}. Runtime values are not allowed:
+\begin{minted}{c++}
+  constexpr int n = 7;
+  fixed_size_array<double, n> point7D; // OK
+
+  int m = 5;
+  fixed_size_array<double, m> point5D; // ERROR: m is runtime value
+\end{minted}
+
+
+% =================================================================================================
+\section{Comparison of templates to concrete types/functions}
+A class generated from a class template is like any other regular / concrete class. It is just a user-defined data-type with size and alignment.
+One can instantiate that class and create type aliases to that class. Especially,
+\begin{itemize}
+  \item there is \underline{no} additional runtime overhead compared to a hand-written (concrete) class,
+  \item there is \underline{no} space overhead in the instantiated template compared to a hand-written class.
+\end{itemize}
+
+Each class template is translated into a regular class at template instantiation. Those instantiations get internally a unique name tepending on the
+instantiated template parameters, e.g. \cpp{mypoint<double>} $\Rightarrow$ \texttt{[...]mypointId[...]} (in g++)
+
+After instantiation of a template, all its internal types, member functions, member variables and static constants are concrete, have a concrete type
+or (in case of static constants) have a concrete value, that can be evaluated and asked for.
+
+For function templates it is similar. After function template instantiation, the template becomes a regular function, that participates in overload
+resolution like any other function. It can be passed as a function parameter to other functions, or can be stored in a function reference variable,
+or a \texttt{std::function} object. And, similar to class templates,
+\begin{itemize}
+  \item there is \underline{no} additional runtime overhead compared to a hand-written (concrete) function,
+  \item there is \underline{no} space overhead in the instantiated template compared to a hand-written function.
+\end{itemize}
