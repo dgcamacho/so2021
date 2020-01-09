@@ -238,10 +238,25 @@ can be qualified with \cpp{const}, reference and pointer. But they can not be us
 \cpp{std::vector<auto>} is not allowed as function parameter in generic lambdas.
 
 \begin{rem}
-  With \marginpar{[\cxx{20}]}\cxx{20} one can introduce named template parameters in generic lambdas. Therefore, one adds after the capture
-  block in the lambda definition a declaration of template parameters:
+  With \marginpar{[\cxx{20}]}\cxx{20} one can introduce named template parameters in generic lambdas. Therefore, one adds a declaration
+  of template parameters after the capture block in the lambda definition:
   %
   \begin{minted}{c++}
   [...] <class P1, class P2, (...)> (P1 param1, P2 param2...) -> ReturnType { function body };
   \end{minted}
 \end{rem}
+
+
+% =================================================================================================
+\section{Abbreviated function template}
+Since \marginpar{[\cxx{20}]}\cxx{20}, a similar syntax as used for generic lambda can be used for regular function. When placeholder types \cpp{auto} appear in the
+parameter list of a function declaration or of a function template declaration, the declaration declares a function template, and one
+invented template parameter for each placeholder is appended to the template parameter list.
+%
+\begin{minted}{c++}
+  void f1(auto arg); // same as template<class T> void f1(T arg)
+  void f2(auto const& arg); // same as template<class T> void f2(T const& arg)
+\end{minted}
+%
+This is especially useful, if the actual type of the argument is irrelevant, but the algorithm allows to generically pass arguments of different
+type.
