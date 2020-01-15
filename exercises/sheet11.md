@@ -125,7 +125,7 @@ class Rational
 Just identity the missing functions, maybe implement it with a placeholder function or an error message so that at least the code
 compiles.
 
-- Please, only implement on of the class templates.
+- Please, only implement one of the class templates.
 
 #### Resources
 - [Polynomial greatest common devisor](https://en.wikipedia.org/wiki/Polynomial_greatest_common_divisor),
