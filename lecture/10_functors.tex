@@ -34,7 +34,7 @@ can easily switch between increasing and decreasing order of the elements.
 Another example is the function \cpp{for_each}, that applies to each element in a container a function (e.g. to change the value of the element):
 \begin{minted}{c++}
   void for_each(std::vector<double>& vec, Sqr const& f) {
-    for (auto& v_i : v)
+    for (auto& v_i : vec)
       v_i = f(v_i);
   }
 
