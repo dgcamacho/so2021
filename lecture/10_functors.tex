@@ -23,6 +23,9 @@ Example:
   }
 \end{minted}
 
+\begin{guideline}{Guideline}
+  Implement functors as classes with an overloaded \cpp{operator()} as \cpp{public} and \cpp{const} memberfunction.
+\end{guideline}
 
 % =================================================================================================
 \section{Functors as function parameters}
@@ -60,7 +63,7 @@ argument:
 \begin{minted}{c++}
   template <class F>
   void for_each(std::vector<double>& vec, F const& f) {
-    for (auto& v_i : v)
+    for (auto& v_i : vec)
       v_i = f(v_i);
   }
 \end{minted}
