@@ -1,0 +1,342 @@
+\chapter{Iterators}
+A central layer ob abstraction introduced in the C++ standard library are \emph{iterators}. Genrally speaking, iterators are objects allowing the
+programmer to traverse the elements of an arbitrary container, without knowing the specific implementation, the data storage or the access pattern to
+individual elements of that data-structure. While vectors and arrays may have a direct element access, using the \cpp{operator[]}, lists and trees do
+not have such a method, or it might be very expensive to retrieve a specific element in the sequence rather than traversing linearly through the container.
+
+An abstraction that you find in C and that is often that case of an implementation of a data-structure are pointers, pointing to the individual elements or
+to the next and previous element in a sequence. But it is not required that containers are implemented with a chain of pointers and constructing the pointer
+to an element could be an additional operation. Also, pointers do not give me any information about how a sequence might be traversed and where to find the
+next element.
+
+The abstraction that we want to discuss here are \emph{iterators}. They provide similar semantics as regular pointers, but incrementing (or decrementing)
+an iterator means pointing to the next (previous) element in the sequence rather than the next position in memory. To allow iterators to be used similar to
+pointers, they provide at least the following operation:
+
+\begin{itemize}
+  \item Dereferencing with \cpp{operator*}, to access the element the iterator is pointing to
+  \item Going to the next element in the sequence, be pre or post increment \cpp{operator++}
+  \item Test for equality and inequality by \cpp{operator==} and \cpp{operator!=}.
+\end{itemize}
+
+Additionally, iterators are light-weight objects, meaning: they can be copied and returned/passed by value without much overhead. They have a size similar
+to a regular pointer.
+
+% =================================================================================================
+\section{Iterators of standard library containers}
+In the standard library, all containers (e.g. \cpp{std::vector}, \cpp{std::list}, \cpp{std::set}) provide at least two functions, \cpp{begin()} and \cpp{end()}
+returning an iterator object. Thereby, \cpp{begin()} points to the first element in the sequence and \cpp{end()} is a so called \emph{sentinel} -- an abstraction of a past-the-end iterator.
+
+Using these two iterators, a traversal over the elements of a container can be realized by
+%
+\begin{minted}{c++}
+  #include <iostream>
+  #include <vector> // or <list> or <set> or ...
+  int main() {
+    std::vector<double> v = {...};
+    for (auto it = v.begin(); it != v.end(); ++it) {
+      // comparison of iterators, increment of the iterator
+
+      std::cout << *it << std::endl;
+      // dereferencing of the iterator to get the value
+    }
+  }
+\end{minted}
+
+In standard library containers, the type of iterators is given as a typedef/alias type in the container class, accessible by \cpp{::iterator} or
+\cpp{::const_iterator}. A \cpp{const_iterator} can be seen as an abstraction of a pointer to \cpp{const}, whereas an \cpp{iterator} as a pointer to
+non-const elements. Thus, one could write out the explicit type in the loop by
+%
+\begin{minted}{c++}
+  for (std::vector<double>::const_iterator it = v.begin(); it != v.end(); ++it)
+    std::cout << *it << std::endl;
+\end{minted}
+
+The\marginpar{[]\cxx{17}]} end-iterator is not necessarily of the same type as the begin-iterator.
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Range-based for-Loops}
+Since iterating over a container is essentially always the same, take begin, compare to end, increment; a loop structure that does essentially
+those steps is added in \cxx{11}, called \emph{range-for} loop.
+
+The syntax follows the general pattern
+\begin{minted}{c++}
+  for (range_declaration : range_expression) loop_statement
+\end{minted}
+
+\begin{example}
+  Consider the following code:
+  \begin{minted}{c++}
+    std::vector<double> v = ...;
+    for (auto const& v_i : v) { std::cout << v_i << std::endl; }
+  \end{minted}
+
+  Here, the declaration of of the variable \cpp{auto const& v_i} is the \emph{range\_declaration}, the vector \texttt{v} is a simple
+  \emph{range\_expression} (could be anything that generates a range) and \cpp{{std::cout << v_i << std::endl; }} is the \emph{loop\_statement}.
+\end{example}
+
+The three parts can be defined as
+\begin{description}
+  \item[range\_declaration]
+    a declaration of a named variable, whose type is the type of the element of the sequence represented by range\_expression, or a reference
+    to that type. Often uses the auto specifier for automatic type deduction
+  \item[range\_expression]
+    any expression that represents a suitable sequence (either an array or an object for which begin and end member functions or free functions
+    are defined, see below) or a braced-init-list.
+  \item[loop\_statement]
+    any statement, typically a compound statement, which is the body of the loop
+\end{description}
+
+The generic implementation, i.e. what the compiler make out of the range-for loop statement above is the following code:
+%
+\begin{minted}{c++}
+{
+  auto && __range = range_expression;
+  auto __begin = begin_expr;
+  auto __end = end_expr;
+  for ( ; __begin != __end; ++__begin) {
+    range_declaration = *__begin;
+    loop_statement
+  }
+}
+\end{minted}
+where \cpp{begin_expr} (and \cpp{end_expr}) represent the evaluation of \cpp{std::begin(c)} or \cpp{c.begin()} (and \cpp{std::end(c)} or \cpp{c.end()}).
+
+
+% ==============================================================================
+\section{Iterators in generic functions}
+In the same way all containers of the standard library can be iterated through as seen above.
+This allows to formulate a general programming methodology, implemented in the standard library:
+
+\begin{guideline}{Fundamental Methodology}
+  Decouple the Implementation of Data Structures and Algorithms.
+\end{guideline}
+
+Each container provides iterators for traversing its content. Each algorithm in the standard library, one the other hand, is implemented in terms
+of iterators. In a classical programming style where an algorithm is implemented for a specific data-structure, to implement $m$ algorithms for
+$n$ containers one needs
+\[
+  m\cdot n\text{ implementations}
+\]
+whereas for algorithms based on iterators, one needs just
+\[
+  m+n\text{ implementations}
+\]
+
+In order to allow iterators to be passed to functions, one needs function templates.
+
+\begin{example}
+  Lets have a look at an algorithm of the standard library: \emph{accumulation} of the values in a container.
+  \begin{minted}{c++}
+  template <typename InputIterator, typename T, typename BinaryFunction>
+  T accumulate(InputIterator it, InputIterator end, T init, BinaryFunction op)
+  {
+    T sum(init);
+    for (; it != end; ++it)
+      sum = op(sum, *it);
+    return sum;
+  }
+  \end{minted}
+
+  One could think of summing up the values. Then, the \texttt{BinaryFunction} is the function returning
+  the sum of two passed arguments and the \texttt{init} value is typically, the neutral value for the plus
+  operator (\texttt{0}), i.e. where to start the sum from.
+
+  Additionally we get two iterators, describing the range of value we want to sum up. \texttt{it} is thereby the
+  first element, and \texttt{end} a position after the last element in the range, so that is it never \textit{equal}
+  to an iterator until the iteration is finished.
+
+  A corresponding \cpp{main()} function could look like
+  \begin{minted}{c++}
+  #include <set>        // std::set
+  #include <functional> // std::plus
+
+  int main() {
+    std::set<double> v = ...;
+    double s = accumulate( v.begin(), v.end(), 0.0, std::plus<double>{} );
+  }
+  \end{minted}
+  %
+  So, we can sum up the values of a set, even if they are not stored contiguously in memory.
+\end{example}
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Iterator categories}
+Not all iterators support iteration forward and backward. Some iterators not even support multiple iterations through the same sequence
+(after the first traversal, als elements are invalidated), but other containers might even support jumping to an arbitrary position in the
+sequence.
+
+To distinguish the different functionality of iterators, the standard library has introduced \emph{iterator categories}:
+\begin{description}
+  \item[Input iterator]
+    Supports only forward iteration at least once through the sequence, and allows to read from the iterators, i.e. const dereferencing.
+    \begin{itemize}
+      \item \cpp{operator++()}
+      \item \cpp{operator++(int)}
+      \item \cpp{operator*() const}
+      \item \cpp{operator->() const}
+    \end{itemize}
+  \item[Forward Iterator]
+    Same as \emph{Input Iterator} but supports multiple iterations through the same sequence.
+  \item[Bidirectional Iterator]
+    Same as \emph{Forward Iterator} but additionally supports backward iteration:
+    \begin{itemize}
+      \item \cpp{operator--()}
+      \item \cpp{operator--(int)}
+    \end{itemize}
+  \item[Random Access Iterator]
+    Same as \emph{Bidirectional Iterator} but additionally supports arbitrary forward and backward jumps in the sequence:
+    \begin{itemize}
+      \item \cpp{operator+=(int)}
+      \item \cpp{operator-=(int)}
+      \item \cpp{operator+(int)}
+      \item \cpp{operator-(int)}
+      \item \cpp{operator[](int)} increment (or decrement) by arbitrary distance and direct dereferencing
+      \item \cpp{operator-(iterator)} distance between two iterators
+    \end{itemize}
+    and also comparison operators \texttt{<, >, <=, >=}.
+  \item[Contiguous Iterator]
+    Same as \emph{Random Access Iterator} but additionally guarantees contiguous storage of the elements in the underlying container.
+  \item[Output Iterator]
+    Supports only forward iteration at least once through the sequence, and allows to write to the elements the iterator is pointing to, i.e. mutable dereferencing.
+    \begin{itemize}
+      \item \cpp{operator++()}
+      \item \cpp{operator++(int)}
+      \item \cpp{operator*()}
+      \item \cpp{operator->()}
+    \end{itemize}
+\end{description}
+
+The categories introduced above formally describe what an iterator can do and where it can be applied. Some algorithms might require random access to
+the elements in the container, like some sorting algorithms, other algorithms are fine with just forward (or even input iterators).
+So, we need a way to distinguish different iterator types by its categories.
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Iterator traits}
+\emph{Traits} are class templates that just provide typedefs/alias types or static values, depending on the template parameters. The special template
+\emph{Iterator Traits}, parametrized with an iterator type, thereby provides access to some properties the iterators. A container can provide its
+own iterator traits (specialization) to give information about its iterators.
+
+A default implementation of the standard library iterator traits could look like the following:
+\begin{minted}{c++}
+  template <typename Iter>
+  struct iterator_traits {
+    using iterator_category = typename Iter::iterator_category;
+    using value_type        = typename Iter::value_type;
+    using difference_type   = typename Iter::difference_type;
+    using pointer           = typename Iter::pointer;
+    using reference         = typename Iter::reference;
+  };
+\end{minted}
+%
+So, it defines a type representing the \emph{Iterator Category} and some more types, useful for generic algorithms.
+
+Thereby, the type \cpp{pointer} describes the return type of the \cpp{operator->()} of an iterator, the type \cpp{reference} the return type of
+\cpp{operator*()}, \cpp{difference_type} is a type that can be used to describe the distance between iterator (typically a signed integer type)
+and that is used in the random access increments (not just \cpp{int} as written above).
+
+The category is represented by empty classes, forming a hierarchy that represents the connection between the categories above:
+\begin{minted}{c++}
+  struct input_iterator_tag { };
+  struct output_iterator_tag { };
+
+  struct forward_iterator_tag
+    : public input_iterator_tag { };
+
+  struct bidirectional_iterator_tag
+    : public forward_iterator_tag { };
+
+  struct random_access_iterator_tag
+    : public bidirectional_iterator_tag { };
+
+  struct contiguous_iterator_tag
+    : public random_access_iterator_tag { };
+\end{minted}
+
+\begin{example}
+  The iterator traits can be used to write more generic algorithms. Consider the \emph{accumulate} function from above:
+  The return type might be different from the init type, e.g. it could be the type of the elements of the sequence:
+  %
+  \begin{minted}{c++}
+  template <typename InputIterator, typename T, typename BinaryFunction>
+  auto accumulate(InputIterator it, InputIterator end,
+                  T init,
+                  BinaryFunction op)
+  {
+    // extract a type from the iterator traits
+    using result_type = typename iterator_traits<InputIterator>::value_type;
+
+    result_type sum(init);
+    for (; it != end; ++it)
+      sum = op(sum, *it);
+    return sum;
+  }
+  \end{minted}
+\end{example}
+
+\begin{rem}(Dependent types)
+  Is an associated type (alias type in a class) extracted from a class template instantiated with a template parameter from the surrounding scope,
+  we call it a dependent type -- the type depends on template parameters. The additional keyword \cpp{typename} is necessary to tell the compiler
+  it is actually a type we are asking for and not a static value or function.
+\end{rem}
+
+\begin{example}
+  Some algorithms can be improved by knowledge about the iterators. An example is the function \cpp{std::distance} returning the distance
+  between two iterator, i.e. how many increments are necessary to reach from begin the end iterator.
+  %
+  \begin{minted}{c++}
+  template <class InputIterator>
+  typename std::iterator_traits<InputIterator>::difference_type
+  distance(InputIterator first, InputIterator last);
+  \end{minted}
+
+  The return type is the \cpp{distance_type} associated to the iterator. Two algorithms could be implemented:
+  \begin{enumerate}
+    \item Iterate from \texttt{first} to \texttt{last} and count the steps.
+    \item Directly take the difference between \texttt{first} and \texttt{last} it the iterator is a \emph{Random Access Iterator}
+  \end{enumerate}
+
+  Since the difference is only possible if the type supports this operation, we can not simply use an \cpp{if - else} branching. we have
+  to implement two function, differing only in the iterator category:
+  %
+  \newpage
+  \begin{minted}{c++}
+    template <class InputIterator>
+    typename std::iterator_traits<InputIterator>::difference_type
+    distance_impl(InputIterator first, InputIterator last, std::input_iterator_tag)
+    {
+      typename std::iterator_traits<InputIterator>::difference_type d = 0;
+      for (; first != last; ++first, ++d) /* no operation */ ;
+      return d;
+    }
+
+    template <class InputIterator>
+    typename std::iterator_traits<InputIterator>::difference_type
+    distance_impl(InputIterator first, InputIterator last, std::random_access_iterator_tag)
+    {
+      return last - first;
+    }
+
+    template <class InputIterator>
+    typename std::iterator_traits<InputIterator>::difference_type
+    distance(InputIterator first, InputIterator last)
+    {
+      return distance_impl(first, last,
+        typename std::iterator_traits<InputIterator>::iterator_category{});
+    }
+  \end{minted}
+
+  Note, that also forward and bidirectional iterators can be used with these two functions, since they are both
+  also input iterators, but not random-access iterators. This can be seen at the class hierarchy of the iterator
+  categories.
+\end{example}
+
+\begin{guideline}{Technique}
+  When specializing generic algorithms, based on properties of the types, \emph{tag dispatching} can be used.
+  Thereby, an additional function parameter is introduced that gets passed a simple, typically empty, class,
+  called \emph{tag} that represents the specialization.
+
+  If tags are put into a class hierarchy, automatic type conversion to base types can be used together with
+  function overloading to allow to specialize for several similar properties.
+\end{guideline}

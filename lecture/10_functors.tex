@@ -63,7 +63,7 @@ argument:
 \begin{minted}{c++}
   template <class F>
   void for_each(std::vector<double>& vec, F const& f) {
-    for (auto& v_i : v)
+    for (auto& v_i : vec)
       v_i = f(v_i);
   }
 \end{minted}
