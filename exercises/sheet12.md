@@ -36,8 +36,8 @@ the `integer_range_iterator` of the begin and end of the container. The values b
 be given in the constructor of the container.
 
 ### Note
-- A word *pseudo-container* just here in this exercise refers to a container that does not store all its elements
-  directly, but provide a way to iterate over all its values.
+- A word *pseudo-container* here in this exercise refers to a container that does not store all its elements
+  directly, but provides a way to iterate over all its values.
 - (optional) In addition to the `begin()` and `end()` member-function, you could easily implement element-access functions
   `operator[]` and size functions for the `integer_range` container. What about mutable access functions? Can you implement
   the whole interface of a `std::vector`?
