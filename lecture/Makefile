@@ -1,6 +1,6 @@
 LECTURE_TEX := $(shell find * -type f -name "lecture_*.tex")
 LECTURE_PDF := $(subst .tex,.pdf,$(LECTURE_TEX))
-CHAPTER_TEX := $(shell find * -type f -regex "[0-9]+_[a-z]+[.]tex")
+CHAPTER_TEX := $(shell find * -type f -regex "[0-9]+_[a-z_]+[.]tex")
 
 all: lecture.pdf $(LECTURE_PDF)
 
