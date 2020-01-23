@@ -24,7 +24,7 @@ to a regular pointer.
 
 % =================================================================================================
 \section{Iterators of standard library containers}
-In the standard library, all containers (e.g. \cpp{std::vector}, \cpp{std::list}, \cpp{std::set}) provide at least two functions, \cpp{begin()} and \cpp{end()}
+In the standard library, all containers (e.\,g.\ \cpp{std::vector}, \cpp{std::list}, \cpp{std::set}) provide at least two functions, \cpp{begin()} and \cpp{end()}
 returning an iterator object. Thereby, \cpp{begin()} points to the first element in the sequence and \cpp{end()} is a so called \emph{sentinel} -- an abstraction of a past-the-end iterator.
 
 Using these two iterators, a traversal over the elements of a container can be realized by
@@ -256,7 +256,7 @@ The category is represented by empty classes, forming a hierarchy that represent
 
 \begin{example}
   The iterator traits can be used to write more generic algorithms. Consider the \emph{accumulate} function from above:
-  The return type might be different from the init type, e.g. it could be the type of the elements of the sequence:
+  The return type might be different from the init type, e.\,g.\ it could be the type of the elements of the sequence:
   %
   \begin{minted}{c++}
   template <typename InputIterator, typename T, typename BinaryFunction>
@@ -554,7 +554,7 @@ The third algorithm, \cpp{std::transform}, applies a unary functor to the elemen
 \end{minted}
 \end{samepage}
 (There is a second version of \cpp{std::transform} taking two input ranges and one output range by iterators. With this, you could implement element-wise
-binary operations, e.g. sum of two vectors.)
+binary operations, e.\,g.\ sum of two vectors.)
 
 \begin{example}
   The following example illustrates the interaction of multiple algorithms and data-structures:
