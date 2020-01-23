@@ -340,3 +340,339 @@ The category is represented by empty classes, forming a hierarchy that represent
   If tags are put into a class hierarchy, automatic type conversion to base types can be used together with
   function overloading to allow to specialize for several similar properties.
 \end{guideline}
+
+
+% =================================================================================================
+\section{Algorithms}
+The C++ standard library implements data-structures and algorithms that can be combined in a flexible way, by using iterators. All container
+implementations at least have a method \cpp{begin()} and \cpp{end()} returning iterators to the first and one-past-the-end element.
+Algorithms on the other hand are written in terms of iterators for the input and output. Thus, data-structures and algorithms are separated.
+
+Some algorithms of the standard library are introduced here. More can be found in cppreference.com in the \cpp{<algorithm>}%
+\footnote{\url{http://en.cppreference.com/w/cpp/algorithm}} and \cpp{<numeric>}\footnote{\url{http://en.cppreference.com/w/cpp/numeric}} headers.
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Copy}
+Copies the elements of a range\footnote{A \emph{range} denotes a data-structure that can be traversed by a pair of iterators} \cpp{[first, last)}
+into another range described by just one output-iterator. Two variants are described here: \cpp{std::copy} and \cpp{std::copy_if}. The latter
+only copies those elements fulfilling some condition.
+%
+\begin{samepage}
+\begin{minted}{c++}
+  template <class InputIt, class OutputIt>
+  OutputIt copy(InputIt first, InputIt last, OutputIt d_first)
+  {
+    while (first != last) {
+      *d_first++ = *first++;
+    }
+    return d_first;
+  }
+\end{minted}
+\end{samepage}
+%
+The parameters \texttt{first} and \texttt{last} are iterators of type \texttt{InputIt} and should fulfill the concepts of an input-iterator. The
+thirst parameter \texttt{d\_first} is an out-iterator pointing to the first element in the output range. It is of type \texttt{OutputIt}. The
+types \texttt{InputIt} and \texttt{OutputIt} are different, allowing to copy from one container in a different one.
+
+The return value of the copy function is again of type \texttt{OutputIt} and thus an iterator into the output range. It points to one-past the element
+copied last in the algorithm. Thus, the iterator pair \cpp{[d_first, return_value)} defines a range that has identical elements as the
+input range \cpp{[first, last)}.
+
+Since the output range is directly filled using the output iterators, it is expected that this range can store enough elements, i.e. the output iterator
+can be increment at least as often as the input iterator. It is, on the other hand, not required, that the returned iterator is identical to the end-iterator
+of the output range. It is fine to copy less elements that the range could store.
+
+\begin{example}
+  Copy elements from a list into a vector:
+  %
+  \begin{minted}{c++}
+  #include <algorithm>
+  #include <cassert>
+  #include <list>
+  #include <vector>
+
+  int main()
+  {
+    std::list<int> l = {0, 1, 2, 3, 4, 5};
+    std::vector<int> v(l.size());
+    auto it = std::copy(l.begin(), l.end(), v.begin());
+
+    assert( it == v.end() ); // here, the return iterator points to the end of the vector
+  }
+  \end{minted}
+\end{example}
+
+The second variant of copy, \cpp{std::copy_if}, expects an additional function parameter representing a \emph{unary predicate}, i.e. function or functor
+taking one parameter and returning a \cpp{bool}:
+%
+\begin{samepage}
+\begin{minted}{c++}
+  template <class InputIt, class OutputIt, class UnaryPredicate>
+  OutputIt copy_if(InputIt first, InputIt last, OutputIt d_first, UnaryPredicate pred)
+  {
+    while (first != last) {
+      if (pred(*first))
+          *d_first++ = *first;
+      first++;
+    }
+    return d_first;
+  }
+\end{minted}
+\end{samepage}
+%
+The output-iterator is incremented only if the predicate returns \cpp{true}.
+
+\begin{example}
+  In the second example, we copy only elements with even values. We use a lambda expression to define the predicate.
+  \begin{minted}{c++}
+  #include <algorithm>
+  #include <cassert>
+  #include <list>
+  #include <vector>
+
+  int main()
+  {
+    std::list<int> l = {0, 1, 2, 3, 4, 5};
+    std::vector<int> v(l.size());
+    auto it = std::copy_if(l.begin(), l.end(), v.begin(),
+      [](int i) { return i % 2 == 0; }); // copy only even elements
+  }
+  \end{minted}
+\end{example}
+
+
+\subsubsection{Backinserter}
+The problem with the copy algorithm is that we need to resize the output container before we can copy into it. In case of \cpp{copy_if} we even do
+not know how many elements are copied. It would be better, if the algorithm itself could ``resize'' the container to the required size. But we
+do not get a container as input, but an iterator. This iterator has no functionality to resize the underlying container. It often does not even has
+a reference to the container it points into.
+
+A workaround for this problem is to use a different output-iterator. Not an iterator directly pointing to elements of the output-range, but a special
+iterator wrapper that performs on assignment to the dereferenced iterator an \cpp{insert()} or \cpp{push_back()} operation. The corresponding
+wrapper type is called \cpp{std::back_insert_iterator} ans is created using the function \cpp{std::back_inserter}.
+%
+\begin{minted}{c++}
+  #include <algorithm>
+  #include <cassert>
+  #include <iterator> // std::back_inserter
+  #include <list>
+  #include <vector>
+
+  int main()
+  {
+    std::list<int> l = {0, 1, 2, 3, 4, 5};
+    std::vector<int> v; // an empty vector
+
+    // add new elements to the back of the vector on copy
+    auto it = std::copy(l.begin(), l.end(), std::back_inserter(v));
+
+    assert( v.size() == l.size() );
+  }
+\end{minted}
+
+The class-type \cpp{std::back_insert_iterator} implements the concept of an \cpp{OutputIterator}. Thus, it can be incremented and dereferenced. But, both
+methods have a different effect as expected, essentially they do nothing, but, in case of the dereference operator, just return \cpp{*this}, i.e. a reference
+to itself. Additionally, this iterator implements an assignment \cpp{operator=}, calling \cpp{push_back()} on the wrapped container with the
+value given to the assignment operator. (see also the exercise)
+
+Similarly, there is \cpp{std::front_insert_iterator} adding elements to the front of the container by \cpp{push_front()}.
+
+
+\subsubsection{Ostream-Iterator}
+Also some very special output-iterators can be used in combination with \cpp{std::copy()}. An example is the \cpp{std::ostream_iterator}. Instead of
+inserting the copied elements into a container, this iterator pushes the element into an output-stream, like \cpp{std::cout}, using the \cpp{operator<<}.
+
+This allows to write all the elements of any container to the output in one line:
+\begin{minted}{c++}
+  #include <algorithm>
+  #include <iostream>
+  #include <list>
+
+  int main()
+  {
+    std::list<int> l = {0, 1, 2, 3, 4, 5};
+
+    // print all elements of the list to the screen
+    auto it = std::copy(l.begin(), l.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << '\n';
+  }
+\end{minted}
+%
+The \cpp{std::ostream_iterator} is a class-template parametrized with the type of the element it has to print to the output-stream. It is
+constructed from an output-stream object, like \cpp{std::cout}, \cpp{std::cerr} or \cpp{std::ofstream}, and optionally as second argument
+a delimiter separating the printed elements.
+
+The \cpp{std::ostream_iterator} is a model of a \emph{single-pass} \cpp{OutputIterator}, thus can be ``traversed'' only once. In a second traversal
+the state of the output-range is already changed and we can not go back.
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Fill, generate, and transform}
+The following three algorithm applied to a container can change the value of the elements.
+
+The first one, \cpp{std::fill}, sets all elements to the same value:
+%
+\begin{samepage}
+\begin{minted}{c++}
+  template <class ForwardIt, class T>
+  void fill(ForwardIt first, ForwardIt last, const T& value)
+  {
+    for (; first != last; ++first) {
+      *first = value;
+    }
+  }
+\end{minted}
+\end{samepage}
+
+The algorithm \cpp{std::generate} fills a range by values generated by a nullary funktor, called generator:
+%
+\begin{samepage}
+\begin{minted}{c++}
+  template <class ForwardIt, class Generator>
+  void generate(ForwardIt first, ForwardIt last, Generator g)
+  {
+    while (first != last) {
+      *first++ = g();
+    }
+  }
+\end{minted}
+\end{samepage}
+
+The third algorithm, \cpp{std::transform}, applies a unary functor to the elements of a range and assigns the result to an output-iterator:
+%
+\begin{samepage}
+\begin{minted}{c++}
+  template <class InputIt, class OutputIt, class UnaryOperation>
+  OutputIt transform(InputIt first1, InputIt last1, OutputIt d_first, UnaryOperation unary_op)
+  {
+    while (first1 != last1) {
+      *d_first++ = unary_op(*first1++);
+    }
+    return d_first;
+  }
+\end{minted}
+\end{samepage}
+(There is a second version of \cpp{std::transform} taking two input ranges and one output range by iterators. With this, you could implement element-wise
+binary operations, e.g. sum of two vectors.)
+
+\begin{example}
+  The following example illustrates the interaction of multiple algorithms and data-structures:
+  \begin{minted}{c++}
+  #include <algorithm>
+  #include <cmath>
+  #include <list>
+  #include <vector>
+
+  int main()
+  {
+    std::list<int> l(10);
+    std::vector<int> v(10);
+
+    // generate input data
+    std::fill(l.begin(), l.end(), 2);
+    std::generate(v.begin(), v.end(), [](){ return std::rand() % 10; });
+
+    // an empty output sequence
+    std::list<int> erg;
+
+    // sum the elements of the input ranges element-wise
+    std::transform(l.begin(), l.end(), v.begin(), std::back_inserter(erg),
+                  [](int a, int b) { return a+b; });
+  }
+  \end{minted}
+\end{example}
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Iota, accumulate, and inner\_product}
+The following three algorithms are taken from the standard library \cpp{<numeric>}.
+
+The first algorithm, \cpp{std::iota}, fills a sequence with increasing values, starting from an initial value:
+%
+\begin{samepage}
+\begin{minted}{c++}
+  template <class ForwardIt, class T>
+  void iota(ForwardIt first, ForwardIt last, T value)
+  {
+    while(first != last) {
+      *first++ = value;
+      ++value;
+    }
+  }
+\end{minted}
+\end{samepage}
+%
+The first two parameter define the output-range, while the third parameter gives the start value for the increasing value sequence.
+
+The second algorithm, \cpp{std::accumulate}, we have seen before. It is a reduction algorithm, returning one value as combination of all values in the range.
+Thus, it reduces a range to a single value. The default behavior of the accumulate algorithm is to sum up the values of the range, but it is possible to
+pass an additional binary functor argument, that defines the actual reduction operation to perform:
+%
+\begin{samepage}
+\begin{minted}{c++}
+  template <class InputIt, class T, class BinaryOperation>
+  T accumulate(InputIt first, InputIt last, T init, BinaryOperation op)
+  {
+    for (; first != last; ++first) {
+      init = op(init, *first);
+    }
+    return init;
+  }
+\end{minted}
+\end{samepage}
+
+The third algorithm in this chapter takes two ranges, given by its iterators, ane reduces the combined elements of the ranges to a single output values.
+The default behavior of this algorithms is to perform a classical Euclidean inner-product, i.e. to sum up the products of the elements of the two ranges.
+
+Instead of this default operation, one can pass two functors to the algorithm. The first one is the reduction functor (plus by default) and the second one
+is the element-combination functor (multiplies by default):
+%
+\begin{samepage}
+\begin{minted}{c++}
+  template <class InputIt1, class InputIt2, class T,
+            class BinaryOperation1, class BinaryOperation2>
+  T inner_product(InputIt1 first1, InputIt1 last1,
+                  InputIt2 first2, T value,
+                  BinaryOperation1 op1, BinaryOperation2 op2)
+  {
+    while (first1 != last1) {
+      value = op1(value, op2(*first1, *first2));
+      ++first1;
+      ++first2;
+    }
+    return value;
+  }
+\end{minted}
+\end{samepage}
+
+\begin{example}
+  The following example first generates sequences of increasing values and then calculates the two-norm and the inf-norm as well as
+  an inner-product:
+  \begin{minted}{c++}
+  #include <numeric>
+  #include <cmath>
+  #include <list>
+  #include <vector>
+
+  int main()
+  {
+    std::list<int> l(10);
+    std::vector<int> v(10);
+
+    // generate input data
+    std::iota(l.begin(), l.end(), 0); // 0,1,2,3...
+    std::iota(v.begin(), v.end(), 1); // 1,2,3,4...
+
+    auto two_norm = std::sqrt( std::accumulate(l.begin(), l.end(), 0,
+      [](int erg, int a) { return erg + a*a; }) );
+
+    auto inf_norm = std::accumulate(v.begin(), v.end(), 0,
+      [](int erg, int a) { return std::max(erg, a); });
+
+    auto dot = std::inner_product(l.begin(), l.end(), v.begin(), 0,
+      [](int a, int b) { return a+b; },
+      [](int a, int b) { return a*b; });
+  }
+  \end{minted}
+\end{example}
