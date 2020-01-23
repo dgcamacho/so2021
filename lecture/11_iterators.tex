@@ -87,7 +87,7 @@ The three parts can be defined as
     any statement, typically a compound statement, which is the body of the loop
 \end{description}
 
-The generic implementation, i.e. what the compiler make out of the range-for loop statement above is the following code:
+The generic implementation, i.\,e.\ what the compiler make out of the range-for loop statement above is the following code:
 %
 \begin{minted}{c++}
 {
@@ -140,7 +140,7 @@ In order to allow iterators to be passed to functions, one needs function templa
 
   One could think of summing up the values. Then, the \texttt{BinaryFunction} is the function returning
   the sum of two passed arguments and the \texttt{init} value is typically, the neutral value for the plus
-  operator (\texttt{0}), i.e. where to start the sum from.
+  operator (\texttt{0}), i.\,e.\ where to start the sum from.
 
   Additionally we get two iterators, describing the range of value we want to sum up. \texttt{it} is thereby the
   first element, and \texttt{end} a position after the last element in the range, so that is it never \textit{equal}
@@ -170,7 +170,7 @@ sequence.
 To distinguish the different functionality of iterators, the standard library has introduced \emph{iterator categories}:
 \begin{description}
   \item[Input iterator]
-    Supports only forward iteration at least once through the sequence, and allows to read from the iterators, i.e. const dereferencing.
+    Supports only forward iteration at least once through the sequence, and allows to read from the iterators, i.\,e.\ const dereferencing.
     \begin{itemize}
       \item \cpp{operator++()}
       \item \cpp{operator++(int)}
@@ -199,7 +199,7 @@ To distinguish the different functionality of iterators, the standard library ha
   \item[Contiguous Iterator]
     Same as \emph{Random Access Iterator} but additionally guarantees contiguous storage of the elements in the underlying container.
   \item[Output Iterator]
-    Supports only forward iteration at least once through the sequence, and allows to write to the elements the iterator is pointing to, i.e. mutable dereferencing.
+    Supports only forward iteration at least once through the sequence, and allows to write to the elements the iterator is pointing to, i.\,e.\ mutable dereferencing.
     \begin{itemize}
       \item \cpp{operator++()}
       \item \cpp{operator++(int)}
@@ -283,7 +283,7 @@ The category is represented by empty classes, forming a hierarchy that represent
 
 \begin{example}
   Some algorithms can be improved by knowledge about the iterators. An example is the function \cpp{std::distance} returning the distance
-  between two iterator, i.e. how many increments are necessary to reach from begin the end iterator.
+  between two iterator, i.\,e.\ how many increments are necessary to reach from begin the end iterator.
   %
   \begin{minted}{c++}
   template <class InputIterator>
@@ -379,7 +379,7 @@ The return value of the copy function is again of type \texttt{OutputIt} and thu
 copied last in the algorithm. Thus, the iterator pair \cpp{[d_first, return_value)} defines a range that has identical elements as the
 input range \cpp{[first, last)}.
 
-Since the output range is directly filled using the output iterators, it is expected that this range can store enough elements, i.e. the output iterator
+Since the output range is directly filled using the output iterators, it is expected that this range can store enough elements, i.\,e.\ the output iterator
 can be increment at least as often as the input iterator. It is, on the other hand, not required, that the returned iterator is identical to the end-iterator
 of the output range. It is fine to copy less elements that the range could store.
 
@@ -403,7 +403,7 @@ of the output range. It is fine to copy less elements that the range could store
   \end{minted}
 \end{example}
 
-The second variant of copy, \cpp{std::copy_if}, expects an additional function parameter representing a \emph{unary predicate}, i.e. function or functor
+The second variant of copy, \cpp{std::copy_if}, expects an additional function parameter representing a \emph{unary predicate}, i.\,e.\ function or functor
 taking one parameter and returning a \cpp{bool}:
 %
 \begin{samepage}
@@ -472,7 +472,7 @@ wrapper type is called \cpp{std::back_insert_iterator} ans is created using the 
 \end{minted}
 
 The class-type \cpp{std::back_insert_iterator} implements the concept of an \cpp{OutputIterator}. Thus, it can be incremented and dereferenced. But, both
-methods have a different effect as expected, essentially they do nothing, but, in case of the dereference operator, just return \cpp{*this}, i.e. a reference
+methods have a different effect as expected, essentially they do nothing, but, in case of the dereference operator, just return \cpp{*this}, i.\,e.\ a reference
 to itself. Additionally, this iterator implements an assignment \cpp{operator=}, calling \cpp{push_back()} on the wrapped container with the
 value given to the assignment operator. (see also the exercise)
 
@@ -623,7 +623,7 @@ pass an additional binary functor argument, that defines the actual reduction op
 \end{samepage}
 
 The third algorithm in this chapter takes two ranges, given by its iterators, ane reduces the combined elements of the ranges to a single output values.
-The default behavior of this algorithms is to perform a classical Euclidean inner-product, i.e. to sum up the products of the elements of the two ranges.
+The default behavior of this algorithms is to perform a classical Euclidean inner-product, i.\,e.\ to sum up the products of the elements of the two ranges.
 
 Instead of this default operation, one can pass two functors to the algorithm. The first one is the reduction functor (plus by default) and the second one
 is the element-combination functor (multiplies by default):
