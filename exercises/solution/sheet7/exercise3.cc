@@ -140,7 +140,7 @@ Polynomial operator*(Polynomial const& lhs, Polynomial const& rhs)
 {
   int target_degree = lhs.degree() >= 0 && rhs.degree() >=0
     ? lhs.degree() + rhs.degree()
-    : 0;
+    : -1;
 
   Polynomial p(target_degree);
   for (int i = 0; i <= lhs.degree(); ++i)
