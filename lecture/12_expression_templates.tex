@@ -1,14 +1,14 @@
 \chapter{Expression Templates}
 Expression Templates is a well known technique implementing a form of delayed evaluation in C++. This idiom allows the compile-time
 construction of a type representing the Abstract Syntax Tree (AST) of an arbitrary statement. This is done by overloading functions and
-operators so they return a lightweight object which represents the current operation in the AST being built rather than performing any
-computation. Once reconstructed, the AST can be transformed into arbitrary code fragments.
+operators returning a lightweight object which represents the current operation in the AST being built rather than performing any
+computation directly. Once reconstructed, the AST can be transformed into arbitrary code fragments.
 
 Expression templates also solve the \textit{pairwise evaluation problem} associated with classical operator-overloaded (array) expressions
 in C++. The problem with pairwise evaluation is that expressions such as
 %
 \begin{minted}{c++}
-  Vector<double> a, b, c, d;
+  Vector<double,N> a, b, c, d;
   a = b + c + d;
 \end{minted}
 %
@@ -27,28 +27,28 @@ generate code like this:
   delete[] tmp1;
 \end{minted}
 
-So we have 4+2 allocations on the heap and 3 loops to evaluate this simple expression. But what we would like to achieve is an evaluation
-in one line:
+So we have 2 additional allocations on the heap, 3 loops to evaluate this simple expression, and 2 de-allocation. But what we would like to
+achieve is an evaluation in one line:
 %
 \begin{minted}{c++}
   for (int i = 0; i < N; ++i)
     a[i] = b[i] + c[i] + d[i];
 \end{minted}
 %
-that could be much faster.
+with no allocation or de-allocation and just 1 loop. This could be much faster.
 
 
 % =================================================================================================
 \section{Domain-Specific Languages}
-A \emph{Domain Specific Languages} (DSL) allows description and solution of a problem to be
+A \emph{Domain Specific Languages} (DSL) allows the description and solution of a problem to be
 expressed in the idiom and at the level of abstraction of the problem domain, the
 maintainability and quality of code is increased. One of the most popular examples
 is \textsf{Matlab} which provides a large selection of toolboxes that allow a direct
-expression of highlevel algebraic and numerical constructs in a easy to use imperative
-language.
+expression of high-level algebraic and numerical constructs in a easy to use imperative
+language. Under-the-hood highly optimized C code is executed for several vectorized expressions.
 
 Other examples include a class of finite-element libraries, that try to express the PDE problem
-setup in a near-mathematical language, e.g. Fenics project, FreeFem.
+setup in a near-mathematical language, \eg \href{https://fenicsproject.org/}{Fenics project}, \href{https://freefem.org/}{FreeFem}.
 
 \emph{Domain Specific Embedded Languages} (or DSELs) are a sub-class of DSLs that provide a good way to mitigate the
 abstraction vs efficiency trade-off. DSELs are languages implemented inside a general-purpose, host language.
@@ -57,18 +57,18 @@ language. They are usually implemented as a library-like component.
 
 Examples include the finite-element library \textsf{Feel++}, \textsf{LiveV} and also linear algebra
 libraries, like \textsf{MTL4}, \textsf{Eigen}, \textsf{Blaze}, \textsf{uBlas}, \textsf{NT$^2$}, \textsf{VexCL}, and many more.
-Also libraries in the context of automatic (or symbolic) differentiation, or inteval arithmetic make use of expression templates.
+Also libraries in the context of automatic (or symbolic) differentiation, or interval arithmetic make use of expression templates.
 
 The DSEL approach has advantages over generating a specific external
 language: (i) interpreter/compiler construction complexities can be ignored, (ii) libraries can concurrently be used
 which is often not the case of specific languages which would have to also develop their own libraries and library
-system, (iii) DSELs inherit the capabilities of the host language (e.g. C++).
+system, (iii) DSELs inherit the capabilities of the host language (\eg C++).
 
 In all cases, the Domain-Specific Language tries to hide the programming details from the user of a library, and
 from the expert in this specific domain. In this sense an expression can be translated to an already implemented and highly specialized
-external function (like BLAS library), and it can break down a complex expression into optimal code (\emph{kernels}), making use of loop
+external function (like BLAS library call), and it can break down a complex expression into optimal code (\emph{kernels}), making use of loop
 unrolling/ vectorization/ parallelization techniques and so on. Some libraries go further and provide a language
-that translates into architecture optimized code (e.g. code for GPUs, or high performance computers, Clusters, or
+that translates into architecture optimized code (\eg code for GPUs, or high performance computers, Clusters, or
 multi-core CPUs, like Intel Phi processor) and generate code that makes use of available instruction sets on the
 target CPU.
 
@@ -77,22 +77,22 @@ target CPU.
 \section{Expression templates: encoding operations}
 The basic idea behind \emph{expression templates} is to implement a DSEL using operator-overloading in C++, where the operator does not
 perform the underlying operation directly, but returns a light-weight object, similar to a functor, that represents the operator operation
-and can easily be chained with others of these leight-weight operations. Only when explicitly asked for, the operation is evaluated.
-This is called \emph{lazy-evaluation}, because the evaluation is shifted to a later point in code, e.g. in the final assignment, or in the
-destruction on an object.
+and can easily be chained with others of these light-weight operations. Only when explicitly asked for, the operation is evaluated.
+This is called \emph{lazy-evaluation}, because the evaluation is shifted to a later point in code, \eg in the final assignment, or in the
+destruction of an object.
 
 \begin{example}
   Consider again the example of the sum of three vectors
   %
   \begin{minted}{c++}
-  Vector<double> b, c, d;
-  b + c + d;
+  Vector<double,N> a, b, c, d;
+  a = b + c + d;
   \end{minted}
   %
   The underlying operation that needs to be performed on the elements of the vectors, can be represented by
   just one functor:
   \begin{minted}{c++}
-  struct Op {
+  struct AddThree {
     template <class T>
     T operator()(T b_i, T c_i, T d_i) const {
       return b_i + c_i + d_i;
@@ -101,10 +101,13 @@ destruction on an object.
   \end{minted}
   It returns the sum of the three elements. Now, this functor can be applied in a loop:
   \begin{minted}{c++}
-  Vector a;
+  AddThree addThree;
   for (int i = 0; i < N; ++i)
-    a[i] = op(b[i], c[i], d[i]);
+    a[i] = addThree(b[i], c[i], d[i]);
   \end{minted}
+  Instead of returning a new vector when evaluation a single \cpp{operator+(Vector,Vector)}, a functor is returned, that internally stores
+  a reference to the two inputs it should be applied to. This can be composed with another functor to eventually result in a functor like
+  the one created above, \texttt{AddThree}.
 \end{example}
 
 \begin{example}
@@ -153,7 +156,7 @@ any other expression template build before.
 
 % -------------------------------------------------------------------------------------------------
 \subsection{Composition of operations}
-To represent the composition of objects of some type (e.g. Vector or Function), we use the technique of composing functors representing the
+To represent the composition of objects of some type (\eg Vector or Function), we use the technique of composing functors representing the
 element-wise or point-wise operation. Composition of more than one object might be represented as an \emph{abstract syntax tree} (AST) where
 inner nodes in the tree represent the unary or binary operations, and the leaf nodes represent the data.
 
@@ -161,7 +164,7 @@ inner nodes in the tree represent the unary or binary operations, and the leaf n
   Consider the vector sum example from above:
   %
   \begin{minted}{c++}
-  Vector<double> a, b, c, d;
+  Vector<double,N> a, b, c, d;
   a = b + c + d;
   \end{minted}
   %
@@ -177,11 +180,11 @@ inner nodes in the tree represent the unary or binary operations, and the leaf n
   Those operations in the root node will be called \emph{terminal operations} in the following.
 \end{example}
 
-Composite operations are given by a composition of elementary operations. They represent a new type that can be used similar to the leaf objects, i.e.
+Composite operations are given by a composition of elementary operations. They represent a new type that can be used similarly to the leaf objects, \ie
 it implements a similar interface.
 
 \begin{example}
-  A vVector has implemented the \cpp{operator[]} to evaluate at a given index. We can easily introduce a new type \cpp{VectorPlusExpr}, that represents the sum of
+  A vector has implemented the \cpp{operator[]} to evaluate at a given index. We can easily introduce a new type \cpp{VectorPlusExpr}, that represents the sum of
   two vectors:
   \begin{minted}{c++}
   class VectorPlusExpr
@@ -226,17 +229,17 @@ it implements a similar interface.
   %
   The only requirement that we have is that the template types \texttt{A} and \texttt{B} have an \cpp{operator[]}.
 
-  With this, the sum of three vector, can be written as the type \cpp{PlusExpr< PlusExpr< Vector, Vector >, Vector}.
+  With this, the sum of three vectors can be written as the type \cpp{PlusExpr<PlusExpr<Vector, Vector>, Vector>}.
 \end{example}
 
 
 % -------------------------------------------------------------------------------------------------
 \subsection{Expressions}
-Instead of writing out the element-wise operation, it can be envoded in a functor directly and the composition of the vector can be
+Instead of writing out the element-wise operation, it can be encoded in a functor directly and the composition of the vectors can be
 parametrized by the input types and the functor type. Sometimes this class-template is called \emph{expression template}, since the
 expression is encoded by template parameters.
 
-First, lets consider unary transformations of expressions, i.e. where a unary functor can be applied element-wise (or point-wise).
+First, lets consider unary transformations of expressions, \ie where a unary functor can be applied element-wise (or point-wise).
 We call it a \emph{unary expression}:
 %
 \begin{minted}{c++}
@@ -302,9 +305,9 @@ These unary and binary expressions can now be used to build an evaluation tree r
   };
   \end{minted}
 
-  Then, the expressions \cpp{PlusExpr< PlusExpr< Vector, Vector >, Vector >} can now be written using \cpp{BinaryExpr} as
+  Then, the expressions \cpp{PlusExpr<PlusExpr<Vector, Vector>, Vector>} can be written using \cpp{BinaryExpr} as
   \begin{minted}{c++}
-    BinaryExpr<Plus, BinaryExpr<Plus, Vector, Vector >, Vector >
+    BinaryExpr<Plus, BinaryExpr<Plus, Vector, Vector>, Vector>
   \end{minted}
 
   Instantiating this type is quite complicated, though:
@@ -327,7 +330,7 @@ template parameters and automatic composition of the constructor arguments. This
 
 % =================================================================================================
 \section{Generator Funktionen}
-To generate a functor from an operation on vectors, or function, we use the concept of generator functions. These functions return
+To generate a functor from an operation on vectors, or functions, we use the concept of generator functions. These functions return
 the expression-object introduced above for elementary operations. For the plus operation we would write something like the following
 %
 \begin{minted}{c++}
@@ -348,12 +351,12 @@ or a bit shorter:
   }
 \end{minted}
 
-Since it is templated with the argument, we can either pass a vector, or another expression to the plus operator. This directly gives
+Since it is parametrized with the arguments, we can either pass a vector, or any other expression to the plus operator. This directly gives
 the possibility to combine these operators. Thus, the expression
 %
 \begin{minted}{c++}
-  Vector b, c, d;
-  b + c + d;
+  Vector<double,N> b, c, d;
+  auto expr = b + c + d;
 \end{minted}
 %
 generates
@@ -364,3 +367,198 @@ generates
     = BinaryExpr<Plus, BinaryExpr<Plus, Vector, Vector>, Vector>
         (Plus{}, BinaryExpr<Plus, Vector, Vector>(b,c), d)
 \end{minted}
+
+\begin{example}
+  The \textit{generated} expression can now be used in the vector assignment loop of the vector sum example:
+  \begin{minted}{c++}
+  for (int i = 0; i < a.size(); ++i)
+    a[i] = (a+b+c)[i];
+  \end{minted}
+
+  This is already better than before, as efficient as writing out the vector-sum loop explicitly, but not as
+  elegant as \cpp{a = b + c + d}. This issue will be solved in the next section.
+\end{example}
+
+\begin{rem}
+  A generator function is a function template that instantiates a class template and return the generated instance.
+  The idea behind these generator function is, that with automatic type deduction (ATD) we get all the types of the
+  function parameters automatically deduced and pass these types to the class template. The same can be achieved with
+  class-template argument deduction of \cxx{17}.
+
+  Classical examples of generator functions in the standard library are \cpp{std::make_pair} or \cpp{std::make_tuple}:
+  %
+  \begin{minted}{c++}
+  template <typename A, typename B>
+  std::pair<A,B> make_pair(A a, B b)
+  {
+    return std::pair<A,B>{a,b};
+  }
+  \end{minted}
+\end{rem}
+
+For unary operations like the sine function we can do the same:
+%
+\begin{minted}{c++}
+  template <typename A>
+  UnaryExpr<Sin, A> sin(A const& a)
+  {
+    return UnaryExpr<Sin, A>(Sin{}, a);
+  }
+\end{minted}
+%
+or simply
+%
+\begin{minted}{c++}
+  template <typename A> UnaryExpr<Sin, A> sin(A const& a) { return {Sin{}, a}; }
+\end{minted}
+
+The evaluation of an expression might be a complicated composition of functions applied to the
+underlying container entries. But, due to the compiler ability to inline (small/simple) functions, we
+end up with the an optimal code for the element-wise evaluation.
+
+\begin{example}
+  We have seen before, that the expression template representing the sum of vectors reads
+  \begin{minted}{c++}
+  a_expr := b + c + d
+    = BinaryExpr<Plus, Vector, Vector>(b,c) + d
+    = BinaryExpr<Plus, BinaryExpr<Plus, Vector, Vector>, Vector>(
+        BinaryExpr<Plus, Vector, Vector>(b,c), d)
+  \end{minted}
+  In the loop, we evaluate by calling \cpp{operator[](i)}. Those function-calls are mainly forwarding
+  to a simple plus-function and probably get inlined, \ie
+  \begin{minted}{c++}
+    a_expr[i] = Plus{}(BinaryExpr<Plus, Vector, Vector>(b,c)[i], d[i]);
+              = Plus{}(b[i], c[i]) + d[i];
+              = (b[i] + c[i]) + d[i];
+  \end{minted}
+  Thus, the loop gets translated into
+  \begin{minted}{c++}
+  for (int i = 0; i < N; i++)
+    a[i] = (b[i] + c[i]) + d[i];
+  \end{minted}
+\end{example}
+
+
+% =================================================================================================
+\section{Terminal Operations}
+So far, we generate a composite expression by chaining the functors and storing the containers in
+member variables in the expression classes. The actual \textit{application} or \textit{evaluation}
+of an expression is spelled out explicitly, by, \eg looping over the entries of a target vector and
+assigning the evaluated expression element-wise.
+
+If you do not want to spell-out the loop, you have to add an operation that implements this loop for
+you, or have to initiate an event, where the expression is evaluated. These events or operations are
+sometimes called \emph{terminal operation} and are typically related to an assignment of the expression
+to a target or the usage of an expression like the regular container or function.
+
+For vector expressions, typical terminal operations are assignment or compound assignment operators
+with the left operand is the target vector and the right operand the expression.
+
+Consider a simplified \texttt{Vector} class:
+%
+\begin{minted}{c++}
+  template <typename T, int N>
+  struct Vector
+  {
+    // ...
+
+    // Assignment of a UnaryExpr to a vector
+    template <typename F, typename A>
+    Vector& operator=(UnaryExpr<F,A> const& expr)
+    {
+      for (int i = 0; i < N; i++)
+        data_[i] = expr[i];
+      return *this;
+    }
+
+    // Assignment of a BinaryExpr to a vector
+    template<typename F, typename A, typename B>
+    Vector& operator=(BinaryExpr<F,A,B> const& expr)
+    {
+      for (int i = 0; i < N; i++)
+        data_[i] = expr[i];
+      return *this;
+    }
+
+    // Compound assignment of a UnaryExpr
+    template <typename F, typename A>
+    Vector& operator+=(UnaryExpr<F,A> const& expr)
+    {
+      for (int i = 0; i < N; i++)
+        data_[i] += expr[i];
+      return *this;
+    }
+
+    // Compound assignment of a BinaryExpr
+    template<typename F, typename A, typename B>
+    Vector& operator+=(BinaryExpr<F,A,B> const& expr)
+    {
+      for (int i = 0; i < N; i++)
+        data_[i] += expr[i];
+      return *this;
+    }
+  };
+\end{minted}
+
+\begin{example}
+  With these assignment operators, one can write the vector sum example in the most natural form
+  %
+  \begin{minted}{c++}
+    Vector<double,N> a, b, c, d;
+    a = b + c + d;
+  \end{minted}
+  %
+  and the code gets optimized (by function inlining) to the above optimal loop.
+\end{example}
+
+\begin{rem}
+  All the different assignments in the \texttt{Vector} class above are very similar. The expression type is
+  different and the assignment operation is different, but everything else is the same. So, one could consider
+  the assignment itself as a (binary) expression template with the functor is an assignment functor, the first
+  argument is the target and the second argument the source expression.
+
+  This requires to have another terminal operation than the assignment before. One idea is to perform the assignment
+  loop in the destructor of the assignment-expression:
+  \begin{minted}{c++}
+  template <typename Assigner, typename Target, typename Source>
+  struct AssignExpr
+  {
+    Assigner assign_;
+    Target& target_;
+    Source const& source_;
+
+    AssignExpr(Assigner assign, Target& t, Source const& s)
+      : assign_(assign)
+      , target_(t)
+      , source_(s)
+    {}
+
+    ~AssignExpr()
+    {
+      for (int i = 0; i < target_.size(); ++i)
+        assign_(target_[i], source_[i]);
+    }
+  };
+
+  struct PlusAssign
+  {
+    template <typename T, typename S>
+    void operator()(T& lhs, T const& rhs) const
+    {
+      lhs += rhs;
+    }
+  };
+
+  template <typename T, int N>
+  struct Vector
+  {
+    // ...
+
+    template <typename Expr>
+    AssignExpr<PlusAssign,Vector,Expr> operator+=(Expr const& expr)
+    {
+      return {PlusAssign{}, *this, expr};
+    }
+  };
+  \end{minted}
+\end{rem}
