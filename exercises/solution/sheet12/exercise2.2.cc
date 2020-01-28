@@ -6,6 +6,7 @@ int main()
 {
   using namespace scprog;
 
+  // we can use range-for loops to iterator over our integer_range
   for (int i : range(10))
     std::cout << i << ' ';
 

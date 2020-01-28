@@ -1,6 +1,10 @@
 #include <cmath>
 #include <tuple>
 
+// This version is an extension of version1, that uses variadic templates to generalize the
+// composer to arbitrary arity of the functor arguments. Additionally, class-template argument deduction
+// of c++17 is used to remove the necessity of a generator function.
+
 // compiler requires std=c++1z or std=c++17
 
 namespace scprog
@@ -25,7 +29,7 @@ namespace scprog
     {}
 
     template <class... Ts>
-    auto operator()(Ts const&... ts)
+    auto operator()(Ts const&... ts) const
     {
       auto eval = [&](auto&& g) -> decltype(auto) { return g(ts...); };
       return std::apply([eval,f=f_](auto&&... gs) -> decltype(auto)

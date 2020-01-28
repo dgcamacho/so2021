@@ -1,5 +1,8 @@
 #include <cmath>
 
+// This version uses the CRTP base-class implementation to restrict
+// template parameters to anything derived from Functor
+
 namespace scprog
 {
   // (CRTP) base class for functors
