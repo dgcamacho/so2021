@@ -1,7 +1,7 @@
 # Exercise sheet 13 - 2020/01/28
 
 ## Exercise 1 (Iterators)
-1Given the following for statement:
+Given the following for statement:
 ```c++
 for (int i = 0; i < max_length; ++i)
   if (line[i] == ' ')
@@ -15,7 +15,7 @@ vector iterator.
 Do the following on a container, e.g. a `std::vector`, with `int`s, using standard function objects, function
 adapters, algorithms, and maybe also some own function objects:
 1. Find all values which are larger than a certain value.
-2. Finds all values which are not equal to certain value.
+2. Find all values which are not equal to certain value.
 3. Multiply all values with a certain factor.
 
 
@@ -33,7 +33,7 @@ the loop. We want to implement something similar in C++:
 - provide iterators over the range and
 - return on dereferencing the mapped value
 
-Therefore, we write a class `MappedRange<Functor,Range>` with a constructor that stores a functor, gets a range
+Therefore, write a class `MappedRange<Functor,Range>` with a constructor that stores a functor, gets a range
 and stores iterators to begin and end of the range:
 ```c++
 MappedRange(Functor f, Range const& range)
