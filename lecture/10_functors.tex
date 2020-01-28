@@ -31,10 +31,10 @@ Example:
 \section{Functors as function parameters}
 Since functors are regular user-defined types, they can be passed to any other function as function parameter. This allows to write algorithms
 without specifying the concrete operation explicitly in code, but expecting this operation to be passed as argument. Examples for this type
-of algorithms are sorting algorithms, where your want to specify the comparison operator, e.g. \cpp{std::less}, as argument so that you
+of algorithms are sorting algorithms, where your want to specify the comparison operator, \eg \cpp{std::less}, as argument so that you
 can easily switch between increasing and decreasing order of the elements.
 
-Another example is the function \cpp{for_each}, that applies to each element in a container a function (e.g. to change the value of the element):
+Another example is the function \cpp{for_each}, that applies to each element in a container a function (\eg to change the value of the element):
 \begin{minted}{c++}
   void for_each(std::vector<double>& vec, Square const& f) {
     for (auto& v_i : vec)
@@ -54,7 +54,7 @@ Another example is the function \cpp{for_each}, that applies to each element in 
   }
 \end{minted}
 %
-We could even instantiate the functor directly in the call of the \cpp{for_each} function, i.e.
+We could even instantiate the functor directly in the call of the \cpp{for_each} function, \ie
 \cppline{for_each(v, Square{});}
 
 The problem with this approach is, that we might want to pass different functors to the same function / algorithm. This is a perfect example
@@ -72,7 +72,7 @@ This allows to call the function \cpp{for_each} the same way as before (thanks t
 algorithm.
 
 \begin{rem}
-  A more generic implementation of the \cpp{for_each} function uses a second template parameter for the container type, i.e.
+  A more generic implementation of the \cpp{for_each} function uses a second template parameter for the container type, \ie
   %
   \begin{minted}{c++}
   template <class Range, class F>
@@ -211,7 +211,7 @@ can be obtained, by using the placeholder \cpp{auto} inside the function paramet
   for_each(v, [factor](auto value) { return factor * value; });
 \end{minted}
 %
-This introduces a member-function template with an unnamed template parameter, i.e. it is similar to the functor definition
+This introduces a member-function template with an unnamed template parameter, \ie it is similar to the functor definition
 %
 \begin{minted}{c++}
   template <class T>
@@ -237,7 +237,7 @@ but, we do not have a name for the type of the parameter like \texttt{S} in the 
 \end{rem}
 
 Similar to classical templates and the \cpp{auto} placeholder in variable declarations, the function parameters in generic lambdas
-can be qualified with \cpp{const}, reference and pointer. But they can not be used as placeholders in other templated types, e.g.
+can be qualified with \cpp{const}, reference and pointer. But they can not be used as placeholders in other templated types, \eg
 \cpp{std::vector<auto>} is not allowed as function parameter in generic lambdas.
 
 \begin{rem}
