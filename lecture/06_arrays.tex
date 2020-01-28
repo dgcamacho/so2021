@@ -15,11 +15,11 @@ Examples:
   char str[len];
 \end{minted}
 %
-Those arrays can then be accessed by square-brackets, similar to \cpp{std::vector}, ie.g.
+Those arrays can then be accessed by square-brackets, similar to \cpp{std::vector}, i\eg
 %
 \cppline{n[2] = 7;}
 %
-Arrays can be pre-initialized. In that case, the array size can be omitted, i.e. is detected
+Arrays can be pre-initialized. In that case, the array size can be omitted, \ie is detected
 automatically by the compiler:
 \begin{minted}{c++}
   int n1[5] = {1, 2, 3, 4, 5};
@@ -35,7 +35,7 @@ Multi-dimensional arrays are written with multiple square brackets:
 %
 and can be understood as arrays of arrays (a matrix is and arrays of rows).
 
-The initialization of multi-dimensional arrays is by lists of initializer-lists, e.g.
+The initialization of multi-dimensional arrays is by lists of initializer-lists, \eg
 %
 \begin{minted}{c++}
 double A[2][3] =
@@ -46,7 +46,7 @@ double A[2][3] =
 \end{minted}
 
 \begin{rem}
-  An array can be pre-initialized with less elements than the given size. In that case the remaining entries are default-initialized, i.e.
+  An array can be pre-initialized with less elements than the given size. In that case the remaining entries are default-initialized, \ie
   number types are initialized to zero and class-types using the default-constructor.
 
   Example:
@@ -63,7 +63,7 @@ For multi-dimensional arrays only one size entry can be omitted. The shape must 
 
 \subsubsection{Size of an array}
 While the syntax for arrays is simple and clean, it lacks the direct possibility to get the size after the declaration. In C, you typically
-use macros to deduce the size from the byte-size of the array, i.e.
+use macros to deduce the size from the byte-size of the array, \ie
 %
 \cppline{#define SIZE(a) (sizeof(a) / sizeof((a)[0])) }
 %
@@ -83,14 +83,14 @@ is not possible to detect with macros.
 
 
 \subsubsection{Arrays as function arguments}
-Arrays can be (implicitly) converted to a pointer, i.e. to a pointer to the first element of the array:
+Arrays can be (implicitly) converted to a pointer, \ie to a pointer to the first element of the array:
 %
 \begin{minted}{c++}
 int a[3] = {1, 2, 3};
 int* p = a;  // pointer to the first element of the array
 \end{minted}
 %
-This allows to pass arrays to functions, accepting pointers as arguments, i.e.
+This allows to pass arrays to functions, accepting pointers as arguments, \ie
 %
 \begin{minted}{c++}
   void f1(int* p) { /* sizeof(p) != sizeof(a) */ }
@@ -122,7 +122,7 @@ The problem here, we have to give the size in the function argument declaration,
 at compile-time and are fixed to exactly one size. It is not allowed to pass arrays of different size to that function.
 
 \begin{rem}
-\underline{Outlook:} Using \emph{templates}, we can write functions of arbitrary array size and can deduce that size automatically, i.e.
+\underline{Outlook:} Using \emph{templates}, we can write functions of arbitrary array size and can deduce that size automatically, \ie
 \begin{minted}{c++}
   template <class T, int N>
   int array_size(T (&)[N]) { return N; }
@@ -204,7 +204,7 @@ may simply overwrite the data stored at the specific memory location $\rightarro
 
 Another problem with dynamic arrays is that you can not even see whether it is an allocated array, or just an uninitialized pointer variable. So,
 here again the general rule applies: initialize variables directly on declaration. If you do not yet have an address to initialize the pointer with,
-set it to zero, i.e.
+set it to zero, \ie
 %
 \cppline{TYPE * pointer = nullptr;}
 %
@@ -223,8 +223,8 @@ Example:
   }
 \end{minted}
 
-Who owns the memory of a pointer, i.e. who is responsible for deleting that pointer? It is the one that has created the array, so do not forget to delete!
-Otherwise you have a \emph{memory leak}. The aftermath of a pointer related bug, e.g. array boundary violation or accessing deleted memory, may show up \underline{much later} than the actual position of the error.
+Who owns the memory of a pointer, \ie who is responsible for deleting that pointer? It is the one that has created the array, so do not forget to delete!
+Otherwise you have a \emph{memory leak}. The aftermath of a pointer related bug, \eg array boundary violation or accessing deleted memory, may show up \underline{much later} than the actual position of the error.
 
 \begin{guideline}{Principle}
   Pointers are \emph{dangerous} and require careful programming. So, prefer library types like \cpp{std::vector} or \cpp{std::array} instead of
@@ -233,7 +233,7 @@ Otherwise you have a \emph{memory leak}. The aftermath of a pointer related bug,
 
 
 \subsubsection{Pointer arithmetics}
-Pointers used as addresses of arrays, i.e. the address to the first element of the array, have its one arithmetic. Since addresses are like integers,
+Pointers used as addresses of arrays, \ie the address to the first element of the array, have its one arithmetic. Since addresses are like integers,
 they can be incremented and decremented, meaning a movement of the pointer in memory.
 
 Pointers are associated to a specific element type (underlying type of the data). Incrementing and decrementing thus moves the address by multiples of
@@ -242,7 +242,7 @@ the size of the underlying data. This means that \cpp{pointer + 1} points to the
 Examples:
 \begin{minted}{c++}
 int* vec = new int[10]; // vec points to the first element of the array
-vec = vec + 1;          // vec now contains the address (vec + sizeof(int)), i.e.
+vec = vec + 1;          // vec now contains the address (vec + sizeof(int)), \ie
                         // vec points to the second element of the array
 vec++;                  // vec points to the third element of the array...
 delete[] vec;           // ERROR: Address of vec not allocated by a direct call to new[]
@@ -315,7 +315,7 @@ The difference between both types is the criterion when to deallocate the memory
   \end{itemize}
 \end{itemize}
 
-You can have multiple pointers pointing to the same object, i.e. to the same memory location. Since a pointer is a simple type, it can directly be copied
+You can have multiple pointers pointing to the same object, \ie to the same memory location. Since a pointer is a simple type, it can directly be copied
 to create a new pointer with the same address:
 %
 \begin{minted}{c++}
@@ -328,7 +328,7 @@ int* p2 = p;    // copy of the first pointer creates a new pointer
                 // pointing to the same object
 \end{minted}
 %
-The same can be done with \cpp{shared_ptr}. They share the same resource, i.e. can point to the same object. Whenever you copy a \cpp{shared_ptr}, an internal
+The same can be done with \cpp{shared_ptr}. They share the same resource, \ie can point to the same object. Whenever you copy a \cpp{shared_ptr}, an internal
 counter is increased that counts how many pointers are pointing to the same object. Only if this counter is zero, the \cpp{shared_ptr} is destroyed at the
 end of a scope:
  %

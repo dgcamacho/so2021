@@ -5,7 +5,7 @@ Let $x,y\in \mathbb{R}^2$ be two elements of the (Euclidean) vector space $\math
 two points (coordinate vectors) in the plane. The space may be equipped with a norm induced by the standard
 dot product in $\mathbb{R}^2$.
 
-Implement this vector space and calculate for two elements of the space its distance, i.e. the norm of its difference!
+Implement this vector space and calculate for two elements of the space its distance, \ie the norm of its difference!
 
 So, the structure representing the vector space should hold all possible realizations of vectors in this vector space
 and should provide required vector space operations on its realizations (instances).
@@ -75,7 +75,7 @@ Some comments about this example:
 
   \item The functions of the standard library are group in the namespace \cpp{std}. Again, this is done in order to avoid conflicts with functions
         from other libraries and your own code. In order to call functions from the standard library, you have to add the prefix
-        (name resolution operator) \cpp{::}, e.g. \cpp{std::sqrt}.
+        (name resolution operator) \cpp{::}, \eg \cpp{std::sqrt}.
 
   \item Additionally to the main program, we have a class (structure) \cpp{Vector} and (free) functions \cpp{dot}, \cpp{two_norm}, and \cpp{distance}.
         A free function is a function not part of a class. But, there is also a function bound to the class. It has the strange name
@@ -130,7 +130,7 @@ The process of compiling can be split into several stages:
   \item[pre-processing] (performed by the \Index{preprocessor}) The content of include files is copied to the include directives, macros and
   preprocessor constants are evaluated.
   \item[linguistic analysis] Check of syntax rules.
-  \item[\Index{assembling}] Translation of the language constructs into CPU instructions, e.g. in form of assembler code.
+  \item[\Index{assembling}] Translation of the language constructs into CPU instructions, \eg in form of assembler code.
   \item[code output] Transformation of internal code (assembler code) into machine-readable binary code. Collection of symbols into
   symbol table with jump references.
 \end{description}
@@ -156,7 +156,7 @@ providing the argument \texttt{-o NAME}:
 \end{verbatim}
 %
 Later in the lecture we get to know different C++ language features available in a specific version of the C++ standard (see history of C++).
-The standard can be selected explicitly by the additional argument \texttt{-std=VERSION}, e.g. for \cxx{11}:
+The standard can be selected explicitly by the additional argument \texttt{-std=VERSION}, \eg for \cxx{11}:
 %
 \begin{verbatim}
   g++ -std=c++11 distance.cpp -o distance
@@ -164,7 +164,7 @@ The standard can be selected explicitly by the additional argument \texttt{-std=
 %
 where the \texttt{VERSION} follows the naming given in the chapter \emph{History of C++}.
 
-If you have multiple files to compile, e.g. one file provides the implementation of the functions and classes, and the other file just
+If you have multiple files to compile, \eg one file provides the implementation of the functions and classes, and the other file just
 the \cpp{main()} function, we say that we have multiple translation units. Those can be compiled individually and then linked together:
 %
 \begin{verbatim}
@@ -182,7 +182,7 @@ and linker call in one line, by listing all the files to compiler one after the 
 
 If a source file depends on some include files (in the top of the file you find the lines \cpp{#include <...>} or \cpp{#include "..."}), the
 compiler has to search for these \textit{header}-files. It automatically searches in default system paths, but for everything else the compiler
-has to be pointed to the location of the include files. This can be done by the additional argument \texttt{-I[path-to-files]}, e.g.
+has to be pointed to the location of the include files. This can be done by the additional argument \texttt{-I[path-to-files]}, \eg
 %
 \begin{verbatim}
   g++ -I/usr/local/library/include/ file1.cpp file2.cpp -o program
@@ -213,7 +213,7 @@ implementations. Sometimes these files are name \texttt{.tpp}, or \texttt{.txx},
 (with any of the header file extensions from above).
 
 While file extensions and naming of files in general is arbitrary, it is recommended to name source and its corresponding header file with the
-same base name and matching file extensions, e.g. \texttt{linear\_algebra.hh} and \texttt{linear\_algebra.cc}.
+same base name and matching file extensions, \eg \texttt{linear\_algebra.hh} and \texttt{linear\_algebra.cc}.
 \end{rem}
 
 
@@ -314,7 +314,7 @@ Some remarks to the examples above:
 
 % ==============================================================================
 \section{Variable declaration and fundamental types\label{sec:data-type}}
-C++ is a statically typed language (in contrast to dynamically typed languages like e.g. PHP), meaning: each identifier and expression in a
+C++ is a statically typed language (in contrast to dynamically typed languages like \eg PHP), meaning: each identifier and expression in a
 C++ program has assigned a type that is already known to the compiler and this type can not be changed.
 
 Examples:
@@ -499,8 +499,8 @@ Literals, to indicate how to interpret a number, are \texttt{F,f,L,l} for \cpp{f
 
 \begin{rem}
   In GCC an extension is implemented to allow quad-precision arithmetics with the data-type \cpp{__float128}. The size is 16 Byte. Typically, this
-  is implemented as a software library, e.g. by concatenating two \cpp{double} types. Only rarely there is hardware support for quad precision
-  numbers (e.g. IBM POWER9 CPU). The arithmetic is defined in the standard document \href{https://doi.org/10.1109%2FIEEESTD.2008.4610935}{IEEE 754-2008}.
+  is implemented as a software library, \eg by concatenating two \cpp{double} types. Only rarely there is hardware support for quad precision
+  numbers (\eg IBM POWER9 CPU). The arithmetic is defined in the standard document \href{https://doi.org/10.1109%2FIEEESTD.2008.4610935}{IEEE 754-2008}.
 \end{rem}
 
 \begin{rem}
@@ -577,7 +577,7 @@ We call an initialization of a value to a smaller type that can not represent th
 Maybe the compiler prints a warning, but not on all warning levels and this is not guaranteed.
 
 \begin{guideline}{Principle}
-  Enable all warnings and stick to the c++ standard, i.e., use the compiler flags \texttt{-Wall -Wextra -pedantic}, optionally you may
+  Enable all warnings and stick to the c++ standard, \ie use the compiler flags \texttt{-Wall -Wextra -pedantic}, optionally you may
   even set the flag \texttt{-Werror} to assert an error instead of warnings.
 \end{guideline}
 
@@ -608,7 +608,7 @@ Some examples of narrowing conversions:
 \end{minted}
 
 \begin{rem}
-  The\marginpar{[\cxx{17}]} curly braces, i.e. uniform initialization, also works with the automatic type deduction \cpp{auto}. But be careful! The meaning
+  The\marginpar{[\cxx{17}]} curly braces, \ie uniform initialization, also works with the automatic type deduction \cpp{auto}. But be careful! The meaning
   of the curly braces has changed in \cxx{17} and also before results sometimes in a type different from what you would expect.
   \begin{minted}{c++}
   auto x1 = {42}; // c++14 x1 is of type std::initializer_list<int>
@@ -620,7 +620,7 @@ Some examples of narrowing conversions:
 \end{rem}
 
 \begin{defn}
-  For floating point values we call a conversion to a smaller data type (e.g. \cpp{double -> float}) a \emph{floating-point conversion} (with possibly loss of precision) and otherwise a \emph{floating-point promotion} (represent the value exactly with the larger type).
+  For floating point values we call a conversion to a smaller data type (\eg \cpp{double -> float}) a \emph{floating-point conversion} (with possibly loss of precision) and otherwise a \emph{floating-point promotion} (represent the value exactly with the larger type).
 \end{defn}
 
 \begin{rem}
