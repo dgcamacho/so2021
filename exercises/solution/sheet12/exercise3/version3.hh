@@ -1,6 +1,9 @@
 #include <cmath>
 #include <tuple>
 
+// This version uses the new concept feature of c++20 to restrict templates
+// to anything that can be called like a function
+
 // compiler requires std=c++2a or -std=c++20
 // only g++-10 or newer
 
@@ -43,7 +46,7 @@ namespace scprog
 
     template <class... Ts>
       requires (Concept::Invocable<Gs,Ts...> && ...)
-    auto operator()(Ts const&... ts)
+    auto operator()(Ts const&... ts) const
     {
       auto eval = [&](auto&& g) { return g(ts...); };
       return std::apply([eval,f=f_](auto&&... gs) { return f(eval(std::forward<decltype(gs)>(gs))...); }, gs_);
