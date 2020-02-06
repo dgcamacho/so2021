@@ -136,7 +136,7 @@ In a classical function, we would write
   }
 \end{minted}
 Compiling this program generates code that can be executed at runtime.
-The compiler output of \texttt{g++ -E factorial.cc} generates assembler code:
+The compiler output of \texttt{g++ -S factorial.cc} generates assembler code:
 \begin{verbatim}
   _Z3factoriali:
   .LFB0:
@@ -197,7 +197,7 @@ and the corresponding assembler code:
   When writing an expression involving template instantiations, like
   \cppline{  N <= 0 ? 1 : factorial_meta<N-1>::value;}
   All templates first get instantiated, second the arithmetic expression is evaluated. Meaning, even for the case \cpp{N == 0} the
-  \cpp{factorial_meta<N-1>} gets instantiated, this \cpp{factorial<-1>}. So we would get an infinite recursion and template instantiation.
+  \cpp{factorial_meta<N-1>} gets instantiated, thus \cpp{factorial<-1>}. So we would get an infinite recursion and template instantiation.
   This can only be overcome by providing another specialization of the template that kicks in instead of the recursive call.
 \end{rem}
 
