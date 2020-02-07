@@ -21,6 +21,7 @@ like compiler versions.
 Often a metaprogramming language is itself a full (Turing complete) language. In C++ we at least 2 such languages (templates and constexpr functions)
 and additionally a macro language (preprocessor commands).
 
+
 % =================================================================================================
 \section{Template-Metaprogramming}
 Template metaprogramming techniques are purely based on templates, template specialization and static type information like static constants. Since
@@ -86,6 +87,7 @@ In order to access the value, we have to instantiate the template and use the na
   std::cout << V::value << std::endl; // prints 42
 \end{minted}
 
+
 \subsubsection{Direct calculations with template parameters}
 An \cpp{integral_constant} just stores a value. But the same technique can be used to do simple calculations.
 
@@ -114,6 +116,7 @@ Or you pass the values as integral constants:
   using B = integral_constant<int,29>;
   std::cout << plus<A, B>::value << std::endl; // prints 42
 \end{minted}
+
 
 \subsubsection{Recursive programming}
 C++ is a statically typed language, meaning: the type of a variable or an alias can not be changed once it is set. And everything must
@@ -215,6 +218,7 @@ With this, you can simply evaluate \cpp{factoral_v<7>} in your code without the 
 and is also introduced for several metafunctions in the standard library with \cxx{17}.
 
 
+% -------------------------------------------------------------------------------------------------
 \subsection{Constexpr Metafunctions}
 Another form of metafunctions that is not based on class templates can be implemented using \cpp{constexpr} functions. The keyword
 \cpp{constexpr} indicates that this must be something that can be evaluated at compile-time. It is introduced with \cxx{11} and limitations
@@ -241,6 +245,7 @@ must be used in a constexpr context:
 \begin{minted}{c++}
   constexpr int z = factorial(7);
 \end{minted}
+
 
 \subsubsection{Restrictions with C++11}
 When introducing this new language feature in \cxx{11}, the standard committee had to make sure, that all evaluations can really be performed
@@ -317,6 +322,7 @@ Type-Traits are not just typefunction parametrized by types, but all combination
 
 Here, we list just examples of some Type-Traits:
 
+
 \subsubsection{Type Transformation}
 Transforming types into another type can be implemented by typefunctions. Therefore the template parameters are type parameters and the result is
 also a type alias.
@@ -334,6 +340,7 @@ Example: Remove the constness of a type:
   };
 \end{minted}
 
+
 \subsubsection{Relation between types}
 Are two types the same, is one larger than the other one, can a type be used in a vector expressions... All these are properties of types that
 can be tested for using typefunctions, that return a \cpp{bool} constant.
@@ -350,6 +357,7 @@ Example: Are two types exactly the same:
     static constexpr bool value = true;
   };
 \end{minted}
+
 
 \subsubsection{Branching on types}
 Conditionals like if-then-else can also be implemented as typefunctions, where the condition is passed as non-type \cpp{bool} parameter

@@ -77,7 +77,7 @@ Some examples:
 
 
 % ==============================================================================
-\section{Partielle Spezialisierung}\label{seq:partial_template_specialization}
+\section{Partial Specialization}\label{seq:partial_template_specialization}
 If not all template parameters are fixed (specialized) and the template parameter list is not empty, the specialization is called
 \emph{partial template specialization}. This is allowed for class templates only! The specialization parameters can depend on some or all remaining
 template parameters in the template parameter list, \eg
@@ -205,6 +205,8 @@ Exact matching non-template functions are always preferred over function templat
   \end{itemize}
 \end{rem}
 
+
+% -------------------------------------------------------------------------------------------------
 \subsection{Basic rules for overload resolution}
 \begin{enumerate}
   \item All visible names are collected (involving \emph{argument dependent lookup} (ADL) in the namespaces of the arguments) (\emph{name lookup})
