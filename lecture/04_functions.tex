@@ -70,7 +70,7 @@ There are essentially two ways how to pass values/arguments to functions:
 \end{description}
 
 \begin{rem}
-  For small types \cpp{T}, e.g. \cpp{int}, \cpp{double}, ..., it is recommended to simple pass-by-value. Larger objects should be passed by
+  For small types \cpp{T}, \eg \cpp{int}, \cpp{double}, ..., it is recommended to simple pass-by-value. Larger objects should be passed by
   reference instead, to reduce the cost of copies:
   \begin{enumerate}[1)]
   \item If the function intends to change the argument as a side effect, take it \emph{by non-const reference}.
@@ -167,11 +167,11 @@ must return the same type (or at least all return values are implicitly cast to 
 \end{guideline}
 
 For the return types it is similar to the argument passing. You can return by value, or return by reference (where for the latter case there
-are some pitfalls, see below). But, you can also return a value, by providing an additional \emph{output argument}, e.g.
+are some pitfalls, see below). But, you can also return a value, by providing an additional \emph{output argument}, \eg
 %
 \cppline{void function_name(Type1 arg1, Type2 arg, ..., OutputType& output, ...) { ... }}
 %
-where the order of the function arguments does not matter, i.e. you could also start with the output argument. The important aspect is that
+where the order of the function arguments does not matter, \ie you could also start with the output argument. The important aspect is that
 output arguments must be passed by (non-const) reference. The intend is that you create the output variable outside of the function and pass it by
 reference to the function where it is filled with values.
 
@@ -270,7 +270,7 @@ int main()
 }
 \end{minted}
 
-Some people prefer the naming \emph{deferred temporary materialization}, i.e. the materialization of the value 42 happens in the \cpp{main()} when
+Some people prefer the naming \emph{deferred temporary materialization}, \ie the materialization of the value 42 happens in the \cpp{main()} when
 assigned to the variable \cpp{x}.
 
 This optimization or guarantee is especially important, if you want to return large objects created inside of the function. It is thus
@@ -288,7 +288,7 @@ The signature of the function is used to select a function to call. For simple f
   \item trailing requires-clause (if any) [\cxx{20}]
 \end{itemize}
 where the \emph{parameter-type-list} specifies the number and type of each individual parameter. Also qualifiers like \cpp{const} and \texttt{\&}
-are important in the to distinguish types in that list. It is also allowed to have an \emph{ellipsis}, i.e. \texttt{...} at the end of the parameter
+are important in the to distinguish types in that list. It is also allowed to have an \emph{ellipsis}, \ie \texttt{...} at the end of the parameter
 list, to indicate a \emph{variadic} function.
 
 The \emph{enclosing namespace} defines the named scope in which the function is defined in and the \emph{trailing requires-clause} is related
@@ -321,7 +321,7 @@ Let's consider an example from the beginning:
   }
 \end{minted}
 %
-The function \cpp{distance} is defined for exactly one parameter-type-list, i.e., two arguments of type \cpp{Point const&}. But the only requirement we need
+The function \cpp{distance} is defined for exactly one parameter-type-list, \ie two arguments of type \cpp{Point const&}. But the only requirement we need
 in order to calculate the distance with this algorithm is that there are two data member \texttt{.x} and \texttt{.y} that are of some number type.
 
 If you want to calculate the distance of some other point type, the algorithm looks pretty much the same, so it would be logical to use the same function
@@ -362,14 +362,14 @@ name for that algorithm.
   Functions implementing the same algorithm on different types should be named equal.
 \end{guideline}
 
-In order to resolve a function call, i.e. to find the right function to evaluate, the compiler has to follow some common steps:
+In order to resolve a function call, \ie to find the right function to evaluate, the compiler has to follow some common steps:
 \begin{enumerate}
   \item Look for all functions with the given function name (\emph{name lookup}). All visible function (and names introduced by a \cpp{using}
         declaration/directive) are considered. Thereby the function namespace is important. If the arguments are defined in some namespace also this
         is considered a viable scope for lookup (\emph{Argument Dependent Lookup, ADL}).
   \item If there is more than one viable function found in the name lookup, the compiler tries to resolve the function overload to select a
         function to call (\emph{overload resolution}). Therefore it is considered which parameter-type-list matches best the passed arguments.
-  \item All non-matching functions are eliminated from the list of viable candidates (e.g. wrong number of arguments or non-matching types). All
+  \item All non-matching functions are eliminated from the list of viable candidates (\eg wrong number of arguments or non-matching types). All
         remaining functions are ordered by the property which one is a ``better'' match for the arguments. At first position in that list is the exact
         match (if it exists).
   \item Each pair of viable functions $F_1$ and $F_2$ is ranked by the implicit casts of its arguments, to decide the order. Thereby we have the rule:
@@ -377,7 +377,7 @@ In order to resolve a function call, i.e. to find the right function to evaluate
         conversions for all arguments of $F_2$, and there is at least one argument of $F_1$ whose implicit conversion is better than the corresponding
         implicit conversion for that argument of $F_2$. Therefore we have the three conversion ranks
         \begin{enumerate}
-          \item exact match: no conversion required, lvalue-to-rvalue conversion, qualification conversion (e.g. add \cpp{const})
+          \item exact match: no conversion required, lvalue-to-rvalue conversion, qualification conversion (\eg add \cpp{const})
           \item Type promotion: integral promotion, floating-point promotion
           \item Type conversion: integral conversion, floating-point conversion, floating-integral conversion
         \end{enumerate}
@@ -401,7 +401,7 @@ In order to resolve a function call, i.e. to find the right function to evaluate
   }
   \end{minted}
   %
-  This overload-set generates a compiler error, since (0) is equivalent to (1) or (2), i.e. all three are exact matches. Removing (0) resolves this error.
+  This overload-set generates a compiler error, since (0) is equivalent to (1) or (2), \ie all three are exact matches. Removing (0) resolves this error.
   Then (1) is called, since \texttt{a} is a mutable object and thus (1) represents an exact match and no const-qualification is needed.
   (3) is ignored because of the wrong number of arguments.
 \end{example}

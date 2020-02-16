@@ -24,7 +24,7 @@ to a regular pointer.
 
 % =================================================================================================
 \section{Iterators of standard library containers}
-In the standard library, all containers (e.\,g.\ \cpp{std::vector}, \cpp{std::list}, \cpp{std::set}) provide at least two functions, \cpp{begin()} and \cpp{end()}
+In the standard library, all containers (\eg \cpp{std::vector}, \cpp{std::list}, \cpp{std::set}) provide at least two functions, \cpp{begin()} and \cpp{end()}
 returning an iterator object. Thereby, \cpp{begin()} points to the first element in the sequence and \cpp{end()} is a so called \emph{sentinel} -- an abstraction of a past-the-end iterator.
 
 Using these two iterators, a traversal over the elements of a container can be realized by
@@ -52,7 +52,7 @@ non-const elements. Thus, one could write out the explicit type in the loop by
     std::cout << *it << std::endl;
 \end{minted}
 
-The\marginpar{[]\cxx{17}]} end-iterator is not necessarily of the same type as the begin-iterator.
+The\marginpar{[\cxx{17}]} end-iterator is not necessarily of the same type as the begin-iterator.
 
 % -------------------------------------------------------------------------------------------------
 \subsection{Range-based for-Loops}
@@ -72,7 +72,7 @@ The syntax follows the general pattern
   \end{minted}
 
   Here, the declaration of of the variable \cpp{auto const& v_i} is the \emph{range\_declaration}, the vector \texttt{v} is a simple
-  \emph{range\_expression} (could be anything that generates a range) and \cpp{{std::cout << v_i << std::endl; }} is the \emph{loop\_statement}.
+  \emph{range\_expression} (could be anything that generates a range) and \cpp{{ std::cout << v_i << std::endl; }} is the \emph{loop\_statement}.
 \end{example}
 
 The three parts can be defined as
@@ -87,7 +87,7 @@ The three parts can be defined as
     any statement, typically a compound statement, which is the body of the loop
 \end{description}
 
-The generic implementation, i.\,e.\ what the compiler make out of the range-for loop statement above is the following code:
+The generic implementation, \ie what the compiler make out of the range-for loop statement above, is the following code:
 %
 \begin{minted}{c++}
 {
@@ -140,7 +140,7 @@ In order to allow iterators to be passed to functions, one needs function templa
 
   One could think of summing up the values. Then, the \texttt{BinaryFunction} is the function returning
   the sum of two passed arguments and the \texttt{init} value is typically, the neutral value for the plus
-  operator (\texttt{0}), i.\,e.\ where to start the sum from.
+  operator (\texttt{0}), \ie where to start the sum from.
 
   Additionally we get two iterators, describing the range of value we want to sum up. \texttt{it} is thereby the
   first element, and \texttt{end} a position after the last element in the range, so that is it never \textit{equal}
@@ -170,7 +170,7 @@ sequence.
 To distinguish the different functionality of iterators, the standard library has introduced \emph{iterator categories}:
 \begin{description}
   \item[Input iterator]
-    Supports only forward iteration at least once through the sequence, and allows to read from the iterators, i.\,e.\ const dereferencing.
+    Supports only forward iteration at least once through the sequence, and allows to read from the iterators, \ie const dereferencing.
     \begin{itemize}
       \item \cpp{operator++()}
       \item \cpp{operator++(int)}
@@ -199,7 +199,7 @@ To distinguish the different functionality of iterators, the standard library ha
   \item[Contiguous Iterator]
     Same as \emph{Random Access Iterator} but additionally guarantees contiguous storage of the elements in the underlying container.
   \item[Output Iterator]
-    Supports only forward iteration at least once through the sequence, and allows to write to the elements the iterator is pointing to, i.\,e.\ mutable dereferencing.
+    Supports only forward iteration at least once through the sequence, and allows to write to the elements the iterator is pointing to, \ie mutable dereferencing.
     \begin{itemize}
       \item \cpp{operator++()}
       \item \cpp{operator++(int)}
@@ -256,7 +256,7 @@ The category is represented by empty classes, forming a hierarchy that represent
 
 \begin{example}
   The iterator traits can be used to write more generic algorithms. Consider the \emph{accumulate} function from above:
-  The return type might be different from the init type, e.\,g.\ it could be the type of the elements of the sequence:
+  The return type might be different from the init type, \eg it could be the type of the elements of the sequence:
   %
   \begin{minted}{c++}
   template <typename InputIterator, typename T, typename BinaryFunction>
@@ -283,7 +283,7 @@ The category is represented by empty classes, forming a hierarchy that represent
 
 \begin{example}
   Some algorithms can be improved by knowledge about the iterators. An example is the function \cpp{std::distance} returning the distance
-  between two iterator, i.\,e.\ how many increments are necessary to reach from begin the end iterator.
+  between two iterator, \ie how many increments are necessary to reach from begin the end iterator.
   %
   \begin{minted}{c++}
   template <class InputIterator>
@@ -379,7 +379,7 @@ The return value of the copy function is again of type \texttt{OutputIt} and thu
 copied last in the algorithm. Thus, the iterator pair \cpp{[d_first, return_value)} defines a range that has identical elements as the
 input range \cpp{[first, last)}.
 
-Since the output range is directly filled using the output iterators, it is expected that this range can store enough elements, i.\,e.\ the output iterator
+Since the output range is directly filled using the output iterators, it is expected that this range can store enough elements, \ie the output iterator
 can be increment at least as often as the input iterator. It is, on the other hand, not required, that the returned iterator is identical to the end-iterator
 of the output range. It is fine to copy less elements that the range could store.
 
@@ -403,7 +403,7 @@ of the output range. It is fine to copy less elements that the range could store
   \end{minted}
 \end{example}
 
-The second variant of copy, \cpp{std::copy_if}, expects an additional function parameter representing a \emph{unary predicate}, i.\,e.\ function or functor
+The second variant of copy, \cpp{std::copy_if}, expects an additional function parameter representing a \emph{unary predicate}, \ie function or functor
 taking one parameter and returning a \cpp{bool}:
 %
 \begin{samepage}
@@ -442,7 +442,7 @@ The output-iterator is incremented only if the predicate returns \cpp{true}.
 \end{example}
 
 
-\subsubsection{Backinserter}
+\subsubsection{Back-inserter}
 The problem with the copy algorithm is that we need to resize the output container before we can copy into it. In case of \cpp{copy_if} we even do
 not know how many elements are copied. It would be better, if the algorithm itself could ``resize'' the container to the required size. But we
 do not get a container as input, but an iterator. This iterator has no functionality to resize the underlying container. It often does not even has
@@ -472,7 +472,7 @@ wrapper type is called \cpp{std::back_insert_iterator} ans is created using the 
 \end{minted}
 
 The class-type \cpp{std::back_insert_iterator} implements the concept of an \cpp{OutputIterator}. Thus, it can be incremented and dereferenced. But, both
-methods have a different effect as expected, essentially they do nothing, but, in case of the dereference operator, just return \cpp{*this}, i.\,e.\ a reference
+methods have a different effect as expected, essentially they do nothing, but, in case of the dereference operator, just return \cpp{*this}, \ie a reference
 to itself. Additionally, this iterator implements an assignment \cpp{operator=}, calling \cpp{push_back()} on the wrapped container with the
 value given to the assignment operator. (see also the exercise)
 
@@ -525,7 +525,7 @@ The first one, \cpp{std::fill}, sets all elements to the same value:
 \end{minted}
 \end{samepage}
 
-The algorithm \cpp{std::generate} fills a range by values generated by a nullary funktor, called generator:
+The algorithm \cpp{std::generate} fills a range by values generated by a nullary functor, called generator:
 %
 \begin{samepage}
 \begin{minted}{c++}
@@ -554,7 +554,7 @@ The third algorithm, \cpp{std::transform}, applies a unary functor to the elemen
 \end{minted}
 \end{samepage}
 (There is a second version of \cpp{std::transform} taking two input ranges and one output range by iterators. With this, you could implement element-wise
-binary operations, e.\,g.\ sum of two vectors.)
+binary operations, \eg sum of two vectors.)
 
 \begin{example}
   The following example illustrates the interaction of multiple algorithms and data-structures:
@@ -623,7 +623,7 @@ pass an additional binary functor argument, that defines the actual reduction op
 \end{samepage}
 
 The third algorithm in this chapter takes two ranges, given by its iterators, ane reduces the combined elements of the ranges to a single output values.
-The default behavior of this algorithms is to perform a classical Euclidean inner-product, i.\,e.\ to sum up the products of the elements of the two ranges.
+The default behavior of this algorithms is to perform a classical Euclidean inner-product, \ie to sum up the products of the elements of the two ranges.
 
 Instead of this default operation, one can pass two functors to the algorithm. The first one is the reduction functor (plus by default) and the second one
 is the element-combination functor (multiplies by default):

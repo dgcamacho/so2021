@@ -13,7 +13,7 @@ is provided that is later filled with concrete realizations of types. This is ca
 \section{Templates}
 Generic programming in C++ allows to parametrize functions and classes not just with values (function parameters, or constructor arguments), but with types.
 A \emph{template parameter} thereby is a special kind of parameter passed to the function, class, or even variable. Inside of the realization of the function
-or class, this type parameter, represented by its name, can be used as any other regular type, e.g. to declare variables, to specify function parameter lists
+or class, this type parameter, represented by its name, can be used as any other regular type, \eg to declare variables, to specify function parameter lists
 or return types, or to parametrize other function or class templates.
 
 An introductory example illustrates the usage of function and class templates:
@@ -40,7 +40,7 @@ An introductory example illustrates the usage of function and class templates:
   }
 \end{minted}
 
-The call to the (generic) function \texttt{distance}, i.e. the \emph{instantiation} of that function with a concrete type, is
+The call to the (generic) function \texttt{distance}, \ie the \emph{instantiation} of that function with a concrete type, is
 initiated by passing concrete arguments to that function, or by specifying the type explicitly
 \begin{minted}{c++}
   int main()
@@ -242,7 +242,7 @@ Again, there is no difference between \texttt{typename} and \texttt{class} of th
   \cppline{template <class T1, class T2, class T3 = int> class CLASS_NAME { ... };}
 \end{rem}
 
-The \emph{template instantiation} of a class template, i.e. the replacement of a template parameter with a concrete type (or value), follows the syntax
+The \emph{template instantiation} of a class template, \ie the replacement of a template parameter with a concrete type (or value), follows the syntax
 \begin{minted}{c++}
   CLASS_NAME<TYPES...> variable(CONSTRUCTOR_ARGUMENTS); // or...
   CLASS_NAME<TYPES...> variable{CONSTRUCTOR_ARGUMENTS}; // Uniform initialization, or
@@ -277,7 +277,7 @@ where \texttt{TYPES...} is a list of concrete types (without the keyword \texttt
 % =================================================================================================
 \section{Non-type parameters}\label{sec:non_type_parameters}
 Apart from type parameters, template parameters can represent integral values. Instead of specifying the template parameter with \texttt{typename} or
-\texttt{class}, it is declared with any integral value type, e.g. \cpp{int}.
+\texttt{class}, it is declared with any integral value type, \eg \cpp{int}.
 
 The following example defines a class template of a container with fixed number of elements that is given as non-type template parameter:
 \begin{minted}{c++}
@@ -329,7 +329,7 @@ One can instantiate that class and create type aliases to that class. Especially
 \end{itemize}
 
 Each class template is translated into a regular class at template instantiation. Those instantiations get internally a unique name tepending on the
-instantiated template parameters, e.g. \cpp{mypoint<double>} $\Rightarrow$ \texttt{[...]mypointId[...]} (in g++)
+instantiated template parameters, \eg \cpp{mypoint<double>} $\Rightarrow$ \texttt{[...]mypointId[...]} (in g++)
 
 After instantiation of a template, all its internal types, member functions, member variables and static constants are concrete, have a concrete type
 or (in case of static constants) have a concrete value, that can be evaluated and asked for.

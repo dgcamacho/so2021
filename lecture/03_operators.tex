@@ -32,7 +32,7 @@ All (binary) operators are classified as left or right associative
 \end{example}
 
 \begin{example}
-  Assignment operators are \emph{right-associative}:  (\texttt{=, +=, <<=, ...}), i.e. the expression
+  Assignment operators are \emph{right-associative}:  (\texttt{=, +=, <<=, ...}), \ie the expression
 
 \cpp{x= y= z} is evaluated from right to left and thus equivalent to: \cpp{x= (y= z)}
 \end{example}
@@ -89,9 +89,9 @@ Operator & Action \\
 \cpp{+} & Addition (unary plus) \\
 \cpp{*} & Multiplication \\
 \cpp{/} & Division \\
-\cpp{%} & Modulo = Reminder of division, i.e. for integers: if \cpp{r = a % b}, then there exists \cpp{c}, such that \cpp{a=b*c + r}  \\
-\cpp{--} & Decrement (Pre- and Postfix), i.e. \cpp{--a} is equivalent tu \cpp{a = a - 1}\\
-\cpp{++} & Increment (Pre- and Postfix), i.e. \cpp{++a} is equivalent tu \cpp{a = a + 1} \\
+\cpp{%} & Modulo = Reminder of division, \ie for integers: if \cpp{r = a % b}, then there exists \cpp{c}, such that \cpp{a=b*c + r}  \\
+\cpp{--} & Decrement (Pre- and Postfix), \ie \cpp{--a} is equivalent to \cpp{a = a - 1}\\
+\cpp{++} & Increment (Pre- and Postfix), \ie \cpp{++a} is equivalent to \cpp{a = a + 1} \\
 \end{tabular}
 \begin{minted}{c++}
 int operator++(int& a, int) { // a++
@@ -123,7 +123,7 @@ Operator & Action \\
 \end{tabular}
 
 \begin{rem}
-  The result of a boolean expression is a \cpp{bool} value, e.g.
+  The result of a boolean expression is a \cpp{bool} value, \eg
   \cppline{bool out_of_bound = x < min_x || x > max_x}
 \end{rem}
 
@@ -207,7 +207,7 @@ but
 
 \subsubsection*{Bracket-Access operators}
 The round brackets \cpp{()} and the square brackets \cpp{[]} also represent operators, namely \emph{bracket-access operators}. While the square bracket
-is typically used as vector access and allows only one argument, e.g. the vector element index, the round brackets represent a function call and thus
+is typically used as vector access and allows only one argument, \eg the vector element index, the round brackets represent a function call and thus
 allow any number of arguments \texttt{>= 0}.
 
 \subsection*{Sequence of evaluation and side effects}
@@ -226,7 +226,7 @@ With \cxx{17}\marginpar{[\cxx{17}]} several more operations are now sequenced an
 See also: \href{http://en.wikipedia.org/wiki/Sequence_point}{Wikipedia}, \href{http://en.cppreference.com/w/cpp/language/eval_order}{CppReference.com}
 
 For logical operators, at first the left operand is evaluated and based on its value it is decided whether to evaluate the right operand
-at all or not, i.e.
+at all or not, \ie
 \begin{minted}{c++}
   A && B        // first evaluate A, if A == true evaluate B and return its value
   A || B        // first evaluate A, if A == false, evaluate B andreturn its value
@@ -260,7 +260,7 @@ at all or not, i.e.
 
 
 \subsection{Operators as functions}
-In C++ nearly all operator can be written (and called) as a regular function. Let \texttt{\#} be the symbol of the operator, e.g.
+In C++ nearly all operator can be written (and called) as a regular function. Let \texttt{\#} be the symbol of the operator, \eg
 \texttt{\#$~\in$\{+,*,(),+=,<,...\}}, then there zero, one or both of the following implementations are available:
 
 \begin{minted}[frame=none]{c++}
@@ -326,8 +326,3 @@ In the column \textit{Overload} means (C), the operator can only be implemented 
 write the operator as member function or free function.
 
 A more complete table can also be found at \url{http://en.wikipedia.org/w/index.php?title=C++\_operators}, or \url{https://en.cppreference.com/w/cpp/language/operator_precedence}.
-
-
-
-
-
