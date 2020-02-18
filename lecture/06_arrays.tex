@@ -242,7 +242,7 @@ the size of the underlying data. This means that \cpp{pointer + 1} points to the
 Examples:
 \begin{minted}{c++}
 int* vec = new int[10]; // vec points to the first element of the array
-vec = vec + 1;          // vec now contains the address (vec + sizeof(int)), \ie
+vec = vec + 1;          // vec now contains the address (vec + sizeof(int)), that is:
                         // vec points to the second element of the array
 vec++;                  // vec points to the third element of the array...
 delete[] vec;           // ERROR: Address of vec not allocated by a direct call to new[]
