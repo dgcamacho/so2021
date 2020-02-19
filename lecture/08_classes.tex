@@ -472,7 +472,7 @@ The argument to the assignment operator thereby is the same as for the copy cons
 \end{minted}
 
 \textbf{Note}: You can not use the initializer-lists anywhere outside of constructors, thus especially not in assignment operators. Therefore, the copy has to
-move to the function body.
+happen in the function body.
 
 \begin{guideline}{Principle}
   If you define a copy-constructor you should also define a copy assignment operator.
