@@ -518,7 +518,7 @@ Move constructors are used/invoked when:
 \begin{itemize}
   \item initialization: \cpp{T a = std::move(b);} or \cpp{T a{std::move(b)};}, where \texttt{b} is of type \texttt{T};
   \item function argument passing: \cpp{f(std::move(a));}, where \texttt{a} is of type \texttt{T} and \texttt{f} is \cpp{void f(T t)};
-  \item function return: return \texttt{a}; inside a function such as \cpp{T f()}, where \texttt{a} is of type \texttt{T} which has a move constructor.
+  \item function return: \texttt{return a}; inside a function such as \cpp{T f()}, where \texttt{a} is of type \texttt{T} which has a move constructor.
 \end{itemize}
 
 The default behavior of a move-constructor is to move construct all its members from the members of the passed argument. This default move constructor
