@@ -147,7 +147,7 @@ The type deduction thereby is very similar to the \cpp{auto} type deduction from
 Actually, in C++ first the template parameter deduction was invented and later the auto-type deduction was added with \cxx{11}.
 
 \begin{rem}
-  Argument type deduction only works, if all the types can be deduced uniquely from the function parameters. In the example above, we have
+  Argument type deduction only works if all the types can be deduced uniquely from the function parameters. In the example above, we have
   declared a function template with two parameters and have specified both with the same template parameter \texttt{T}. Thus, we have to
   pass two arguments of the same type to the function template in order to allow the template parameters to be deduced from the
   function parameters:
@@ -253,7 +253,7 @@ where \texttt{TYPES...} is a list of concrete types (without the keyword \texttt
 \begin{rem}
   With \marginpar{[\cxx{17}]}\cxx{17} the class template parameters can be automatically deduced from the class constructor arguments. This
   is called \emph{class template argument deduction}. Similar to argument type deduction for function templates the template parameters
-  are deduced from the arguments passed to a constructor of the class template. This works, if all class template parameters are related to
+  are deduced from the arguments passed to a constructor of the class template. This works if all class template parameters are related to
   a constructor parameter:
   %
   \begin{minted}{c++}

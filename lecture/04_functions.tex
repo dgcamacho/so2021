@@ -205,7 +205,7 @@ int& foo2() {
 \end{minted}
 
 \begin{rem}
-  Using \cpp{auto} return type might lead to unexpected behavior, if combined with references. The type that is returned is the raw type
+  Using \cpp{auto} return type might lead to unexpected behavior if combined with references. The type that is returned is the raw type
   of the expression in the return statement, removing all top-level const and reference qualifiers:
   \begin{minted}{c++}
   auto           f0(int i) { return i; }  // -> int
@@ -273,7 +273,7 @@ int main()
 Some people prefer the naming \emph{deferred temporary materialization}, \ie the materialization of the value 42 happens in the \cpp{main()} when
 assigned to the variable \cpp{x}.
 
-This optimization or guarantee is especially important, if you want to return large objects created inside of the function. It is thus
+This optimization or guarantee is especially important if you want to return large objects created inside of the function. It is thus
 guaranteed that no expensive copy operation must be performed. (not even a move operation). The created objects simply materializes outside of
 the function in the target variable.
 

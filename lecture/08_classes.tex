@@ -342,7 +342,7 @@ that is also initialized by a constructor call passing two arguments.
 of the constructor arguments).
 
 \textbf{Note}: If some member variables have default initializers, like \cpp{int dim = 2;} those initializations are appended to \underline{all} constructor
-initializer lists, if no other value for that variable is prescribed.
+initializer lists if no other value for that variable is prescribed.
 
 
 % -------------------------------------------------------------------------------------------------
@@ -367,7 +367,7 @@ MyPoint* q2 = new MyPoint{};
 \end{minted}
 
 If there is no other constructor defined, the compiler automatically generates a default constructor with default behavior, \ie that calls the default constructor
-on each member variable (and base-class). For integral and floating-point types the default initializer value is \texttt{0}, if not specified otherwise by
+on each member variable (and base-class). For integral and floating-point types the default initializer value is \texttt{0} if not specified otherwise by
 putting the value in the variable definition, \ie \cpp{int dim = 2;}.
 
 If there is any other constructor defined, one can force the compiler to generate the default constructor automatically, by adding the keyword \cpp{= default} to
