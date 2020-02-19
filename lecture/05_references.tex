@@ -174,17 +174,17 @@ Which one you mean is determined by the position of the \cpp{const} qualifier, \
   int data = 42, data2 = 1234;
 
   int const* i1 = &data;
-  *i1 = 7;                // ERROR: can not modify constant data
+  *i1 = 7;                // ERROR: cannot modify constant data
   i1 = &data2;            // OK: i1 now points to data2
 
   int* const i2 = &data;
   *i2 = 7;                // OK: data is not const
-  i2 = &data2;            // ERROR: can not change address of const pointer
+  i2 = &data2;            // ERROR: cannot change address of const pointer
 
   int const* const i3 = &data; // completely imutable
 \end{minted}
 
-Since one can not have a reference of a reference, one can also not declare a pointer to a reference (something like \cpp{int&*}), but a
+Since one cannot have a reference of a reference, one can also not declare a pointer to a reference (something like \cpp{int&*}), but a
 pointer is a regular type representing an address, it can be referenced, \ie
 %
 \begin{minted}{c++}

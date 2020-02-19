@@ -191,7 +191,7 @@ in that function. If you have a \cpp{const} class object or a \cpp{const&} to a 
 % -------------------------------------------------------------------------------------------------
 \subsection{Static Members}
 Static variables (class variables) or static function (class functions) are shared by all instances of that class and are introduced with the keyword \cpp{static}.
-Static variables must be defined outside of the class. Since they are independent of any instance. Static members can not be initialized in a constructor.
+Static variables must be defined outside of the class. Since they are independent of any instance. Static members cannot be initialized in a constructor.
 %
 \begin{minted}{c++}
   class MyPoint
@@ -444,7 +444,7 @@ by using the keyword \cpp{= default}, as above:
   };
 \end{minted}
 
-Also, one could explicitly mark the copy constructor as \emph{deleted} to enforce that a class can not be copied. This can be accomplished by using the
+Also, one could explicitly mark the copy constructor as \emph{deleted} to enforce that a class cannot be copied. This can be accomplished by using the
 keyword \cpp{= delete}, similar to the default.
 
 \begin{guideline}{Attention}
@@ -471,7 +471,7 @@ The argument to the assignment operator thereby is the same as for the copy cons
   };
 \end{minted}
 
-\textbf{Note}: You can not use the initializer-lists anywhere outside of constructors, thus especially not in assignment operators. Therefore, the copy has to
+\textbf{Note}: You cannot use the initializer-lists anywhere outside of constructors, thus especially not in assignment operators. Therefore, the copy has to
 happen in the function body.
 
 \begin{guideline}{Principle}
@@ -531,12 +531,12 @@ implicitly declared only of
   \item there are no user-declared destructors;
 \end{itemize}
 
-and is implicitly deleted if some data members (or base-classes) can not be moved.
+and is implicitly deleted if some data members (or base-classes) cannnot be moved.
 
 In case the default behavior would make sense but another constructor or destructor of the list above is defined, one can force the compiler to generate
 the move-constructor automatically, using the keyword \cpp{= default}, as above.
 
-Also, one could explicitly mark the move constructor as \emph{deleted} to enforce that a class can not be moved. This can be accomplished by using the
+Also, one could explicitly mark the move constructor as \emph{deleted} to enforce that a class cannot be moved. This can be accomplished by using the
 keyword \cpp{= delete}, similar to the default.
 
 Similar to the copy constructor, there is a cousin of the move constructor, the move assignment operator: This should be defined whenever a move constructor
@@ -621,7 +621,7 @@ Additionally, there is the access restriction \cpp{protected} that we will see l
   Point p{1.0, 2.0}; // Initialization
 
   p.x;   // OK: x is a public member variable
-  p.a:   // ERROR: a ist a private member and can not be accessed from outside the class
+  p.a:   // ERROR: a ist a private member and cannot be accessed from outside the class
 
   p.foo(); // OK: foo is a public member function
   p.bar(); // ERROR: bar is a private member function
@@ -638,7 +638,7 @@ have this access restriction.
 
 \begin{rem}
   Also constructors can be restricted. This allows to instantiate a class (or copy/move a class) in a specific way only. If there are no public
-  constructors available, the class can not be instantiated directly and one has to provide a ``factory''-function instead, \ie a static public
+  constructors available, the class cannot be instantiated directly and one has to provide a ``factory''-function instead, \ie a static public
   member function that constructs and returns the instantiated class.
 \end{rem}
 

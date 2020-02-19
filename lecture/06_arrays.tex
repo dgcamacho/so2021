@@ -78,7 +78,7 @@ Example:
   static_assert(SIZE(mat) == 4, "");
 \end{minted}
 
-One can not directly determine the rank of a matrix/tensor and thus number of rows and columns of a matrix without prior knowledge of the shape
+One cannot directly determine the rank of a matrix/tensor and thus number of rows and columns of a matrix without prior knowledge of the shape
 is not possible to detect with macros.
 
 
@@ -202,7 +202,7 @@ may simply overwrite the data stored at the specific memory location $\rightarro
   it may lead to undefined behavior (and often produces a runtime-error of the form ``invalid pointer'').
 \end{guideline}
 
-Another problem with dynamic arrays is that you can not even see whether it is an allocated array, or just an uninitialized pointer variable. So,
+Another problem with dynamic arrays is that you cannot even see whether it is an allocated array, or just an uninitialized pointer variable. So,
 here again the general rule applies: initialize variables directly on declaration. If you do not yet have an address to initialize the pointer with,
 set it to zero, \ie
 %
@@ -253,7 +253,7 @@ Pointers can be dereferenced, giving a reference to the data it points to. Addit
 equivalent to \cpp{*(pointer + n)}.
 
 Requirement for using pointer arithmetic is that the data has a defined size (complete types). The ``empty-set'' type \cpp{void} can be used as a pointer type,
-meaning just the address without any reference to the data-type of the stored data. Since \cpp{void} does not have a size, pointers to \cpp{void} can not
+meaning just the address without any reference to the data-type of the stored data. Since \cpp{void} does not have a size, pointers to \cpp{void} cannot
 be used in pointer arithmetics.
 
 

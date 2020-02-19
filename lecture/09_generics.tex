@@ -155,7 +155,7 @@ Actually, in C++ first the template parameter deduction was invented and later t
   \begin{minted}{c++}
   double a = 1.0;
   float b = 2.0f;
-  abs_difference(a,b); // ERROR: can not deduce template parameters
+  abs_difference(a,b); // ERROR: cannot deduce template parameters
   \end{minted}
   %
   The parameter \texttt{T} could be either deduced to \cpp{double} or to \cpp{float}.
@@ -265,7 +265,7 @@ where \texttt{TYPES...} is a list of concrete types (without the keyword \texttt
   but
   %
   \begin{minted}{c++}
-  std::vector v2(7);      // ERROR: type can not be deduced. The constructor argument is
+  std::vector v2(7);      // ERROR: type cannot be deduced. The constructor argument is
                           // just the size of the vector, no value.
   \end{minted}
 

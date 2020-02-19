@@ -297,7 +297,7 @@ The category is represented by empty classes, forming a hierarchy that represent
     \item Directly take the difference between \texttt{first} and \texttt{last} it the iterator is a \emph{Random Access Iterator}
   \end{enumerate}
 
-  Since the difference is only possible if the type supports this operation, we can not simply use an \cpp{if - else} branching. we have
+  Since the difference is only possible if the type supports this operation, we cannot simply use an \cpp{if - else} branching. we have
   to implement two function, differing only in the iterator category:
   %
   \newpage
@@ -504,7 +504,7 @@ constructed from an output-stream object, like \cpp{std::cout}, \cpp{std::cerr} 
 a delimiter separating the printed elements.
 
 The \cpp{std::ostream_iterator} is a model of a \emph{single-pass} \cpp{OutputIterator}, thus can be ``traversed'' only once. In a second traversal
-the state of the output-range is already changed and we can not go back.
+the state of the output-range is already changed and we cannot go back.
 
 
 % -------------------------------------------------------------------------------------------------

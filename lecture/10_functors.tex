@@ -189,7 +189,7 @@ Without the \emph{capture} clause, it looks like a regular function definition.
 \end{example}
 
 The capture list is very similar to a list of constructor argument of the functor. All variables in that list introduce a local
-member variable, that can be used inside the lambda expressions function body. Any other variable can not be used there, since it
+member variable, that can be used inside the lambda expressions function body. Any other variable cannot be used there, since it
 generates an unnamed functor class with an \cpp{operator()} member function that is called on evaluation.
 
 Using the capture list, a connection to the surrounding scope can be established. The following values are possible in the capture list:
@@ -237,7 +237,7 @@ but, we do not have a name for the type of the parameter like \texttt{S} in the 
 \end{rem}
 
 Similar to classical templates and the \cpp{auto} placeholder in variable declarations, the function parameters in generic lambdas
-can be qualified with \cpp{const}, reference and pointer. But they can not be used as placeholders in other templated types, \eg
+can be qualified with \cpp{const}, reference and pointer. But they cannot be used as placeholders in other templated types, \eg
 \cpp{std::vector<auto>} is not allowed as function parameter in generic lambdas.
 
 \begin{rem}

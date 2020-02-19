@@ -315,7 +315,7 @@ Some remarks to the examples above:
 % ==============================================================================
 \section{Variable declaration and fundamental types\label{sec:data-type}}
 C++ is a statically typed language (in contrast to dynamically typed languages like \eg PHP), meaning: each identifier and expression in a
-C++ program has assigned a type that is already known to the compiler and this type can not be changed.
+C++ program has assigned a type that is already known to the compiler and this type cannot be changed.
 
 Examples:
 \begin{minted}{c++}
@@ -572,7 +572,7 @@ Example:
 \end{minted}
 (Fine if \cpp{long} is 64Bit long, wrong value if \cpp{long} is only 32Bit long)
 
-We call an initialization of a value to a smaller type that can not represent this value a \emph{narrowing initialization} or
+We call an initialization of a value to a smaller type that cannot represent this value a \emph{narrowing initialization} or
 \emph{narrowing conversion}. In the example above, the compiler will not give any error and compiles fine, although the value might be wrong.
 Maybe the compiler prints a warning, but not on all warning levels and this is not guaranteed.
 
@@ -666,7 +666,7 @@ A \cpp{constexpr} variable must satisfy the following requirements:
   \item the full-expression of its initialization, including all implicit conversions, constructors calls, etc, must be a constant expression
 \end{itemize}
 
-The category \emph{LiteralType} can not yet be fully explained, but especially the fundamental types discussed above are \emph{LiteralTypes}.
+The category \emph{LiteralType} cannot yet be fully explained, but especially the fundamental types discussed above are \emph{LiteralTypes}.
 
 \begin{rem}
   \cpp{constexpr} variables, expressions and functions are a powerful tool within C++, available since \cxx{11} and extended in \cxx{14} and \cxx{17}.
@@ -924,7 +924,7 @@ This structured binding does not only work for tuple-like structures, but also f
 \end{minted}
 
 \begin{rem}
-Tuples (and pairs) can not be traversed like other containers. The reason is that each element in a tuple has a different type and in a loop the elements must have the same type in each iteration. Currently the standard committee discusses and extended version of a loop, like \cpp{for...(auto t : tuple)} or \cpp{for constexpr(auto t : tuple)}. But this is not yet decided. We will see later in the chaper about meta-programming how to write a loop over tuples yourself. Then you get something like
+Tuples (and pairs) cannot be traversed like other containers. The reason is that each element in a tuple has a different type and in a loop the elements must have the same type in each iteration. Currently the standard committee discusses and extended version of a loop, like \cpp{for...(auto t : tuple)} or \cpp{for constexpr(auto t : tuple)}. But this is not yet decided. We will see later in the chaper about meta-programming how to write a loop over tuples yourself. Then you get something like
 \begin{minted}{c++}
   forEach(tuple, [](auto t) {
     std::cout << t << std::endl;
