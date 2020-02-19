@@ -564,8 +564,8 @@ private:
 \end{minted}
 At the end of a user-defined destructor, the destructors of all member variables are called automatically.
 
-The default behavior of a destructor is, that simply all members are destroyed using their destructors. This default behavior is automatically generated if
-no user-defined destructor is provided. If any member cannot be destructed, the implicitly generate destructor is deleted.
+The default destructor that simply destroys all members using their destructors. This default behavior is automatically generated if
+no user-defined destructor is provided. If any member cannot be destructed, the implicitly generated destructor is deleted.
 
 % =================================================================================================
 \section{Rule of five / Rule of zero}
