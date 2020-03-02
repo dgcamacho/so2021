@@ -2,7 +2,7 @@
 An advantage of generic programming is that we can reuse the same code for multiple types/arguments/parameters. Although this gives us a lot of flexibility
 sometimes we want to be more specific, \ie some algorithms require special knowledge about the data types used to allow an efficient implementation. Some
 types have additional guarantees (\eg contiguous storage of its data elements) or allow more (efficient) operations (\eg containers with optimized sorting
-algorithm directly implemented and not by the generic \cpp{std::sort} function). In such cases is would be advantages to provide a more specialized implementation
+algorithm directly implemented and not by the generic \cpp{std::sort} function). In such cases is would be advantageous to provide a more specialized implementation
 of the same algorithm or data-structure without loosing the generic version for the other types.
 
 \begin{example}
@@ -68,7 +68,7 @@ Some examples:
   template <class T>
   class MyPoint<T, long> { ... }; // (b)
 
-  // specialization for element type `M<Point<T,int>' where `T` could be any type
+  // specialization for element type `MyPoint<T,int>' where `T` could be any type
   // and fixed index type `int`
   template <class T>
   class MyPoint< MyPoint<T,int>, int > { ... }; // (c)
@@ -77,7 +77,7 @@ Some examples:
 
 
 % ==============================================================================
-\section{Partielle Spezialisierung}\label{seq:partial_template_specialization}
+\section{Partial Template Specialization}\label{seq:partial_template_specialization}
 If not all template parameters are fixed (specialized) and the template parameter list is not empty, the specialization is called
 \emph{partial template specialization}. This is allowed for class templates only! The specialization parameters can depend on some or all remaining
 template parameters in the template parameter list, \eg
