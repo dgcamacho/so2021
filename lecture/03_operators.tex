@@ -129,7 +129,7 @@ Operator & Action \\
 
 \begin{rem}
 With \cxx{20}\marginpar{[\cxx{20}]} a new comparison operator will be introduced, called \emph{three-way comparison operator}
-or sometimes also \emph{space-ship operator}. It is written as \cpp{<=>} and returns and object such that
+or sometimes also \emph{space-ship operator}. It is written as \cpp{<=>} and returns an object such that
 \begin{itemize}
   \item \cpp{(a <=> b) < 0} if \cpp{lhs < rhs}
   \item \cpp{(a <=> b) > 0} if \cpp{lhs > rhs}
@@ -250,7 +250,7 @@ at all or not, \ie
   int foo(int a, int b) { return a + b; }
 
   int x = 1;
-  foo(++x, x++); // Variant 1 (behavior undefiniert)
+  foo(++x, x++); // Variant 1 (undefined behavior)
 
   x = 1;
   int a = ++x, b = x++;
