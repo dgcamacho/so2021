@@ -485,7 +485,7 @@ leaving it in an undetermined state. This requires that the moved-from object is
 an rvalue. So, move constructors expect as single argument an \underline{rvalue-reference} to the class-type: \cpp{MyPoint(MyPoint&& that)}.
 
 Move constructors are introduced in \cxx{11} (together with rvalue reference) to allow the fast construction of copies of objects, that are destroyed anyway.
-Thus, one just use the data ob the temporary object, without copying it. This can be motivated by a class storing a pointer to a large dynamic array
+Thus, one just use the data of the temporary object, without copying it. This can be motivated by a class storing a pointer to a large dynamic array
 that was allocated in some constructor and would be destroyed in a destructor. Instead of copying all the elements of that array, a move-constructor
 could just copy the pointer to the array and set it to \cpp{nullptr} inside the moved-from object to forbid the deallocation:
 %
@@ -531,7 +531,7 @@ implicitly declared only of
   \item there are no user-declared destructors;
 \end{itemize}
 
-and is implicitly deleted if some dana members (or base-classes) can not be moved.
+and is implicitly deleted if some data members (or base-classes) can not be moved.
 
 In case the default behavior would make sense but another constructor or destructor of the list above is defined, one can force the compiler to generate
 the move-constructor automatically, using the keyword \cpp{= default}, as above.
