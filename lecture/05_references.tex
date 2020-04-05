@@ -1,4 +1,3 @@
-
 \section{References and Pointers\label{sec:references}}
 Although used already, the references need a revisit. References can be understood as alias to (existing) objects. Compared to classical
 pointer, they do not represent the address of the references object, but the data of the objects directly.
@@ -18,7 +17,7 @@ r = 1;      // changes the value of i => i == 1
 i = 2;      // also r == 2
 \end{minted}
 
-References itself are no objects and do not need own memory. That is why there are no arrays of references and no references of references!
+References itself are not objects and do not need own memory. That is why there are no arrays of references and no references of references!
 \begin{minted}{c++}
 int& a[3]; // error
 int& &r;   // error
@@ -152,7 +151,7 @@ T&& problematic = xvalue();
 % -------------------------------------------------------------------------------------------------
 \subsection{Pointers}
 Referencing to something in memory could be understood as just storing the address of that memory. An address ist just an integer indicating
-the position in memory relative to some initial address. But, we need more than just the adress, we need the type of the data that we are
+the position in memory relative to some initial address. But, we need more than just the address, we need the type of the data that we are
 referring to, so that we can give the memory a meaning. This is called a pointer:
 %
 \cppline{TYPE * pointer = &OBJECT;}
@@ -168,7 +167,7 @@ The \textit{dual} operator to the address-of operator is the de-reference operat
 where \texttt{POINTER} must be any object of pointer type. So, the dereferenced pointer is again an lvalue.
 
 Pointers can be combined with \cpp{const} qualifiers, to either indicate that the addressed data is immutable or that the address value is constant.
-Which one you mean is determined by the position of the \cpp{const} qualifier, \ie
+This behaviour is determined by the position of the \cpp{const} qualifier, \ie
 %
 \begin{minted}{c++}
   int data = 42, data2 = 1234;

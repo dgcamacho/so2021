@@ -51,7 +51,7 @@ We distinguish two types of template metaprogramming
 
 % -------------------------------------------------------------------------------------------------
 \subsection{Metafunctions}
-Classical function get their inputs as values in the function parameters can return values wither in the return statement or in an output
+Classical function get their inputs as values in the function parameters can return values either in the return statement or in an output
 function parameter. In contrast, metafunctions get their input as template parameters and provide their results either as typedef (type alias)
 or as static constant. Thereby, metafunctions are typically class templates.
 
@@ -204,7 +204,7 @@ and the corresponding assembler code:
 
 \subsubsection{Value aliases}
 Instead of accessing the result of a computation in a template metafunction by the \cpp{value} member, it is common standard to
-introduce a variable template for this purpose that simplifies the calles and makes it look very similar to regular function calls:
+introduce a variable template for this purpose that simplifies the calls and makes it look very similar to regular function calls:
 %
 \begin{minted}{c++}
   template <int N>

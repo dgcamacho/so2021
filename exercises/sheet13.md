@@ -25,7 +25,7 @@ example is the `map` operation, that takes a range and applies a functor to each
 range:
 ```python
 for x in map(lambda x: 2*x, range(0,10)):
-  print x
+  print(x)
 ```
 Here, an integer range `[0, 10)` is created and the entries are scaled by a factor 2, but only during iteration in
 the loop. We want to implement something similar in C++:

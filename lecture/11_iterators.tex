@@ -1,5 +1,5 @@
 \chapter{Iterators}
-A central layer ob abstraction introduced in the C++ standard library are \emph{iterators}. Genrally speaking, iterators are objects allowing the
+A central layer of abstraction introduced in the C++ standard library are \emph{iterators}. Genrally speaking, iterators are objects allowing the
 programmer to traverse the elements of an arbitrary container, without knowing the specific implementation, the data storage or the access pattern to
 individual elements of that data-structure. While vectors and arrays may have a direct element access, using the \cpp{operator[]}, lists and trees do
 not have such a method, or it might be very expensive to retrieve a specific element in the sequence rather than traversing linearly through the container.
@@ -164,7 +164,7 @@ In order to allow iterators to be passed to functions, one needs function templa
 % -------------------------------------------------------------------------------------------------
 \subsection{Iterator categories}
 Not all iterators support iteration forward and backward. Some iterators not even support multiple iterations through the same sequence
-(after the first traversal, als elements are invalidated), but other containers might even support jumping to an arbitrary position in the
+(after the first traversal, elements are invalidated), but other containers might even support jumping to an arbitrary position in the
 sequence.
 
 To distinguish the different functionality of iterators, the standard library has introduced \emph{iterator categories}:
@@ -372,7 +372,7 @@ only copies those elements fulfilling some condition.
 \end{samepage}
 %
 The parameters \texttt{first} and \texttt{last} are iterators of type \texttt{InputIt} and should fulfill the concepts of an input-iterator. The
-thirst parameter \texttt{d\_first} is an out-iterator pointing to the first element in the output range. It is of type \texttt{OutputIt}. The
+third parameter \texttt{d\_first} is an out-iterator pointing to the first element in the output range. It is of type \texttt{OutputIt}. The
 types \texttt{InputIt} and \texttt{OutputIt} are different, allowing to copy from one container in a different one.
 
 The return value of the copy function is again of type \texttt{OutputIt} and thus an iterator into the output range. It points to one-past the element
