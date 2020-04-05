@@ -63,7 +63,7 @@ There are essentially two ways how to pass values/arguments to functions:
 
   int main() {
     int j = 4;
-    foo(j);     // j can not be changed by foo
+    foo(j);     // j cannot be changed by foo
     return 0;
   }
   \end{minted}
@@ -122,7 +122,7 @@ must be set to arguments starting from the last one.
 \end{example}
 
 \begin{rem}
-  One can not directly set a default value for the first argument and no default value for the second argument. If a default is set, for argument $n$, all
+  One cannot directly set a default value for the first argument and no default value for the second argument. If a default is set, for argument $n$, all
   following arguments also must have a default value.
 
   An alternative to these default values, are \emph{optional} values. This is a library extension in \cxx{17}\marginpar{[\cxx{17}]}, where the actual default
@@ -176,7 +176,7 @@ output arguments must be passed by (non-const) reference. The intend is that you
 reference to the function where it is filled with values.
 
 \begin{rem}
-  There is no only-output parameter type in c++, you can always read from the output variable. This is a source of errors so that some people prefer
+  There is no only-output parameter type in C++, you can always read from the output variable. This is a source of errors so that some people prefer
   not to use output arguments, or use pointer arguments exclusively for this purpose, so that access to the value must be done explicitly.
 \end{rem}
 
@@ -205,7 +205,7 @@ int& foo2() {
 \end{minted}
 
 \begin{rem}
-  Using \cpp{auto} return type might lead to unexpected behavior, if combined with references. The type that is returned is the raw type
+  Using \cpp{auto} return type might lead to unexpected behavior if combined with references. The type that is returned is the raw type
   of the expression in the return statement, removing all top-level const and reference qualifiers:
   \begin{minted}{c++}
   auto           f0(int i) { return i; }  // -> int
@@ -273,7 +273,7 @@ int main()
 Some people prefer the naming \emph{deferred temporary materialization}, \ie the materialization of the value 42 happens in the \cpp{main()} when
 assigned to the variable \cpp{x}.
 
-This optimization or guarantee is especially important, if you want to return large objects created inside of the function. It is thus
+This optimization or guarantee is especially important if you want to return large objects created inside of the function. It is thus
 guaranteed that no expensive copy operation must be performed. (not even a move operation). The created objects simply materializes outside of
 the function in the target variable.
 

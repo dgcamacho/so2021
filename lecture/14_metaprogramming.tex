@@ -116,8 +116,8 @@ Or you pass the values as integral constants:
 \end{minted}
 
 \subsubsection{Recursive programming}
-C++ is a statically typed language, meaning: the type of a variable or an alias can not be changed once it is set. And everything must
-have a type. This prevents from implementing something like loops where you update a counter during iteration. This makes it more
+C++ is a statically typed language, meaning: the type of a variable or an alias cannot be changed once it is set. And everything must
+have a type. The prevents from implementing something like loops where you update a counter during iteration. This makes it more
 difficult to do programming with templates. Everything has to be implemented using recursion instead of iteration.
 
 In order to illustrate a recursive algorithm implemented using templates, we consider the factorial computation.
@@ -281,7 +281,7 @@ with assembler output
   movl  $5,  -4(%rbp)
 \end{verbatim}
 
-This restriction is removed in \cxx{14} and you can write loops, use if-then-else, introduce local variables and much more. But, you can not do
+This restriction is removed in \cxx{14} and you can write loops, use if-then-else, introduce local variables and much more. But, you cannot do
 all that is possible with classical functions. Especially, your arguments and return types must be \emph{LiteralType}s like scalar types or
 trivial classes.
 

@@ -29,8 +29,8 @@ automatically by the compiler:
 Multi-dimensional arrays are written with multiple square brackets:
 %
 \begin{minted}{c++}
-  int A[2][3]; // a 2 x 3 matrix
-  double B[5][4][3]; // an 5 x 4 x 3 tensor
+  int A[2][3]; // a 2 × 3 matrix
+  double B[5][4][3]; // an 5 × 4 × 3 tensor
 \end{minted}
 %
 and can be understood as arrays of arrays (a matrix is and arrays of rows).
@@ -78,7 +78,7 @@ Example:
   static_assert(SIZE(mat) == 4, "");
 \end{minted}
 
-One can not directly determine the rank of a matrix/tensor and thus number of rows and columns of a matrix without prior knowledge of the shape
+One cannot directly determine the rank of a matrix/tensor and thus number of rows and columns of a matrix without prior knowledge of the shape
 is not possible to detect with macros.
 
 
@@ -142,7 +142,7 @@ library:
   #include <array>
   // ...
   std::array<int, 3> vec1 = { 1.0, 2.0, 3.0 };
-  std::array vec2 = {1, 2, 3}; // with c++17
+  std::array vec2 = {1, 2, 3}; // with C++17
 
   std::cout << vec1[1];
 \end{minted}
@@ -202,7 +202,7 @@ may simply overwrite the data stored at the specific memory location $\rightarro
   it may lead to undefined behavior (and often produces a runtime-error of the form ``invalid pointer'').
 \end{guideline}
 
-Another problem with dynamic arrays is that you can not even see whether it is an allocated array, or just an uninitialized pointer variable. So,
+Another problem with dynamic arrays is that you cannot even see whether it is an allocated array, or just an uninitialized pointer variable. So,
 here again the general rule applies: initialize variables directly on declaration. If you do not yet have an address to initialize the pointer with,
 set it to zero, \ie
 %
@@ -242,7 +242,7 @@ the size of the underlying data. This means that \cpp{pointer + 1} points to the
 Examples:
 \begin{minted}{c++}
 int* vec = new int[10]; // vec points to the first element of the array
-vec = vec + 1;          // vec now contains the address (vec + sizeof(int)), \ie
+vec = vec + 1;          // vec now contains the address (vec + sizeof(int)), that is:
                         // vec points to the second element of the array
 vec++;                  // vec points to the third element of the array...
 delete[] vec;           // ERROR: Address of vec not allocated by a direct call to new[]
@@ -253,7 +253,7 @@ Pointers can be dereferenced, giving a reference to the data it points to. Addit
 equivalent to \cpp{*(pointer + n)}.
 
 Requirement for using pointer arithmetic is that the data has a defined size (complete types). The ``empty-set'' type \cpp{void} can be used as a pointer type,
-meaning just the address without any reference to the data-type of the stored data. Since \cpp{void} does not have a size, pointers to \cpp{void} can not
+meaning just the address without any reference to the data-type of the stored data. Since \cpp{void} does not have a size, pointers to \cpp{void} cannot
 be used in pointer arithmetics.
 
 

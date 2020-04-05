@@ -297,7 +297,7 @@ The category is represented by empty classes, forming a hierarchy that represent
     \item Directly take the difference between \texttt{first} and \texttt{last} it the iterator is a \emph{Random Access Iterator}
   \end{enumerate}
 
-  Since the difference is only possible if the type supports this operation, we can not simply use an \cpp{if - else} branching. we have
+  Since the difference is only possible if the type supports this operation, we cannot simply use an \cpp{if - else} branching. we have
   to implement two function, differing only in the iterator category:
   %
   \newpage
@@ -444,13 +444,13 @@ The output-iterator is incremented only if the predicate returns \cpp{true}.
 
 \subsubsection{Back-inserter}
 The problem with the copy algorithm is that we need to resize the output container before we can copy into it. In case of \cpp{copy_if} we even do
-not know how many elements are copied. It would be better, if the algorithm itself could ``resize'' the container to the required size. But we
+not know how many elements are copied. It would be better if the algorithm itself could ``resize'' the container to the required size. But we
 do not get a container as input, but an iterator. This iterator has no functionality to resize the underlying container. It often does not even has
 a reference to the container it points into.
 
 A workaround for this problem is to use a different output-iterator. Not an iterator directly pointing to elements of the output-range, but a special
 iterator wrapper that performs on assignment to the dereferenced iterator an \cpp{insert()} or \cpp{push_back()} operation. The corresponding
-wrapper type is called \cpp{std::back_insert_iterator} ans is created using the function \cpp{std::back_inserter}.
+wrapper type is called \cpp{std::back_insert_iterator} and is created using the function \cpp{std::back_inserter}.
 %
 \begin{minted}{c++}
   #include <algorithm>
@@ -504,7 +504,7 @@ constructed from an output-stream object, like \cpp{std::cout}, \cpp{std::cerr} 
 a delimiter separating the printed elements.
 
 The \cpp{std::ostream_iterator} is a model of a \emph{single-pass} \cpp{OutputIterator}, thus can be ``traversed'' only once. In a second traversal
-the state of the output-range is already changed and we can not go back.
+the state of the output-range is already changed and we cannot go back.
 
 
 % -------------------------------------------------------------------------------------------------
