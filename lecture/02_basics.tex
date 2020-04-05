@@ -264,7 +264,7 @@ Example 2: The definition of a template function (included at the end of the hea
 
 \begin{minted}[frame=lines,label={example.impl.hh}]{c++}
 #pragma once
-// definition of the funktion foo()
+// definition of the function foo()
 template <class T>
 void foo() { /*...*/ }
 \end{minted}
@@ -419,7 +419,7 @@ Examples:
   Test obj();             // declaration of a funktion (with return type Test)
 \end{minted}
 
-A fundamental rule is that you are not allowed two define an object twice. While it may be allowed to declare exactly the same object multiple times, even after the definition.
+A fundamental rule is that you are not allowed to define an object twice. While it may be allowed to declare exactly the same object multiple times, even after the definition.
 
 \begin{standard}{\S 6.3 (1)}
   \textbf{One-definition rule:} No translation unit shall contain more than one definition of any variable, function, class type, enumeration
@@ -603,7 +603,7 @@ Some examples of narrowing conversions:
 
   unsigned u3 = {3};
   int      i3 = {2};
-  unsigned u4 = {i2}; // Narrowing ERROR: no negative values
+  unsigned u4 = {i3}; // Narrowing ERROR: no negative values
   int      i4 = {u3}; // Narrowing ERROR: no all values
 \end{minted}
 
@@ -629,7 +629,7 @@ Some examples of narrowing conversions:
 
 \subsection{Constants\label{sec:const}}
 An important aspect of programming languages is to control the access to data. A data-type with the property \cpp{const}
-is called a \emph{constant} ans is immutable. The syntax to declare a constant is
+is called a \emph{constant} and is immutable. The syntax to declare a constant is
 
 \cppline{TYPE const VARNAME = VALUE;}
 
@@ -655,7 +655,7 @@ Constants can be defined using automatic type deduction. Therefore, the keyword 
 \end{minted}
 
 \subsubsection{constexpr specifier}
-There is another qualifier that is stronger that \cpp{const}: The \cpp{constexpr} specifier declares that it is possible to evaluate the
+There is another qualifier that is stronger than \cpp{const}: The \cpp{constexpr} specifier declares that it is possible to evaluate the
 value of the variable at compile time. Such variables can then be used where only compile time constant expressions are allowed.
 A \cpp{constexpr} specifier used in an object declaration implies \cpp{const}.
 
@@ -679,7 +679,7 @@ The category \emph{LiteralType} can not yet be fully explained, but especially t
 \subsection{Scopes}
 Each name that appears in a C++ program is only valid in some possibly discontiguous portion of the source code called its scope. Thus,
 scopes determine the lifetime and visibility of (non-static) variables and constants. There are different types of scopes,
-global scope, function scope, class scope, block scope, function parameter scope, namespace scope, \dots. Typically, scopes a blocks of
+global scope, function scope, class scope, block scope, function parameter scope, namespace scope, \dots. Typically, scopes are blocks of
 code surrounded by curly braces, except for the global scope that lives outside of functions and classes.
 
 \begin{guideline}{Principle}
@@ -719,7 +719,7 @@ used to declare a new variable hiding the outer one with lifetime only in that n
     x = 1;     // assignment to local x (1)
     {
       int x;   // (2) hides local x (1)
-      x = 2;   // assignment ot local x (2)
+      x = 2;   // assignment to local x (2)
     }
     x = 3;     // assignment to local x (1)
   }
