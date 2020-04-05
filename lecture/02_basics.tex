@@ -307,7 +307,7 @@ Some remarks to the examples above:
     top of the include file. This directive is supported by all major compilers and can be used without any problems.
 
   \item If you want to (or have to) provide an implementation of a function or class method in a header file, it must be included together with
-    the corresponding declaration. Often, since is done my an include statement at the end of the header file. Or the definition is provided
+    the corresponding declaration. Often this is done my an include statement at the end of the header file. Or the definition is provided
     together with the declaration.
 \end{itemize}
 
@@ -351,7 +351,7 @@ initialization:
 
 % -------------------------------------------------------------------------------------------------
 \subsection{Literals\label{sec:literal}}
-A literal is a tokes directly representing a constant value of a concrete type.
+A literal is a token directly representing a constant value of a concrete type.
 
 Examples:
 \begin{minted}{c++}
@@ -383,7 +383,7 @@ where the implementer is responsible for giving those literals a meaning.
 
 \begin{rem}
   A literal is a \textit{primary expression}. Its type depends on its form (see above). A string literal is an \Index{lvalue}; all other
-  literals are \Index{prvalues}.
+  literals are \Index{prvalues} (see chapter about value categories).
 \end{rem}
 
 
@@ -426,12 +426,17 @@ A fundamental rule is that you are not allowed to define an object twice. While 
   type, or template.
 \end{standard}
 
+
+\begin{guideline}{Principle}
+  Declare variables as late as possible, usually right before using them the first time and whenever possible not before you can initialize them.
+\end{guideline}
+
 % -------------------------------------------------------------------------------------------------
 \subsection{Fundamental Types\label{sec:fundamental-type}}
 We have seen already some types in the examples above, like integer types and floating-point types. There are more fundamental data-types
 available in C++. A summary can be found at \url{http://en.cppreference.com/w/cpp/language/types}.
 
-Basic types in C++ a categorized into three groups: integral types, floating-point types, and \cpp{void}. Integral type represent integer numbers, while floating-point type might represent fractions.
+Basic types in C++ are categorized into three groups: integral types, floating-point types, and \cpp{void}. Integral types represent integer numbers, while floating-point types might represent fractions.
 
 The type \cpp{void} represents the empty set of values. No variable can be declared of type \cpp{void}. Thus, \cpp{void} is an \emph{incomplete type}. It is used as the return type for functions that do not return a value. Any expression can be explicitly converted to type \cpp{void}.
 
@@ -504,7 +509,7 @@ Literals, to indicate how to interpret a number, are \texttt{F,f,L,l} for \cpp{f
 \end{rem}
 
 \begin{rem}
-  To do arithmetic with arbitrary precision, there a multiple libraries available. Examples include \href{https://gmplib.org/}{GNU GMP}
+  To do arithmetic with arbitrary precision, there are multiple libraries available. Examples include \href{https://gmplib.org/}{GNU GMP}
   (Gnu MultiPrecision Arithmetic Library) and \href{https://www.boost.org/doc/libs/1_71_0/libs/multiprecision/doc/html/index.html}{Boost.Multiprecision} library.
 
   An example of high precision calculation of the enclosed area of a circle with boost multiprecision is given below. Note, it uses templates to
@@ -550,16 +555,11 @@ int main()
 
 
 \begin{rem}
-  Arithmetic with floating-point number is not the same as arithmetic with real $\mathbb{R}$ numbers. There are effects of rounding,
+  Arithmetic with floating-point numbers is not the same as arithmetic with real $\mathbb{R}$ numbers. There are effects of rounding,
   finite representation, cancellation, non-associativity, $\ldots$. Details can be found in the standard document
   \href{https://standards.ieee.org/content/ieee-standards/en/standard/754-2019.html}{IEEE 754} and are explained in the lecture
   \emph{Computer Arithmetics} by Prof. W. Walter.
 \end{rem}
-
-
-\begin{guideline}{Principle}
-  Declare variables as late as possible, usually right before using them the first time and whenever possible not before you can initialize them.
-\end{guideline}
 
 
 

@@ -161,43 +161,6 @@ and the official standard
 \url{http://www.open-std.org/jtc1/sc22/wg21/}
 
 
-\section{Programming paradigms}
-\emph{Programming paradigms}\footnote{\url{https://en.wikipedia.org/wiki/Programming_paradigm}} are a way to classify programming languages
-based on their features. Languages can be classified into multiple paradigms. Some common programming paradigms include:
-\begin{enumerate}
-  \item \emph{imperative} in which the programmer instructs the machine how to change its state,
-    \begin{enumerate}
-      \item \emph{procedural} which groups instructions into procedures, (Fortran, C, Pascal)
-      \item \emph{object-oriented} which groups instructions together with the part of the state they operate on, (Java, C++)
-    \end{enumerate}
-  \item \emph{declarative} in which the programmer declares properties of the desired result, but not how to compute it
-    \begin{enumerate}
-      \item \emph{functional} in which the desired result is declared as the value of a series of function applications, (Haskell, Scheme)
-      \item \emph{logic} in which the desired result is declared as the answer to a question about a system of facts and rules. (ALF, Curry)
-    \end{enumerate}
-\end{enumerate}
-
-Some programming languages are referred to as multi-paradigm programming languages. A concise reference\footnote{\url{https://en.wikipedia.org/wiki/Comparison_of_multi-paradigm_programming_languages}} for the programming
-paradigms that are supported directly (or by a library implementation) of C++ include
-\begin{description}
-  \item[Concurrent programming] have language constructs for concurrency, these may involve multi-threading, support for distributed computing, message passing, shared resources (including shared memory), or futures
-  \item[Constraint programming] relations between variables are expressed as constraints (or constraint networks), directing allowable solutions (uses constraint satisfaction or simplex algorithm)
-  \item[Dataflow programming] forced recalculation of formulas when data values change (\eg spreadsheets)
-  \item[Declarative programming] describes what a computation should perform, without specifying detailed state changes c.f. imperative programming (functional and logic programming are major subgroups of declarative programing)
-  \item[Distributed programming] have support for multiple autonomous computers that communicate via computer networks
-  \item[Functional programming] uses evaluation of mathematical functions and avoids state and mutable data
-  \item[Generic programming] uses algorithms written in terms of to-be-specified-later types that are then instantiated as needed for specific types provided as parameters
-  \item[Imperative programming] explicit statements that change a program state
-  \item[Logic programming] uses explicit mathematical logic for programming
-  \item[Metaprogramming] writing programs that write or manipulate other programs (or themselves) as their data, or that do part of the work at compile time that would otherwise be done at runtime
-  \item[Object-oriented programming] uses data structures consisting of data fields and methods together with their interactions (objects) to design programs
-  \item[Pipeline programming] a simple syntax change to add syntax to nest function calls to language originally designed with none
-  \item[Rule-based programming] a network of rules of thumb that comprise a knowledge base and can be used for expert systems and problem deduction and resolution
-\end{description}
-
-Just a few other programming languages are listed on Wikipedia that have a similarly long list (Haskell, Julia, Mathematica).
-
-
 \section{History of C++}
 The programming language has a long history, that is described in the books by Bjarne Stroustrup: \emph{The Design and Evolution of C++, 1994},
 \url{http://www.stroustrup.com/hopl2.pdf} (\emph{A History of C++: 1979--1991}) and \url{http://www.stroustrup.com/hopl-almost-final.pdf}
@@ -225,12 +188,12 @@ user-controlled free-storage memory control, improved type checking. A long list
 around \textbf{1986-1987}.
 
 A first reference manual, \textit{The C++ programming language}, was written in the year \textbf{1985}, and later in \textbf{1990} the book
-\textit{The Annotated C++ Reference Manual}. The language was not yet standardized. So, the book are kind of the standard reference manuals.
+\textit{The Annotated C++ Reference Manual}. The language was not yet standardized. So, the books are kind of the standard reference manuals.
 During these days other compiler vendors published a C++ compiler, like  the \textit{Borland C++ Compiler} and in \textbf{1987} C++ was added
 to the GNU Compiler Collection GCC.
 
 \subsection{Standard C++}
-The first ISO standard of C++ was published in the year \textbf{1998}, also called \cxx{98} standard. Fron that release on, the C++ versions are
+The first ISO standard of C++ was published in the year \textbf{1998}, also called \cxx{98} standard. From that release on, the C++ versions are
 named after the publication year of the standard document. Around \textbf{1979} an accompanying library was developed, providing standard
 containers and algorithms. This library, known as the standard library, later became part of the C++ standard. During the year \textbf{1999}
 the collection \emph{Boost} was founded by some standard committee members, to push the development of standard library components.
