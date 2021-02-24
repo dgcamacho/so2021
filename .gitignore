@@ -13,6 +13,8 @@
 *.fls
 *.fdb_latexmk
 *.~*
+*.pdf
+*.pyg
 
 # ignore build directories
 _minted*/
