@@ -1,8 +1,6 @@
-LECTURE_TEX := $(shell find * -type f -name "lecture_*.tex")
-LECTURE_PDF := $(subst .tex,.pdf,$(LECTURE_TEX))
 CHAPTER_TEX := $(shell find * -type f -regex "[0-9]+_[a-z_]+[.]tex")
 
-all: lecture.pdf $(LECTURE_PDF)
+all: lecture.pdf
 
 # CUSTOM BUILD RULES
 %.tex: %.raw
@@ -24,11 +22,10 @@ all: lecture.pdf $(LECTURE_PDF)
 
 # MAIN LATEXMK RULE
 
-lecture_%.pdf: lecture_%.tex %_*.tex declarations.tex
-	latexmk -pdf -pdflatex="pdflatex -shell-escape" -use-make $<
-
 lecture.pdf: lecture.tex declarations.tex $(CHAPTER_TEX)
-	latexmk -pdf -pdflatex="pdflatex -shell-escape" -use-make $<
+	latexmk -pdf -latexoption="--shell-escape" -use-make $<
 
 clean:
 	latexmk -CA
+	rm -rf *.pyg _minted*/
+

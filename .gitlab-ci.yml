@@ -1,0 +1,9 @@
+image: spraetor/latex-builder:2021
+
+build:
+  script:
+    - cd lecture
+    - make
+  artifacts:
+    paths:
+      - "lecture/lecture.pdf"
