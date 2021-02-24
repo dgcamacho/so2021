@@ -11,12 +11,13 @@
 
 ## Exercise sheets
 
-| Week | Topic                                  | Download        |
+| Week | Topic                                  | Link            |
 |------|----------------------------------------|-----------------|
-| 01   | Overview and Motivation for the Course | [sheet01.pdf][] |
-| 02   | Basic Syntax and Types                 | [sheet02.pdf][] |
+| 01   | Overview and Motivation for the Course | [sheet1.md][]   |
+| 02   | Basic Syntax and Types                 | [sheet2.md][]   |
 
-[sheet01.pdf]: https://gitlab.mn.tu-dresden.de/teaching/scprog_java/wi2020/-/jobs/artifacts/master/raw/exercises/sheet01.pdf?job=build
+[sheet1.md]: https://gitlab.mn.tu-dresden.de/teaching/scprog/so2021/-/blob/master/exercises/sheet1.md
+[sheet2.md]: https://gitlab.mn.tu-dresden.de/teaching/scprog/so2021/-/blob/master/exercises/sheet2.md
 
 
 ## General information
