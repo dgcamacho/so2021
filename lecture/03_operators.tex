@@ -260,12 +260,12 @@ at all or not, \ie
 
 
 \subsection{Operators as functions}
-In C++ nearly all operator can be written (and called) as a regular function. Let \texttt{\#} be the symbol of the operator, \eg
-\texttt{\#$~\in$\{+,*,(),+=,<,...\}}, then there zero, one or both of the following implementations are available:
+In C++ nearly all operator can be written (and called) as a regular function. Let \texttt{o} be the symbol of the operator, \eg
+\texttt{o$~\in$\{+,*,(),+=,<,...\}}, then there zero, one or both of the following implementations are available:
 
 \begin{minted}[frame=none]{c++}
-Result operator #(Arg1 a, Arg2 b, ...) // a # b
-Result Arg1::operator #(Arg2 b, ...) // Arg1 a; a # b
+Result operator o(Arg1 a, Arg2 b, ...) // a o b
+Result Arg1::operator o(Arg2 b, ...) // Arg1 a; a o b
 \end{minted}
 The variant 1 implement the operator as a free function, whereas the variant 2 implements the operator as a member function of a class,
 where \texttt{Arg1} is the name of that class. Whether there is a function representation of the operator and whether it is allowed to \emph{overload}
