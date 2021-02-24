@@ -2,9 +2,9 @@
 
 ## Lecture notes
 
-| Topic                                  | Download                 |
-|----------------------------------------|--------------------------|
-| Scientific Programming with C++        | [lecture.pdf][]          |
+| Topic                                  | Download                 | Updated       |
+|----------------------------------------|--------------------------|---------------|
+| Scientific Programming with C++        | [lecture.pdf][]          | 2021/02/24    |
 
 [lecture.pdf]: https://gitlab.mn.tu-dresden.de/teaching/scprog/so2021/-/jobs/artifacts/master/raw/lecture/lecture.pdf?job=build
 
@@ -16,8 +16,8 @@
 | 01   | Overview and Motivation for the Course | [sheet1.md][]   |
 | 02   | Basic Syntax and Types                 | [sheet2.md][]   |
 
-[sheet1.md]: https://gitlab.mn.tu-dresden.de/teaching/scprog/so2021/-/blob/master/exercises/sheet1.md
-[sheet2.md]: https://gitlab.mn.tu-dresden.de/teaching/scprog/so2021/-/blob/master/exercises/sheet2.md
+[sheet1.md]: exercises/sheet1.md
+[sheet2.md]: exercises/sheet2.md
 
 
 ## General information

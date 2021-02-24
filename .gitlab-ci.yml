@@ -1,9 +1,11 @@
 image: gitlab.mn.tu-dresden.de:8000/teaching/docker/latex-builder:2021
 
 build:
+  only:
+    changes:
+      - lecture/*
   script:
-    - cd lecture
-    - make
+    - (cd lecture && make)
   artifacts:
     paths:
       - "lecture/lecture.pdf"
