@@ -56,20 +56,20 @@ We want to solve the task $\mathbf{y} = \alpha A\mathbf{x} + \beta \mathbf{y}$ (
 and $\alpha=\beta=1$ for simplicity.
 %
 \begin{minted}{c++}
-  DenseVector y(m, 0.0);
+  DenseVector y(n, 0.0);
 \end{minted}
 
 First, we are using the library CBLAS:
 %
 \begin{minted}{c++}
-  int m = A.rows();         // number of rows of the matrix A
-  int n = A.cols();         // number of columns of the matrix A
-  int lda = std::max(1,m);  // Specifies the leading dimension of array storing the value of A
+  int n = A.rows();         // number of rows of the matrix A
+                            //  == number of columns of the matrix A
+  int lda = std::max(1,n);  // Specifies the leading dimension of array storing the value of A
   int incx = 1;             // Specifies the increment for the elements of x
   int incy = 1;             // Specifies the increment for the elements of y
   double alpha = 1.0, beta = 1.0;
 
-  cblas_dgemv(CblasRowMajor, CblasNoTrans, m, n, alpha, &A[0][0], lda,
+  cblas_dgemv(CblasRowMajor, CblasNoTrans, n, n, alpha, &A[0][0], lda,
               &x[0], incx, beta, &y[0], incy);
 \end{minted}
 %
@@ -111,54 +111,54 @@ performance and how to test and optimize your implementation. Classical design p
 the twin lecture SCPROG -- Fortgeschrittene Konzepte des Wissenschaftlichen Programmierens: OOP mit Java -- by Prof. W. Walter.
 
 
-\section{Structure of the lecture and tutorial}
-This module focuses on three learning goals:
-\begin{enumerate}[1)]
-  \item Programming with C++
-  \item Working with programming tools
-  \item Discovering scientific C++ software libraries
-\end{enumerate}
+% \section{Structure of the lecture and tutorial}
+% This module focuses on three learning goals:
+% \begin{enumerate}[1)]
+%   \item Programming with C++
+%   \item Working with programming tools
+%   \item Discovering scientific C++ software libraries
+% \end{enumerate}
 
-There will be a tutorial every week with exercises. The corresponding exercise sheets can be found online in a Git repository at
+% There will be a tutorial every week with exercises. The corresponding exercise sheets can be found online in a Git repository at
 
-\url{https://gitlab.mn.tu-dresden.de/teaching/scprog/wi2019}
+% \url{https://gitlab.mn.tu-dresden.de/teaching/scprog/so2021-tutorial}
 
-On each exercise sheet there are a few exercises marked for submission. Approximately two weeks you have time to work on the tasks
-and are supposed to submit your solutions into the Git repository itself. Therefore, in the first tutorials you get an account and
-have to create a Git project on the TU-Dresden local GitLab server \url{https://gitlab.mn.tu-dresden.de}. The details about this are
-explained on the repository README page and are presented in the first tutorial. The advantage you have from submitting the exercises
-is 1. you get a personal review and feedback, 2. you learn how to work in a cooperative environment on scientific projects, and 3. you
-can get a bonus for the final oral exam (reaching 66\% of the possible exercise points gives a bonus of up to a grade of 0.3).
+% On each exercise sheet there are a few exercises marked for submission. Approximately two weeks you have time to work on the tasks
+% and are supposed to submit your solutions into the Git repository itself. Therefore, in the first tutorials you get an account and
+% have to create a Git project on the TU-Dresden local GitLab server \url{https://gitlab.mn.tu-dresden.de}. The details about this are
+% explained on the repository README page and are presented in the first tutorial. The advantage you have from submitting the exercises
+% is 1. you get a personal review and feedback, 2. you learn how to work in a cooperative environment on scientific projects, and 3. you
+% can get a bonus for the final oral exam (reaching 66\% of the possible exercise points gives a bonus of up to a grade of 0.3).
 
-\subsection{Course outline}
-\begin{itemize}
-  \item Best practice in scientific programming
-  \item C++ basics (data-types, operators, pointers, arrays, references, $\ldots$)
-  \item Scopes, Namespaces, Functions
-  \item Overloading, Specialization
-  \item Basics of object-oriented class design, inheritance, polymorphie
-  \item Generic Programming with templates
-  \item Generic Design patterns (Functors, Iterators, Type-Traits)
-  \item Algorithms and Data-Structures in the C++ standard library
-  \item Meta-Programming
-  \item Expression-Templates
-  \item (Compile-Time symbolic differentiation)
-\end{itemize}
+% \subsection{Course outline}
+% \begin{itemize}
+%   \item Best practice in scientific programming
+%   \item C++ basics (data-types, operators, pointers, arrays, references, $\ldots$)
+%   \item Scopes, Namespaces, Functions
+%   \item Overloading, Specialization
+%   \item Basics of object-oriented class design, inheritance, polymorphie
+%   \item Generic Programming with templates
+%   \item Generic Design patterns (Functors, Iterators, Type-Traits)
+%   \item Algorithms and Data-Structures in the C++ standard library
+%   \item Meta-Programming
+%   \item Expression-Templates
+%   \item (Compile-Time symbolic differentiation)
+% \end{itemize}
 
-\section{Literature and material}
-There is a lot of good (and a lot of bad) literature on C++ programming. Some references with links to the Slub and to online sources
-are given on the website
+% \section{Literature and material}
+% There is a lot of good (and a lot of bad) literature on C++ programming. Some references with links to the Slub and to online sources
+% are given on the website
 
-\url{https://math.tu-dresden.de/~spraetor}
+% \url{https://math.tu-dresden.de/~spraetor}
 
-on the subpage \texttt{Teaching/Scientific Programming with C++}, or on the README page of the repository as above. The main source for reference of C++ is the nearly complete online standard at
+% on the subpage \texttt{Teaching/Scientific Programming with C++}, or on the README page of the repository as above. The main source for reference of C++ is the nearly complete online standard at
 
-\url{https://en.cppreference.com}
+% \url{https://en.cppreference.com}
 
-and the official standard
+% and the official standard
 
-\url{https://github.com/cplusplus/draft}, or \\
-\url{http://www.open-std.org/jtc1/sc22/wg21/}
+% \url{https://github.com/cplusplus/draft}, or \\
+% \url{http://www.open-std.org/jtc1/sc22/wg21/}
 
 
 \section{History of C++}
@@ -201,27 +201,27 @@ the collection \emph{Boost} was founded by some standard committee members, to p
 A first correction of the \cxx{98} standard was published in \textbf{2003}. It resolved several smaller or larger errors and problems in the
 1998 standard and was named again after the publication year, \cxx{03} standard. In \textbf{2005} extensions of the 2003 standard were collected
 and summarized in the technical report TR1. Those developments were the bases for a new standard that was intended to be published in the
-early 2000s. This can be seen on the working title of this standard \cxx{0x}. But it needed more time and couln't be finished within the same
+early 2000s. This can be seen on the working title of this standard \cxx{0x}. But it needed more time and couldn't be finished within the same
 decade. Finally in 2011 the standard \cxx{11} was finalized and published. It contains a long list of new features (including lambda functions,
-constexpr, auto type deduction, decltype specifier, several library extensions like tuples, arrays, type-traits and a lot more) and was the
+\texttt{constexpr}, auto type deduction, \texttt{decltype} specifier, several library extensions like tuples, arrays, type-traits and a lot more) and was the
 biggest new release since the initial version from 1998.
 
 Since version 4.8.1. of GCC the \cxx{11} version is completely implemented. In Clang since version 3.3., in Intel ICC Compiler since version 15.0,
 and in Microsoft Visual Studio Compiler since version 19.0. See \url{https://en.cppreference.com/w/cpp/compiler_support} for an overview of
 the compiler support of C++ features.
 
-Although the \cxx{11} standard brought so many new features, some could not be complete in the standard, others needed minor fixes. This is the reason
+Although the \cxx{11} standard brought so many new features, some could not be completed in the standard, others needed minor fixes. This is the reason
 why in \textbf{2014} the next \emph{minor} revision of the standard, called \cxx{14}, was published. But it is more than a revision, it is a completion
 of the \cxx{11} standard. The working title of the standard was \cxx{1y} and the Compiler vendors finished their implementation of the standard
 with version 5 of GCC, version 3.4 of clang, version 17.0 if Intel ICC, and version 19.10 of MSVC. Due to some bugs in the implementation,
 the recommendation for GCC is version 6.1 for \cxx{14}, though.
 
-\cxx{14} is not the recent standard. Since the release of the \cxx{11} standard in 2011, it was decided to have a fixed release cycle of 3 years,
+\cxx{14} is not the most recent standard. Since the release of the \cxx{11} standard in 2011, it was decided to have a fixed release cycle of 3 years,
 where each new feature that is not completely ready until a some feature freeze date has to wait for the next release and not the release for the feature.
-The current published C++ release is \cxx{17} (working title \cxx{1z}) and the development for \cxx{20} (working title \cxx{2a}) is in its
+The current published C++ release is \cxx{17} and the development for \cxx{20} (working title \cxx{2a}) is in its
 final standardizing phase. Both standards are only partially implemented by the compiler vendors, but at least the core language features
 of \cxx{17} are now finished. It needs approximately 3 years after a standard is published until all feature and library components are
 implemented by the compilers GCC, clang, ICC, and MSVC.
 
-Proposals for new features and some discussion of the future development of C++ can be found at the ISO-standard workinggroup 21 page
+Proposals for new features and some discussion of the future development of C++ can be found at the ISO standard working group 21 page
 \url{http://www.open-std.org/jtc1/sc22/wg21/}.

@@ -1,0 +1,5 @@
+.remark-code-line-highlighted {
+  margin-left: -10px;
+  border-left: 10px solid var(--gray80);
+  background-color: var(--gray40);
+}

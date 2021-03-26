@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ site.title }}</title>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+      content="user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width" />
+    <link rel="stylesheet" type="text/css" href="./css/pure-min.css" />
+    <link rel="stylesheet" type="text/css" href="./css/typo.css" />
+    <link rel="stylesheet" type="text/css" href="./css/spaces.css" />
+    <link rel="stylesheet" type="text/css" href="./css/devices.min.css" />
+    <link rel="stylesheet" type="text/css" href="./css/tud-dark.css" />
+    <link rel="stylesheet" type="text/css" href="./css/tud-light.css" />
+    <link rel="stylesheet" type="text/css" href="./css/abs-layout.css" />
+    <link rel="stylesheet" type="text/css" href="./css/border-layout.css" />
+    <link rel="stylesheet" type="text/css" href="./css/lines.css" />
+    <link rel="stylesheet" type="text/css" href="./css/filters.css" />
+    <link rel="stylesheet" type="text/css" href="./fonts/remixicon.css" />
+    <link rel="stylesheet" type="text/css" href="./css/style.css" />
+    <link rel="stylesheet" type="text/css" href="./css/icons.css" />
+    <link rel="stylesheet" type="text/css" href="./css/katex.min.css" />
+  </head>
+  <body>
+    <textarea id="source">
+layout: true
+class: tud-dark, typo, splash
+---
+
+<div class="frontpage">
+  <small>{{ site.author }}</small>
+  <h1>{{ site.title }}<br>
+  <small>Institute of Scientific Computing</small></h1>
+
+  <small>{{ site.semester }}</small>
+</div>
+---
+layout: true
+class: tud-light, typo
+
+{% include introduction.md %}
+{% include variables-and-datatypes.md %}
+
+    </textarea>
+    <div id="slideshow"></div>
+    <script src="js/remark.min.js"></script>
+    <script src="js/vue.js"></script>
+    <!-- <script src="js/quasar.umd.min.js"></script> -->
+    <script src="js/mermaid.min.js"></script>
+    <script src="js/katex.min.js"></script>
+    <script src="contrib/auto-render.min.js" onload="renderMathInElement(document.getElementById('source'));"></script>
+    <script>
+      var targetTextArea = document.getElementById("source");
+      var lines = targetTextArea.innerHTML.split("\n");
+      var slideshow = remark.create({
+        ratio: "16:9", // window ratio
+        highlightStyle: "default",
+        highlightLines: true,
+        countIncrementalSlides: false, // whether the incremental content count as one page
+        navigation: {
+          scroll: false, // Page turning with mouse wheel is allowed
+          touch: true, // Is it allowed to scroll back and forth by clicking on the left or right side of the screen
+          click: false // Allow the mouse to click on the left or right side of the screen to turn back and forth
+        }
+      });
+
+      function isFullScreen() {
+        return window.fullScreen || (window.innerWidth == screen.width && window.innerHeight == screen.height);
+      }
+
+      window.addEventListener("resize", () => {
+          document.body.style["background-color"] = "#d7d8d2";
+      });
+    </script>
+  </body>
+</html>

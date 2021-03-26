@@ -1,0 +1,284 @@
+@charset "utf-8";
+
+html {
+  background: white;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-rendering: optimizelegibility;
+}
+
+html.borderbox *, html.borderbox *:before, html.borderbox *:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td, hr, button, article, aside, details, figcaption, figure, footer, header, menu, nav, section {
+  margin: 0;
+  padding: 0;
+}
+
+article, aside, details, figcaption, figure, footer, header, menu, nav, section {
+  display: block;
+}
+
+audio, canvas, video {
+  display: inline-block;
+}
+
+body, button, input, select, textarea {
+  font-family: OpenSans;
+}
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+fieldset, img {
+  border: 0;
+}
+
+blockquote {
+  position: relative;
+  font-weight: 400;
+  padding-left: 1em;
+  margin: 1em 3em 1em 2em;
+}
+
+@media only screen and ( max-width: 640px ) {
+  blockquote {
+    margin: 1em 0;
+  }
+}
+
+acronym, abbr {
+  border-bottom: 1px dotted;
+  font-variant: normal;
+}
+
+abbr {
+  cursor: help;
+}
+
+del {
+  text-decoration: line-through;
+}
+
+address, caption, cite, code, dfn, th, var {
+  font-style: normal;
+  font-weight: 400;
+}
+
+em {
+  font-style: italic;
+  color: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+caption, th {
+  text-align: left;
+}
+
+q:before, q:after {
+  content: '';
+}
+
+sub, sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+}
+
+:root sub, :root sup {
+  vertical-align: baseline; /* for ie9 and other modern browsers */
+}
+
+sup {
+  top: -0.5em;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+
+ins, a {
+  text-decoration: none;
+}
+
+u, .typo-u {
+  text-decoration: underline;
+}
+
+mark {
+  padding: 2px;
+  margin: 0 5px;
+}
+
+pre, code, pre tt {
+  font-family: Courier, 'Courier New', monospace;
+}
+
+pre {
+  padding: 1em 1.5em;
+  display: block;
+  -webkit-overflow-scrolling: touch;
+}
+
+
+small, .typo-small,
+figcaption {
+  font-size: 0.9em;
+}
+
+strong, b {
+  font-weight: 400;
+}
+
+[draggable] {
+  cursor: move;
+}
+
+.clearfix:before, .clearfix:after {
+  content: "";
+  display: table;
+}
+
+.clearfix:after {
+  clear: both;
+}
+
+.clearfix {
+  zoom: 1;
+}
+
+.textwrap, .textwrap td, .textwrap th {
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+.textwrap-table {
+  table-layout: fixed;
+}
+
+.serif {
+  font-family: Palatino, Optima, Georgia, serif;
+}
+
+.typo p, .typo pre, .typo ul, .typo ol, .typo dl, .typo form, .typo hr, .typo table,
+.typo-p, .typo-pre, .typo-ul, .typo-ol, .typo-dl, .typo-form, .typo-hr, .typo-table, blockquote {
+  margin-bottom: 1.0em
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: OpenSans;
+  font-weight: 100;
+  line-height: 1.35;
+}
+
+.typo h1, .typo-h1 {
+  margin-top: 0.6em;
+  margin-bottom: 0.6em;
+  line-height: 1.35;
+}
+
+.typo h2, .typo h3,
+.typo-h2, .typo-h3 {
+  margin-top: 0.6em;
+  margin-bottom: 0.3em;
+  line-height: 1.35;
+}
+
+.typo h4, .typo h5,
+.typo-h5, .typo-h5 {
+  margin-top: 0.3em;
+  margin-bottom: 0.1em;
+  line-height: 1.2;
+}
+
+.typo h1, .typo-h1 {
+  font-size: 1.5em;
+  font-weight: 200;
+}
+
+.typo h2, .typo-h2 {
+  font-size: 1.3em;
+}
+
+.typo h3, .typo-h3 {
+  font-size: 1.1em;
+  font-weight: 200;
+}
+
+.typo h4, .typo-h4 {
+  font-size: 1.0em;
+}
+
+.typo h5, .typo h6, .typo-h5, .typo-h6 {
+  font-size: 1.1em;
+}
+
+.typo ul, .typo-ul {
+  margin-left: 1.3em;
+  list-style: disc;
+}
+
+.typo ol, .typo-ol {
+  list-style: decimal;
+  margin-left: 1.9em;
+}
+
+.typo li ul, .typo li ol, .typo-ul ul, .typo-ul ol, .typo-ol ul, .typo-ol ol {
+  margin-bottom: 0.1em;
+  margin-left: 2em;
+}
+
+.typo li ul, .typo-ul ul, .typo-ol ul {
+  list-style: circle;
+}
+
+.typo table th, .typo table td, .typo-table th, .typo-table td, .typo table caption {
+  padding: 0.5em 1em;
+}
+
+.typo table caption {
+  border-bottom: none;
+}
+
+.typo-input, .typo-textarea {
+  -webkit-appearance: none;
+  border-radius: 0;
+}
+
+legend, caption {
+  font-weight: inherit;
+}
+
+.typo-em {
+  position: relative;
+}
+
+.typo-em:after {
+  position: absolute;
+  top: 0.65em;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  content: "・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・";
+}
+
+/* Responsive images */
+.typo img {
+  max-width: 100%;
+}

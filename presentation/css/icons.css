@@ -1,0 +1,68 @@
+@charset "utf-8";
+
+@font-face{
+  font-family: IconFont;
+  src:url(fonts/TUD-Iconfont-Light.eot) format("embedded-opentype"),url(fonts/TUD-Iconfont-Light.woff) format("woff"),url(fonts/TUD-Iconfont-Light.otf) format("opentype");
+  font-weight:100;
+  font-style:normal;
+}
+
+/* Pfeile */
+.icon-rechts { font-family: IconFont; }
+.icon-rechts:after { content: "\2192"; }
+
+.icon-rechts-oben { font-family: IconFont; }
+.icon-rechts-oben:after { content: "\1F517"; }
+
+.icon-rechts-unten { font-family: IconFont; }
+.icon-rechts-unten:after { content: "\2B0A"; }
+
+.icon-links { font-family: IconFont; }
+.icon-links:after { content: "\2190"; }
+
+.icon-links-oben { font-family: IconFont; }
+.icon-links-oben:after { content: "\2B09"; }
+
+.icon-links-unten { font-family: IconFont; }
+.icon-links-unten:after { content: "\2B0B"; }
+
+.icon-oben { font-family: IconFont; }
+.icon-oben:after { content: "\2191"; }
+
+.icon-unten { font-family: IconFont; }
+.icon-unten:after { content: "\2193"; }
+
+/* Gebäudespezifika */
+.icon-gebaeude { font-family: IconFont; }
+.icon-gebaeude:after { content: "\2302"; }
+
+.icon-aufzug { font-family: IconFont; }
+.icon-aufzug:after { content: "\1F6D7"; }
+
+.icon-garderobe { font-family: IconFont; }
+.icon-garderobe:after { content: "\1F302"; }
+
+/* Symbole */
+.icon-plus { font-family: IconFont; }
+.icon-plus:after { content: "\002B"; }
+
+.icon-minus { font-family: IconFont; }
+.icon-minus:after { content: "\2212"; }
+
+.icon-kreuz { font-family: IconFont; }
+.icon-kreuz:after { content: "\274C"; }
+
+.icon-nach-oben { font-family: IconFont; }
+.icon-nach-oben:after { content: "\1F815"; }
+
+.icon-nach-unten { font-family: IconFont; }
+.icon-nach-unten:after { content: "\1F817"; }
+
+.icon-nach-standortpunkt { font-family: IconFont; }
+.icon-nach-standortpunkt:after { content: "\29BE"; }
+
+.icon-nach-upload { font-family: IconFont; }
+.icon-nach-upload:after { content: "\2912"; }
+
+.icon-nach-download { font-family: IconFont; }
+.icon-nach-download:after { content: "\2913"; }

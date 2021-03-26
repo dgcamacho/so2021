@@ -1,0 +1,130 @@
+
+@font-face{
+  font-family: OpenSans;
+  src:url(fonts/OpenSans-Bold.ttf) format("truetype");
+  font-weight:400;
+  font-style:normal;
+}
+
+@font-face{
+  font-family: OpenSans;
+  src:url(fonts/OpenSans-BoldItalic.ttf) format("truetype");
+  font-weight:400;
+  font-style:italic;
+}
+
+@font-face{
+  font-family: OpenSans;
+  src:url(fonts/OpenSans-ExtraBold.ttf) format("truetype");
+  font-weight:600;
+  font-style:normal;
+}
+
+@font-face{
+  font-family: OpenSans;
+  src:url(fonts/OpenSans-ExtraBoldItalic.ttf) format("truetype");
+  font-weight:600;
+  font-style:italic;
+}
+
+@font-face{
+  font-family: OpenSans;
+  src:url(fonts/OpenSans-SemiBold.ttf) format("truetype");
+  font-weight:200;
+  font-style:normal;
+}
+
+@font-face{
+  font-family: OpenSans;
+  src:url(fonts/OpenSans-SemiBoldItalic.ttf) format("truetype");
+  font-weight:200;
+  font-style:italic;
+}
+
+@font-face{
+  font-family: OpenSans;
+  src:url(fonts/OpenSans-Italic.ttf) format("truetype");
+  font-weight:100;
+  font-style:italic;
+}
+
+@font-face{
+  font-family: OpenSans;
+  src:url(fonts/OpenSans-Regular.ttf) format("truetype");
+  font-weight:100;
+  font-style:normal;
+}
+
+@font-face{
+  font-family: OpenSans;
+  src:url(fonts/OpenSans-Light.ttf) format("truetype");
+  font-weight:50;
+  font-style:normal;
+}
+
+@font-face{
+  font-family: OpenSans;
+  src:url(fonts/OpenSans-LightItalic.ttf) format("truetype");
+  font-weight:50;
+  font-style:italic;
+}
+
+
+:root {
+  /* primary color */
+  --darkblue10: #dae1eb;
+  --darkblue20: #b8c5d8;
+  --darkblue30: #98abc6;
+  --darkblue40: #7b94b4;
+  --darkblue50: #02305a;
+  --darkblue60: #486a93;
+  --darkblue70: #335984;
+  --darkblue80: #204975;
+  --darkblue90: #103b67;
+  --darkblue100:#02305a;
+  --darkblue: var(--darkblue100);
+  --hks41: var(--darkblue100);
+
+  /* secondary color */
+  --gray20: #e1e4e5;
+  --gray40: #c3c9cb;
+  --gray60: #a6aeb0;
+  --gray80: #899295;
+  --gray100:#6c7579;
+  --gray: var(--gray100);
+  --hks92: var(--gray100);
+
+  /* highlighting color2, 1. category */
+  --blue20: #c6ddf1;
+  --blue40: #90bfe4;
+  --blue60: #5ba3d8;
+  --blue80: #288acc;
+  --blue100:#0073c0;
+  --blue: var(--blue100);
+  --hks44: var(--blue100);
+
+  --cyan20: #c6effc;
+  --cyan40: #8ce1f9;
+  --cyan60: #52d3f7;
+  --cyan80: #18c5f4;
+  --cyan100:#00b9f2;
+  --cyan: var(--cyan100);
+
+  /* highlighting color2, 2. category */
+  --hks65: rgb(106,176,35);
+  --green: var(--hks65);
+
+  --hks57: rgb(0,125,64);
+  --darkgreen: var(--hks57);
+
+  --hks33: rgb(147,16,126);
+  --hks36: rgb(84,55,138);
+  --hks07: rgb(238,127,0);
+
+  /* TUD web interface */
+  --webdarkred:  rgb(181,28,28);
+  --weblightred: rgb(221,39,39);
+  --webdarkblue: rgb(0,37,87);
+  --weblightblue:rgb(39,66,117);
+
+}

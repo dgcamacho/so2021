@@ -19,6 +19,10 @@
 # ignore build directories
 _minted*/
 _repo/
+_presentation/
+.vscode/
+old.md
+.jekyll-cache/
 
 # ignore c++ object files
 *.o

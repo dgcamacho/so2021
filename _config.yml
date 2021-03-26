@@ -1,0 +1,19 @@
+# Configuration of Jekyll
+url: "http://localhost:4000/"
+baseurl: "file:///home/spraetor/lehre/scprog-so2021/_presentation"
+
+source: presentation/
+destination: _presentation/
+exclude: []
+keep_files: [contrib, css, fonts, images, js]
+
+# Site settings
+title: "Scientific Programming with C++"
+institute: "Institute of Scientific Computing"
+email: simon.praetorius@tu-dresden.de
+description: "Lecture slides for SCPROG Scientific Programming, Advanced Aspects So2021"
+author: "Dr. Simon Praetorius"
+semester: "Summer term 2021"
+
+collections:
+  - slides

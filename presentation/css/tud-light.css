@@ -1,0 +1,81 @@
+@import "./tud.css";
+
+.tud-light {
+  background-color: white;
+}
+
+.tud-light h1, .tud-light .h1,
+.tud-light h2, .tud-light .h2,
+.tud-light h3, .tud-light .h3,
+.tud-light h4, .tud-light .h4,
+.tud-light h5, .tud-light .h5,
+.tud-light h6, .tud-light .h6,
+.tud-light p,
+.tud-light li {
+  color: var(--webdarkblue);
+}
+
+.tud-light h2, .tud-light .h2  {
+  color: var(--hks33);
+}
+.tud-light h4, .tud-light .h4 {
+  color: var(--hks33);
+}
+
+.tud-light .under-line {
+  position: relative;
+}
+
+.tud-light .under-line::after {
+  position: absolute;
+  top: 1.65em;
+  left: 0;
+  width: 100%;
+  height: 0px;
+  overflow: hidden;
+  white-space: nowrap;
+  content: " ";
+  border-top: 1px solid var(--darkblue80);
+  border-left: 0px;
+  border-right: 0px;
+  border-bottom: 0px;
+}
+
+.tud-light small {
+  color: var(--darkblue60);
+  opacity: 0.6;
+}
+
+.tud-light a {
+  color: var(--webdarkred);
+  text-decoration: underline;
+}
+
+.tud-light a:hover {
+  text-decoration: none;
+}
+
+
+.tud-light pre {
+  background: transparent;
+  padding: 0px;
+  border: 0px;
+}
+
+.tud-light blockquote {
+  display: block;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 40px;
+  margin-inline-end: 40px;
+  padding-left: 1.5em;
+  color: rgb(123, 136, 161);
+  border-left: 0.2em solid rgba(94, 129, 172, 0.6);
+  margin: 1em 0px;
+  transition: border-left 400ms ease-in-out 0s, color 400ms ease-in-out 0s;
+}
+
+.tud-light blockquote > p {
+  color: rgb(123, 136, 161);
+  opacity: 0.65;
+}

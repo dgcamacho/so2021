@@ -1,0 +1,204 @@
+@import "./tud.css";
+
+.tud-dark {
+  background-color: var(--darkblue);
+}
+
+.tud-dark h1,
+.tud-dark h2,
+.tud-dark h3,
+.tud-dark h4,
+.tud-dark h5,
+.tud-dark h6,
+.tud-dark p,
+.tud-dark span,
+.tud-dark strong,
+.tud-dark li {
+  color: var(--darkblue10);
+}
+
+.tud-dark small {
+  color: var(--nord4);
+  opacity: 0.6;
+}
+
+.tud-dark a {
+  color: var(--nord8);
+  border-radius: 0.25em;
+  transition: color 200ms ease-in-out 0s, background-color 200ms ease-in-out 0s;
+  cursor: pointer;
+  text-decoration: none;
+  outline: none;
+  border-bottom-color: transparent;
+}
+
+.tud-dark a:hover {
+  color: var(--nord8);
+  background-color: var(--nord3);
+  opacity: 0.8;
+  border-bottom-color: transparent;
+}
+
+.tud-dark pre {
+  padding: 0px;
+  border: 0px;
+  background: transparent;
+}
+
+.tud-dark code {
+  color: var(--nord6);
+  background-color: var(--nord1);
+  padding: 0.2em 0.4em;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  transition: background-color 400ms ease-in-out 0s;
+}
+
+.tud-dark .remark-inline-code {
+  color: var(--nord6);
+  background-color: var(--nord1);
+  padding: 0.2em 0.4em;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  transition: background-color 400ms ease-in-out 0s;
+  font-family: OpenSans;
+}
+
+.tud-dark .remark-code,
+.tud-dark .hljs-keyword {
+  color: var(--nord6);
+  background-color: var(--nord1);
+  border-radius: 4px;
+  transition: background-color 400ms ease-in-out 0s;
+}
+
+.tud-dark blockquote {
+  display: block;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 40px;
+  margin-inline-end: 40px;
+  padding-left: 1.5em;
+  color: var(--nord9);
+  border-left: 0.2em solid rgba(136, 192, 208, 0.6);
+  margin: 1em 0px;
+  transition: border-left 400ms ease-in-out 0s, color 400ms ease-in-out 0s;
+}
+
+.tud-dark blockquote > p {
+  color: var(--nord4);
+  opacity: 0.65;
+}
+
+.tud-dark ol,
+.tud-dark li ol {
+  margin-left: 0em;
+}
+
+.tud-dark ul,
+.tud-dark ol ul,
+.tud-dark ul li ul {
+  list-style-type: none;
+  margin: 0px 0px 1em;
+  padding: 0px 0px 0px 1em;
+}
+
+.tud-dark ul > li {
+  position: relative;
+  margin-left: 0.3em;
+  margin-bottom: 0.7em;
+  margin-top: 0.7em;
+}
+
+.tud-dark ul > li::before {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  top: 0.7em;
+  left: -20px;
+  background-color: rgb(76, 86, 106);
+  border-radius: 50%;
+  transition: background-color 400ms ease-in-out 0s;
+}
+
+.tud-dark ol {
+  margin: 0px 0px 1em;
+  padding: 0px 0px 0px 1em;
+}
+
+.tud-dark ol > li {
+  padding-left: 0.3em;
+}
+
+.tud-dark .column-2,
+.tud-dark .column-3,
+.tud-dark .column-4,
+.tud-dark .column-5,
+.tud-dark .column-6 {
+  column-rule: 0.2px solid rgba(216, 222, 233, 0.5);
+}
+
+/*
+ *适用于 nord dark 主题的沉浸式图片效果
+ */
+.tud-dark-steep-img {
+  position: relative;
+  padding: 2px;
+}
+
+.tud-dark-steep-img::after {
+  background: linear-gradient(rgba(46, 52, 64, 1) 1%, rgba(46, 52, 64, 0), rgba(46, 52, 64, 0), rgba(46, 52, 64, 1) 85%),
+    linear-gradient(
+      to right,
+      rgba(46, 52, 64, 1) 0%,
+      rgba(46, 52, 64, 0),
+      rgba(46, 52, 64, 0),
+      rgba(46, 52, 64, 1) 100%
+    );
+  content: "";
+  display: block;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+/* 代码框滚动条 */
+.tud-dark .remark-code::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.tud-dark .remark-code::-webkit-scrollbar-thumb {
+  background-color: var(--oc-gray-2);
+  outline: 1px solid #333;
+  border-radius: 4px;
+}
+
+.tud-dark .remark-code::-webkit-scrollbar-thumb {
+  background-color: var(--nord3);
+}
+
+.tud-dark .remark-slide-number {
+  color: #fff;
+}
+
+/* .tud-dark-steep-img2 {
+  position: relative;
+  padding: 2px;
+}
+
+.tud-dark-steep-img2::after {
+  background: radial-gradient(48% 48% at center, rgba(46, 52, 64, 0), rgba(46, 52, 64, 1) 125%);
+  content: "";
+  display: block;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  pointer-events: none;
+} */
