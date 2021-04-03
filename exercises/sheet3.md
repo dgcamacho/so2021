@@ -1,4 +1,4 @@
-# Exercise sheet 3 - 2019/10/30
+# Exercise sheet 3
 
 ## Exercise 1 (Literals)
 What is the type of the following literals
@@ -58,7 +58,7 @@ First, try to evaluate by hand, then check your results by implementing the expr
 
 
 
-## Exercise 4 (Recursion) :pencil2:
+## Exercise 4 (Recursion)
 To calculate the square-root of a real number $`a > 0`$ you can use the Newton-method, by getting the root (zero-point) of the function $`f(x)`$,
 defined by:
 ```math
@@ -88,8 +88,6 @@ Try your code with a recursion depth of $`N=5, 10, 100`$ for $`a=10`$ and initia
 
 How to check the error you have made? How to choose the initial value `x0` and the iteration count `N`? How would you design your implementation
 `double sqrt(double a)` of a square-root function and which version of the implementation above would you choose?
-
-**>> Submit solution until 2019/11/13 ... (10 Points)**
 
 ### Notes and additional questions:
 - You can use the `std::sqrt` function from `<cmath>` as a comparison.

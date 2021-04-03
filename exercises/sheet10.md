@@ -1,4 +1,4 @@
-# Exercise sheet 10 - 2020/01/08
+# Exercise sheet 10
 
 ## Exercise 1 (Standard Containers)
 The C++ standard library provides implementations of several common data-structures: vector, list, deques, queues,...
@@ -135,7 +135,7 @@ int main()
 ```
 
 
-## Exercise 4 (External Libraries):pencil2:
+## Exercise 4 (External Libraries)
 We have implemented our own matrix and vector classes in the last exercises. For most of the
 data-structures there is an efficient implementation already available. Especially for linear
 algebra containers and algorithms there exist a large variety of libraries, all with a different focus
@@ -157,5 +157,3 @@ We want to explore some of the external libraries in this exercise. The task is 
 - [Eigen3](http://eigen.tuxfamily.org)
 - [Blaze](https://bitbucket.org/blaze-lib/blaze)
 - [Armadillo](http://arma.sourceforge.net)
-
-**>> Submit solution until 2020/01/22 ... (10 Points)**

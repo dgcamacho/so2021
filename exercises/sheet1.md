@@ -1,4 +1,4 @@
-# Exercise sheet 1 - 2019/10/16
+# Exercise sheet 1
 
 ## Exercise 0 (Introduction to Linux command line)
 This exercise serves as introduction to the Linux command line. If your are not yet familiar with
@@ -86,16 +86,16 @@ and "Todos" tabs, and the "Wiki" tab. If and how you use these features is up to
 - [Git reference](https://www.git-scm.com/docs)
 - [cheat sheet](https://github.github.com/training-kit/downloads/github-git-cheat-sheet.pdf)
 
-## Exercise 2 (Compiling code) :pencil2:
+## Exercise 2 (Compiling code)
 
 
 In the directory [material/sheet1/](/exercises/material/sheet1) you can find
 an initial C++ example in the files `linear_algebra.cc`, `linear_algebra.h`, and `exercise2.cc`. Download the files and compile the code:
 
 ```bash
-g++-7 -std=c++14 -Wall -O2 -c linear_algebra.cc
-g++-7 -std=c++14 -Wall -O2 -c exercise2.cc
-g++-7 -o exercise2 linear_algebra.o exercise2.o
+c++ -std=c++14 -Wall -O2 -c linear_algebra.cc
+c++ -std=c++14 -Wall -O2 -c exercise2.cc
+c++ -o exercise2 linear_algebra.o exercise2.o
 ```
 
 This creates a new file `exercise2` in the current directory. You can now run the example by
@@ -111,14 +111,12 @@ What is the effect? What is the minimal necessary set of options to pass?
 Document the output, results, and findings, write it into a file `solution.txt` or `solution.md` and commit into your repository. Follow the
 instructions given in the [README.md](/README.md) of this repository.
 
-**>> Submit solution until 2019/10/30 ... (5 Points)**
-
 ### Resources
 You can find a documentation of the compiler arguments on
 - [GCC manual](https://gcc.gnu.org/onlinedocs/gcc-7.2.0/gcc/)
 
 
-## Exercise 3 (Basic debugging) :pencil2:
+## Exercise 3 (Basic debugging)
 
 In the [material/sheet1/](/exercises/material/sheet1) directory, you can
 find a second exercise code for this exercise sheet, i.e. the file `exercise3.cc`.
@@ -149,8 +147,6 @@ or the current instance of the class (e.g. `*this`).
 
 Use GDB to locate, find, and correct the bugs in the provided source code. Document
 which bugs you have found and how.
-
-**>> Submit solution until 2019/10/30 ... (5 Points)**
 
 ### Resources
 - [GDB Documentation](https://www.gnu.org/software/gdb/documentation/)

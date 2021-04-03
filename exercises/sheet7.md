@@ -1,4 +1,4 @@
-# Exercise sheet 7 - 2019/12/04
+# Exercise sheet 7
 
 ## Exercise 1 (Pointers)
 Let `i` have the type `int`, and `p` the type `int *`.
@@ -39,7 +39,7 @@ int main()
 ```
 
 
-## Exercise 3 (Polynomials) :pencil2:
+## Exercise 3 (Polynomials)
 This exercise is about a user-defined type representing polynomials
 ```math
   P(x) = a_0 + a_1 x + a_2 x^2 + \ldots + a_n x^n\quad (n \geq 0)
@@ -71,8 +71,6 @@ Test your polynomial arithmetic on some reference polynomials:
 - The constant function
 - Polynomials with just one coefficient unequal to zero
 - All coefficients = 1
-
-**>> Submit solution until 2019/12/18 ... (10 Points)**
 
 ### Hint:
 - Implement an overload for the function `operator<<` for your type:

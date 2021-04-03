@@ -1,4 +1,4 @@
-# Exercise sheet 4 - 2019/11/06
+# Exercise sheet 4
 
 ## Exercise 1 (Work with references and constants)
 *References* are aliases to existing objects or functions. In contrast to pointers, references are
@@ -74,7 +74,7 @@ In `material/sheet4/exercise3.cc` you can find a horribly complicated unreadable
 
 
 
-## Exercise 4 (Rational numbers) :pencil2:
+## Exercise 4 (Rational numbers)
 Write a class for rational numbers. The number should always be represented as *fully reduced fraction* of the form
 ```math
 \frac{\text{numerator}}{\text{denominator}}
@@ -105,8 +105,6 @@ with $`\text{denominator} > 0`$.
    ```math
    \frac{13}{12},\; -\frac{1}{3},\; \frac{16}{3},\; \frac{19}{3},\; -\frac{3}{1},\; -\frac{3}{2},\; -\frac{3}{16}.
    ```
-
-**>> Submit solution until 2019/11/27 ... (10 Points)**
 
 ### Resources
 - [GCD](https://en.wikipedia.org/wiki/Greatest_common_divisor)

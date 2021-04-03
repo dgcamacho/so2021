@@ -1,4 +1,4 @@
-# Exercise sheet 9 - 2019/12/17
+# Exercise sheet 9
 
 ## Exercise 1 (Vector class)
 In the following vector class and main function there are more than 25 programming

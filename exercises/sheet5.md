@@ -1,4 +1,4 @@
-# Exercise sheet 5 - 2019/11/13
+# Exercise sheet 5
 
 ## Exercise 1
 What is the error (if any) in the following function definitions?

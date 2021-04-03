@@ -561,14 +561,19 @@ The placeholder `auto` may be accompanied by modifiers, such as `const` or `&`, 
 ```c++
 auto x = 3+4;       // deduce the type from the expression: x <-- int <-- 3+4
 auto y = long{3+4}; // explicitly committing to a type: y <-- long
-auto z{3+4};        // same as variable x: z <-- int                  [C++17]
 
-auto const z2 = 3+4;    // type of x3 is 'int const'
+auto z{3+4};            // same as variable x: z <-- int                      [C++17]
+auto z1 = {3.4};        // ATTENTION: This gives 'std::initializer_list<int>' [C++17]
+auto const z2 = 3+4;    // type of z2 is 'int const'
 
 decltype(auto) x2 = x;  // type of x2 is 'int&'
 decltype(x) x3 = x;     // extract the type from the expression 'x'
-auto& x4 = x;           // type of x3 is 'int&'
+auto& x4 = x;           // type of x4 is 'int&'
 ```
+
+> .h3[Almost-Always-Auto:] Preferring auto variables is motivated primarily by *correctness*,
+> *performance*, *maintainability*, and *robustness* - and only lastly about typing convenience.
+> (Herb Sutter, [GotW #94](https://herbsutter.com/2013/08/12/gotw-94-solution-aaa-style-almost-always-auto/))
 
 ---
 
@@ -581,7 +586,7 @@ usage *requirements* and not explicit datatypes. Requires **C++20**.
 <type-constraint> decltype(auto) <variable name> = <expression>;
 ```
 
-### Example:
+### Examples:
 ```c++
 std::integral       auto x{3+4}; // Ok, deduces the type from expr 3+4 -> int,
                                  // must be integral type

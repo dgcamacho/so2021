@@ -1,4 +1,4 @@
-# Exercise sheet 12 - 2020/01/22
+# Exercise sheet 12
 
 ## Exercise 1 (Functors)
 Write a functor `Scale` that multiplies an assigned value with a constant factor. This constant factor

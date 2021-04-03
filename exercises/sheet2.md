@@ -1,4 +1,4 @@
-# Exercise sheet 2 - 2019/10/23
+# Exercise sheet 2
 
 
 ## Exercise 1 (Floating-point numbers)
@@ -92,7 +92,7 @@ while a positive integer is read from the keyboard. Use the standard stream oper
 - [std::cout](https://en.cppreference.com/w/cpp/io/cout), [std::cin](https://en.cppreference.com/w/cpp/io/cin)
 
 
-## Exercise 4 (Kahan Summation Formula) :pencil2:
+## Exercise 4 (Kahan Summation Formula)
 Calculate the sum $`\sum_{j=0}^{N-1} x_j`$ for a given set of values $`\{x_j\}`$ using the following algorithm:
 ```
 S = x_0
@@ -131,9 +131,6 @@ std::reverse(x.begin(), x.end());
 std::srand(12345);               // fixed initial seed
 std::random_shuffle(x.begin(), x.end(), [](int n) { return std::rand() % n; });
 ```
-
-
-**>> Submit solution until 2019/11/06 ... (10 Points)**
 
 ### Note
 For a comparison of the computations, print the value with maximal precision to `std::cout`, i.e.

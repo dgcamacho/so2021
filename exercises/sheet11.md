@@ -1,4 +1,4 @@
-# Exercise sheet 11 - 2020/01/15
+# Exercise sheet 11
 
 ## Exercise 1 (Function templates)
 1. Write a function template `minmax(a,b)` to calculate minimum and maximum of two values `a` and
@@ -82,7 +82,7 @@ again! What is the output of the program and why? Use the tools `nm` or `objdump
 and expected symbols in the files.
 
 
-## Exercise 3 (Class Templates) :pencil2:
+## Exercise 3 (Class Templates)
 Choose one of the three classes from the last exercises (`Rational`, `Matrix`, or `Polynomial`) and transform it into a
 class template, i.e.
 ```c++
@@ -115,10 +115,6 @@ class Rational
 3. Try to instantiate your class with one of the other classes, i.e. `Rational<Polynomial>` to form a rational function,
    `Matrix<Rational>` a matrix with rational coefficients, or `Polynomial<double,Matrix>` a matrix polynomial. What
    functionality is missing in the template types and can you easily correct/extend it? Run the test suite on those types!
-
-
-**>> Submit solution until 2020/01/29 ... (10 Points)**
-
 
 #### Note
 - The full correction/extension in step 3 might be a complicated task. This is optional!

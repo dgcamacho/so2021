@@ -1,4 +1,4 @@
-# Exercise sheet 6 - 2019/11/27
+# Exercise sheet 6
 
 ## Exercise 1
 In the following there are various overloads of `foo(.)` and `bar(.,.)` provided. Which of the function is called in the
@@ -72,7 +72,7 @@ class Pair {
 ```
 
 
-## Exercise 3 :pencil2:
+## Exercise 3
 For a better structuring of your code, it is recommended to separate declaration and definition. Apply this
 splitting to the code from exercise 2 or 3 of exercise sheet 5 (the `Matrix` class). Therefore, move the function
 declarations and class definition to a header file (file ending `.hh` or `.hpp`) and the definition / implementation
@@ -135,8 +135,6 @@ next test? In your `main()` call each test and throw an error if the test failed
 
   Look up in the web how to throw and handle exceptions and replace assertions by proper throw statements. Now,
   you can even test that a function produces the right error in case of wrong input. So, test the error handling!
-
-**>> Submit solution until 2019/12/11 ... (10 Points)**
 
 
 ## Exercise 4 (GotW-1: Variable initialization -- or is it?)

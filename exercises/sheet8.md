@@ -1,4 +1,4 @@
-# Exercise sheet 8 - 2019/12/11
+# Exercise sheet 8
 
 ## Exercise 1 (Valgrind)
 1. Create a small program that creates arrays on the heap (using dynamic allocation). Therefore, write a function `int allocate(int n)`
@@ -127,8 +127,6 @@ get a compiler error.Read the code and understand the requirements on the types.
 - [Makefile](https://www.gnu.org/software/make/manual/html_node/Makefiles.html),
   [Makefile cheatsheet](https://devhints.io/makefile),
   [Makefile conventions and guidelines](https://eigenstate.org/notes/makefiles)
-
-**>> Submit solution until 2020/01/08 ... (20 Points)**
 
 
 ## Exercise 4 (GotW-89: Smart Pointers)

@@ -1,4 +1,4 @@
-# Exercise sheet 13 - 2020/01/28
+# Exercise sheet 13
 
 ## Exercise 1 (Iterators)
 Given the following for statement:
