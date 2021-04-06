@@ -14,10 +14,8 @@
 | Week | Topic                                  | Link            |
 |------|----------------------------------------|-----------------|
 | 01   | Overview and Motivation for the Course | [sheet1.md][]   |
-| 02   | Basic Syntax and Types                 | [sheet2.md][]   |
 
 [sheet1.md]: exercises/sheet1.md
-[sheet2.md]: exercises/sheet2.md
 
 
 ### Submission of solutions
