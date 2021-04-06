@@ -1,7 +1,4 @@
 # Configuration of Jekyll
-url: "http://localhost:4000/"
-baseurl: "file:///home/spraetor/lehre/scprog-so2021/_presentation"
-
 source: presentation/
 destination: _presentation/
 exclude: []
