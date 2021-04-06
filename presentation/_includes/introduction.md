@@ -1,6 +1,10 @@
+
 ---
-class: center, middle
-# Introduction
+class: middle
+
+> .h3[Scott Meyers (2014):] If you’re not at all interested in performance, shouldn’t you
+> be in the Python room down the hall?
+
 ---
 
 # Scientific Programming with C++
@@ -19,6 +23,38 @@ class: center, middle
 - Low-level programming language for fine control about data and processing
 - Multi-paradigm development: OOP, Generic, Functional, Meta-programming,...
 - Standardized, industry ready programming language
+
+---
+class: middle
+
+> .h3[Bjarne Stroustrup (1994):] It would be nice if every kind of numeric software
+> could be written in C++ without loss of efficiency, but unless something can be
+> found that achieves this without compromising the C++ type system it may be
+> preferable to rely on Fortran, Assembler or architecture-specific extensions.
+
+<br>
+
+.opacity-10[
+> .h3[Todd L. Veldhuizen (2000):] C++ is now ready to compete with the performance
+> of Fortran. Its performance problems have been solved by a combination of better
+> optimizing compilers and template techniques. It's possible that C++ will be
+> faster than Fortran for some applications.
+]
+
+---
+class: middle
+
+> .h3[Bjarne Stroustrup (1994)]: It would be nice if every kind of numeric software
+> could be written in C++ without loss of efficiency, but unless something can be
+> found that achieves this without compromising the C++ type system it may be
+> preferable to rely on Fortran, Assembler or architecture-specific extensions.
+
+<br>
+
+> .h3[Todd L. Veldhuizen (2000)]: C++ is now ready to compete with the performance
+> of Fortran. Its performance problems have been solved by a combination of better
+> optimizing compilers and template techniques. It's possible that C++ will be
+> faster than Fortran for some applications.
 
 ---
 
