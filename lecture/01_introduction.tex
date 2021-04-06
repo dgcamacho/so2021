@@ -1,6 +1,8 @@
 \chapter{Introduction}
 \begin{zitat}{Bjarne Stroustrup (1994) \cite{stroustrup1994design}}
-  ``It would be nice if every kind of numeric software could be written in C++ without loss of efficiency, but unless something can be found that achieves this without compromising the C++ type system it may be preferable to rely on Fortran, Assembler or architecture-specific extensions.''
+  ``It would be nice if every kind of numeric software could be written in C++ without loss of efficiency, but unless something
+  can be found that achieves this without compromising the C++ type system it may be preferable to rely on Fortran, Assembler or
+  architecture-specific extensions.''
 \end{zitat}
 
 Scientific programming is an old discipline in computer science. The first applications on computers were indeed computations.
@@ -52,8 +54,8 @@ that can represent our real-valued matrix $A$ and vector $\mathbf{x}$:
   // initialize x
 \end{minted}
 
-We want to solve the task $\mathbf{y} = \alpha A\mathbf{x} + \beta \mathbf{y}$ (accumulated matrix-vector multiplication) with $\mathbf{y}\in\mathbb{R}^n$ initialized to zero
-and $\alpha=\beta=1$ for simplicity.
+We want to solve the task $\mathbf{y} = \alpha A\mathbf{x} + \beta \mathbf{y}$ (accumulated matrix-vector multiplication) with
+$\mathbf{y}\in\mathbb{R}^n$ initialized to zero and $\alpha=\beta=1$ for simplicity.
 %
 \begin{minted}{c++}
   DenseVector y(n, 0.0);
@@ -109,56 +111,6 @@ from CBLAS simply by analyzing the arguments passed to the multiplication operat
 This lecture goes beyond the basics of the C++ programming language and tries to teach how to write, debug, and manage code, how to analyze
 performance and how to test and optimize your implementation. Classical design patterns of object-oriented programming is more the focus of
 the twin lecture SCPROG -- Fortgeschrittene Konzepte des Wissenschaftlichen Programmierens: OOP mit Java -- by Prof. W. Walter.
-
-
-% \section{Structure of the lecture and tutorial}
-% This module focuses on three learning goals:
-% \begin{enumerate}[1)]
-%   \item Programming with C++
-%   \item Working with programming tools
-%   \item Discovering scientific C++ software libraries
-% \end{enumerate}
-
-% There will be a tutorial every week with exercises. The corresponding exercise sheets can be found online in a Git repository at
-
-% \url{https://gitlab.mn.tu-dresden.de/teaching/scprog/so2021-tutorial}
-
-% On each exercise sheet there are a few exercises marked for submission. Approximately two weeks you have time to work on the tasks
-% and are supposed to submit your solutions into the Git repository itself. Therefore, in the first tutorials you get an account and
-% have to create a Git project on the TU-Dresden local GitLab server \url{https://gitlab.mn.tu-dresden.de}. The details about this are
-% explained on the repository README page and are presented in the first tutorial. The advantage you have from submitting the exercises
-% is 1. you get a personal review and feedback, 2. you learn how to work in a cooperative environment on scientific projects, and 3. you
-% can get a bonus for the final oral exam (reaching 66\% of the possible exercise points gives a bonus of up to a grade of 0.3).
-
-% \subsection{Course outline}
-% \begin{itemize}
-%   \item Best practice in scientific programming
-%   \item C++ basics (data-types, operators, pointers, arrays, references, $\ldots$)
-%   \item Scopes, Namespaces, Functions
-%   \item Overloading, Specialization
-%   \item Basics of object-oriented class design, inheritance, polymorphie
-%   \item Generic Programming with templates
-%   \item Generic Design patterns (Functors, Iterators, Type-Traits)
-%   \item Algorithms and Data-Structures in the C++ standard library
-%   \item Meta-Programming
-%   \item Expression-Templates
-%   \item (Compile-Time symbolic differentiation)
-% \end{itemize}
-
-% \section{Literature and material}
-% There is a lot of good (and a lot of bad) literature on C++ programming. Some references with links to the Slub and to online sources
-% are given on the website
-
-% \url{https://math.tu-dresden.de/~spraetor}
-
-% on the subpage \texttt{Teaching/Scientific Programming with C++}, or on the README page of the repository as above. The main source for reference of C++ is the nearly complete online standard at
-
-% \url{https://en.cppreference.com}
-
-% and the official standard
-
-% \url{https://github.com/cplusplus/draft}, or \\
-% \url{http://www.open-std.org/jtc1/sc22/wg21/}
 
 
 \section{History of C++}

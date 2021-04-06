@@ -175,10 +175,14 @@ strong, b {
   font-family: Palatino, Optima, Georgia, serif;
 }
 
-.typo p, .typo pre, .typo ul, .typo ol, .typo dl, .typo form, .typo hr, .typo table,
+.typo p, .typo-p, .typo ul, .typo-ul {
+  margin-bottom: 0.5em
+}
+
+/* .typo p, .typo pre, .typo ul, .typo ol, .typo dl, .typo form, .typo hr, .typo table,
 .typo-p, .typo-pre, .typo-ul, .typo-ol, .typo-dl, .typo-form, .typo-hr, .typo-table, blockquote {
   margin-bottom: 1.0em
-}
+} */
 
 h1, h2, h3, h4, h5, h6 {
   font-family: OpenSans;
@@ -248,7 +252,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .typo table th, .typo table td, .typo-table th, .typo-table td, .typo table caption {
-  padding: 0.5em 1em;
+  padding: 0.1em 1em;
 }
 
 .typo table caption {
