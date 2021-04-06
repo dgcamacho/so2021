@@ -86,8 +86,8 @@ and "Todos" tabs, and the "Wiki" tab. If and how you use these features is up to
 - [Git reference](https://www.git-scm.com/docs)
 - [cheat sheet](https://github.github.com/training-kit/downloads/github-git-cheat-sheet.pdf)
 
-## Exercise 2 (Compiling code)
 
+## Exercise 2 (Compiling code)
 
 In the directory [material/sheet1/](/exercises/material/sheet1) you can find
 an initial C++ example in the files `linear_algebra.cc`, `linear_algebra.h`, and `exercise2.cc`. Download the files and compile the code:
