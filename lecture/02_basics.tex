@@ -1,0 +1,845 @@
+\chapter{C++ Basics\label{sec:basics}}
+\section{Introductory example\label{sec:introductory-example}}
+
+\begin{minted}[frame=lines,label={Introductory example}]{c++}
+  #include <iostream>
+  #include <boost/numeric/mtl/mtl.hpp>
+
+  using namespace mtl;
+
+  int main(int argc, char** argv)
+  {
+    int const size = 40, N = size * size;
+    using matrix_t = compressed2D<double>;
+
+    // Set up a matrix 1,600 x 1,600 with
+    // 5-point-stencil
+    matrix_t A{N, N};
+    mat::laplacian_setup(A, size, size);
+
+    // Compute b = A*x with x == 1
+    dense_vector<double> x{N, 1.0}, b;
+    b = A * x;
+
+    std::cout << two_norm(b) << std::endl;
+  }
+\end{minted}
+
+Some comments about this example:
+
+\begin{itemize}
+  \item Main program: The entry point for the program is the function \cpp{main}. It must be available in all executables and returns an integer indicating an error code of the program (\cpp{0} means no error).
+
+  \item Typically, there are just two variants of the \cpp{main} function allowed, without arguments or with two arguments containing command-line parameters to the program. Thereby, \cpp{int argc} indicates the number of command-line arguments and \cpp{char** argv} or \cpp{char* argv[]} a sequence of null-terminated character sequences (strings) representing the actual command-line arguments. Especially, the zero-th argument \cpp{argv[0]} corresponds to the name of the executable.
+
+  \textit{Remark:} Some compilers allow more than those two arguments, that may contain environmental variables.
+
+  \item Input- and Output is not part of the C++ core language, but is implemented in libraries, like the C++ standard library. Those libraries must be included explicitly.
+
+  \item Include-files are any regular files that can be found by the compiler. Typically, those includes have the file ending \texttt{.h} (for header file) and contain specifications of the interface of functions or even implementations of those functions. Include in C++ means: the text of the file is copied to the include directive \cpp{#include} into the code.
+
+  \textit{Remark 1:} Header-files of the C++ standard library do not have a file extension. This is, in order to avoid conflicts with the C standard library (those files have the extension \texttt{.h}).
+
+  \textit{Remark 2:} There are two variants for the include directive: \cpp{#include <Dateiname>} or \cpp{#include "Dateiname"}. In the first variant the include files are searched in the compiler include paths and system paths only while in the second variant it is searched also in the current source directory. This is why the standard library include directives are typically written with angular brackets \cpp{<...>}.
+
+  \item The functions of the standard library are grouped in the namespace \cpp{std}. Again, this is done in order to avoid conflicts with functions from other libraries and your own code. In order to call functions from the standard library, you have to add the prefix (name resolution operator) \cpp{::}, \eg \cpp{std::sqrt}.
+
+  \item In addition to the main program, we have a class (structure) \cpp{compressed2D<double>} and (free) functions \cpp{two_norm}, and \cpp{mat::laplacian_setup}. A free function is a function not part of a class. But, there is also a function bound to the class.
+
+  \item Finally, the output of the result to the screen is by an output-stream object \cpp{std::cout} (part of the standard library). It provides a way to assign new output data to the output device, using the ``shift'' operator \cpp{<<}. The expression \cpp{std::endl} thereby indicates a line-break (the end-of-line symbol, and it flushes the output). One could also write the character \cpp{'\n'} directly.
+
+  \item Brackets \cpp{{ }} in C++ inclose a local code block (scope). Variables declared inside a scope can only be accessed from within that scope or a sub-scope. The brackets are also used during the initialization of an object.
+
+  \item Single line comments are introduced by \cpp{//} and multi-line comments are introduced by \cpp{/* ... */}
+\end{itemize}
+
+Some questions to think about:
+\begin{itemize}
+  \item What happens if you add another \cpp{main(...)} function to the code? Is it possible to add both main functions, \cpp{main(), main(int, char**)} at the same time?
+
+  \item There is not just text pushed to the output stream, but also values (numbers). How are numbers printed / converted to strings? How to modify this behavior?
+\end{itemize}
+
+
+% =================================================================================================
+\section{Compiling C++ code\label{sec:compiling}}
+Compared to scripting or interpreted languages, like Python, Matlab, or JavaScript, C++ code must be translated into machine-readable, executable instructions. This process of translation is called \Index{Compiling}. More generally, one could understand compiling as a transformation of code from one (high-level) language to another (low-level) language.
+
+\begin{rem}
+  During the compilation of C++ code, you might even print out intermediate states of its transformation process, like preprocessor output, or assembler output. We will look at these intermediate code in the lecture or exercises to understand better what the compiler is doing with our code.
+\end{rem}
+
+\begin{itemize}
+  \item The process of compiling is performed by a program, called the \Index{compiler}. Typical examples of compilers are \emph{g++}, \emph{clang}, \emph{Intel ICC}, \emph{MSVC}, and others.
+
+  \item The compiler gets as input a \Index{translation unit}, typically a text file containing the C++ code --- the definition of functions and classes. A program typically consists of many translation units that are combined.
+
+  \item The output of the compiler is a collection of \Index{object files}, one for each translation unit.
+
+  \item To generate an executable (or a library) from these object files, the \Index{linker} combines all the objects to a single file.
+\end{itemize}
+
+The process of compiling can be split into several stages:
+\begin{description}
+  \item[pre-processing] (performed by the \Index{preprocessor}) The content of include files is copied to the include directives, macros and preprocessor constants are evaluated.
+
+  \item[linguistic analysis] Check of syntax rules.
+
+  \item[\Index{assembling}] Translation of the language constructs into CPU instructions, \eg in form of assembler code.
+
+  \item[code output] Transformation of internal code (assembler code) into machine-readable binary code. Collection of symbols into a symbol table with jump references.
+\end{description}
+
+On many linux distributions the C++ compiler of the GNU Compiler Collection (GCC) or the clang compiler of LLVM are preinstalled. Assume that the code from the introductory example is stored in a text file \texttt{distance.cc}. This can be compiled into an executable by
+%
+\begin{verbatim}
+  c++ distance.cpp
+\end{verbatim}
+%
+where \texttt{c++} is an alias (often a symbolic link) to the actual compiler.
+
+\begin{rem}
+  The version and name of the compiler can be obtained by \texttt{c++ --version}.
+\end{rem}
+
+The result of the compilation is a binary file, named \texttt{a.out}. This is the default executable name, that can be changed by providing the argument \texttt{-o <name>}, \eg
+%
+\begin{verbatim}
+  g++ distance.cpp -o distance
+\end{verbatim}
+%
+Later in the lecture we get to know different C++ language features available in a specific version of the C++ standard (see history of C++). The standard can be selected explicitly by the additional argument \texttt{-std=<version>}, \eg for \cxx{11}:
+%
+\begin{verbatim}
+  g++ -std=c++11 distance.cpp -o distance
+\end{verbatim}
+%
+where the \texttt{<version>} follows the naming given in the chapter \emph{History of C++}.
+
+If you have multiple files to compile, \eg one file provides the implementation of the functions and classes, and the other file just the \cpp{main()} function, we say that we have multiple translation units. Those can be compiled individually and then linked together:
+%
+\begin{verbatim}
+  g++ -c file1.cpp
+  g++ -c file2.cpp
+  g++ file1.o file.o -o program
+\end{verbatim}
+%
+The output name of the compiled translation units follows the pattern \texttt{<basename>.o}. The compiler allows to combine the compiler and linker call in one line, by listing all the files to compiler one after the other:
+%
+\begin{verbatim}
+  g++ file1.cpp file2.cpp -o program
+\end{verbatim}
+
+If a source file depends on some include files (in the top of the file you find the lines \cpp{#include <...>} or \cpp{#include "..."}), the compiler has to search for these \textit{header}-files. It automatically searches in default system paths, but for everything else the compiler has to be pointed to the location of the include files. This can be done by the additional argument \texttt{-I<path-to-files>}, \eg
+%
+\begin{verbatim}
+  g++ -I/usr/local/library/include/ file1.cpp file2.cpp -o program
+\end{verbatim}
+%
+and if the program depends not only on include files, but also \Index{symbols} (compiled implementations) of library functions, a list of additional libraries to link the executable with has to be appended. Therefore, two arguments are allowed for the compiler: \texttt{-L<path-to-library>} and \texttt{-l<libname>}, where \texttt{<libname>} contains the part of the file name of the library between the prefix \texttt{lib} and the file extension \texttt{.so} or \texttt{.a}. (This might be different on different operating systems, like MacOS or MS Windows).
+%
+\begin{verbatim}
+  g++ -I/usr/local/library/include/ file1.cpp file2.cpp -o program \
+      -L/usr/local/library/lib -llibrary
+\end{verbatim}
+%
+
+If your project depends on multiple libraries that itself depend on other libraries it gets more and more complicated to put everything correctly into the compile command. To simplify this, there are multiple different \Index{build systems} developed that collect and analyze dependencies and generate compiler commands for you. A classical one is a \Index{Makefile}, that defines various targets that can depend on each other and some way to construct from these targets a sequence of commands to execute in order to compile (build) the executable. Another example is \Index{CMake} (more precisely it is a build system generator).
+
+\begin{rem}
+  As you may have noticed, source files that are compiled by the compiler are typically named with a file extension \texttt{.cc}, \texttt{.cpp}, or \texttt{.cxx}. This differs from the include (header) files with file extension \texttt{.h}, \texttt{.hh}, \texttt{.hpp}, or \texttt{.hxx}.  Here the first file extension comes from C and is just a abbreviation for \textit{header}. Later in the lecture, we will see source (implementation) files, that are not compiled, but are typically included at the end of the corresponding header file. This is related to template   implementations. Sometimes these files are name \texttt{.tpp}, or \texttt{.txx}, but more ofter just \texttt{.impl.hh}, or \texttt{.inc.hh} (with any of the header file extensions from above).
+
+  While file extensions and naming of files in general is arbitrary, it is recommended to name source and its corresponding header file with the same base name and matching file extensions, \eg \texttt{linear\_algebra.hh} and \texttt{linear\_algebra.cc}. Use the standard file extensions also to get automatic syntax highlighting in your code editor of choice.
+\end{rem}
+
+
+% ==============================================================================
+\section{Basic structure of a C++ program\label{sec:code-structure}}
+Each C++ code resulting in an executable must contain exactly one \cpp{main(...)} function, while both variants
+%
+\begin{minted}{c++}
+  int main();
+  int main(int argc, char* argv[]); // or. int main(int argc, char** argv);
+\end{minted}
+%
+are allowed. The arguments \cpp{argc, argv} are filled when running the executable with command-line arguments. Thereby, the argument \cpp{argc} represents the number of command-line arguments and \cpp{argv} represents and \textit{array} of \textit{strings} (character sequences) representing each individual command-line argument. The fist entry in this array, \cpp{argv[0]}, contains the name of the executed program.
+
+\paragraph{Splitting in multiple source files}
+Code can (and should) be split into multiple translation units representing different components of the program. This splitting means multiple header and source files, where each source file can be translated into an object file without the knowledge of the other source files.
+
+Typically, in header files the functions and classes are just \Index{declared}, while in the source file those entities are \Index{defined}.
+
+Example 1: A header file contains the \Index{prototype} (interface description) of a function and a class definition.
+\begin{minted}[frame=lines,label={example.hh}]{c++}
+#ifndef EXAMPLE_HH
+#define EXAMPLE_HH
+
+// declaration and definition of a class
+struct Point
+{
+  double x, y;
+
+  // declaration of a member function
+  Point subtract(Point const& other) const;
+};
+
+// declaration of a function
+double distance(Point const& a, Point const& b);
+
+// declaration of a template function
+template <class T> void foo();
+
+#include "example.impl.hh"
+#endif // EXAMPLE_HH
+\end{minted}
+
+Example 2: The definition of a template function (included at the end of the header file)
+
+\begin{minted}[frame=lines,label={example.impl.hh}]{c++}
+#pragma once
+// definition of the function foo()
+template <class T>
+void foo() { /*...*/ }
+\end{minted}
+
+Example 3: The source file, includes the header file and defines the functions
+
+\begin{minted}[frame=lines,label={example.cc}]{c++}
+#include "example.hh" // include the declaration
+#include <cmath>      // include additional function (declarations)
+
+// definition of a member function
+Point Point::subtract(Point const& other) const
+{
+  return {this->x - other.x, this->y - other.y};
+}
+
+// definition of the function distance()
+double distance(Point const& a, Point const& b)
+{
+  Point ab = a.subtract(b);
+  return std::sqrt(ab.x * ab.x + ab.y * ab.y);
+}
+
+int main(int argc, char** argv)
+{
+  Point a{ 1.0, 2.0 }, b{ 7.0,-1.5 };
+  distance(a,b);
+  return 0;
+}
+\end{minted}
+
+
+Some remarks to the examples above:
+\begin{itemize}
+  \item The triplet \cpp{#ifndef NAME}, \cpp{#define NAME} and \cpp{#endif} builds a so called \textbf{include guard}. It prevents the header file to be included multiple times in the same translation unit. This is not allowed, since the C++ standard imposes a \textbf{one definition rule}, meaning: No translation unit shall contain more than one definition of any variable, function, class type, enumeration type, or template.
+
+  Another way of enforcing that a file is included only once, is by using the (non-standard) preprocessor directive \cpp{#pragma once} in the top of the include file. This directive is supported by all major compilers and can be used without any problems.
+
+  \item If you want to (or have to) provide an implementation of a function or class method in a header file, it must be included together with the corresponding declaration. Often this is done by an include statement at the end of the header file. Or the definition is provided together with the declaration.
+\end{itemize}
+
+
+% ==============================================================================
+\section{Variable declaration and fundamental types\label{sec:data-type}}
+C++ is a statically typed language (in contrast to dynamically typed languages like \eg PHP), meaning: each identifier and expression in a C++ program has assigned a type that is already known to the compiler and this type cannot be changed.
+
+Examples:
+\begin{minted}{c++}
+  float x;          // x is a single precision floating point number
+  int y = 3+4;      // y is an integer variable with initial value 7
+  float f(int);     // f is a function with one integer argument and float return type
+\end{minted}
+
+Here, the variable \cpp{y} is initialized with an expression on the right-hand side of the assignment operator \cpp{=}. This expression \cpp{3+4} also has a type. Since \cpp{3} and \cpp{4} are integer numbers and the result of the addition of two integers is defined to be also an integer, the expression is of type \cpp{int}.
+
+\begin{standard}{\S 7.1 (1)}
+  An expression is a sequence of operators and operands that specifies a computation. An expression can result in a value and can cause side effects.
+\end{standard}
+
+\begin{rem}
+  That the expression \cpp{3+4} has the type \cpp{int} is not as trivial as you might think. In some languages it might be a type that could be larger than \cpp{int} but that can hold the value of the addition of these two integers.
+\end{rem}
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Automatic type deduction}
+When the compiler parses an expression, it internally determines its type. In order to create a variable of just that type, the language has introduced the meta-type \cpp{auto}. It is not an actual data-type, but is a placeholder for the type determined by the expression of the
+initialization:
+%
+\begin{minted}{c++}
+  auto x = 3+4;       // deduce the type from the expression: x <-- int
+  auto y = long{3+4}; // explicitly committing to a type: y <-- long
+  auto z{3+4};        // same as variable x: z <-- int [C++17]
+\end{minted}
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Literals\label{sec:literal}}
+A literal is a token directly representing a constant value of a concrete type.
+
+Examples:
+\begin{minted}{c++}
+  42u       // unsigned integer literal
+  108.87e-1 // floating point literal
+  true      // boolean literal
+  "Hello"   // string literal
+\end{minted}
+
+The type of the literal is often determined by a literal suffix (like in \cpp{42u} the \texttt{u}). All integer literals are just a sequence of digits that has no period or exponent part, while floating point literals must contain a period and/or an exponent part. Character literals are introduced with a single quote, e.g., \cpp{'c'}, and string literals with the double quotes, e.g., \cpp{"Hello"}. There are some more literals, we will see in the exercise.
+
+\begin{rem}
+  Since\marginpar{[\cxx11]} \cxx{11} one can define own literals of the form \texttt{built-in literal + \_ + suffix}. This allows, for example, to create numbers with units.
+
+Example:
+\begin{minted}{c++}
+  101000101_b  // binary representation
+  63_s         // seconds
+  123.45_km    // kilometer
+  33_cent      // cent
+\end{minted}
+
+where the implementer is responsible for giving those literals a meaning.
+\end{rem}
+
+\begin{rem}
+  A literal is a \textit{primary expression}. Its type depends on its form (see above). A string literal is an \Index{lvalue}; all other literals are \Index{prvalues} (see chapter about value categories).
+\end{rem}
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Declaration -- Definition -- Initialization}
+\begin{description}
+  \item[Declaration] A declaration may introduce one or more names into a translation unit or redeclare names introduced by previous declarations.
+
+  \item[Definition] A \textit{declaration} that provides the implementation details of that entity, or in case of variables, reserves memory for the entity.
+
+  A \textit{declaration} of a class (\cpp{struct}, \cpp{class}, \cpp{enum}, \cpp{union}), function, or method is a definition if the declaration is followed by curly braces containing the implementation body.
+
+  Variable declarations are always \textit{definitions} unless prefixed with the keyword \cpp{extern}.
+
+  \item[Initialization] A \textit{definition} with explicit value assignment.
+\end{description}
+
+Examples:
+\begin{minted}{c++}
+  class Test;             // declaration of a class
+  class Test {};          // definition of that class
+
+  int func();             // declaration of a function
+  int func() { return 7;} // definition of that function
+
+  extern int i=func();    // definition and initialization of a variable
+  extern int j;           // declaration of a variable
+  int k;                  // definition of a variable
+
+  int obj();              // !!! declaration of a function
+\end{minted}
+
+A fundamental rule is that you are not allowed to define an object twice. While it may be allowed to declare exactly the same object multiple times, even after the definition.
+
+\begin{standard}{\S 6.3 (1)}
+  \textbf{One-definition rule:} No translation unit shall contain more than one definition of any variable, function, class type, enumeration type, or template.
+\end{standard}
+
+
+\begin{guideline}{Principle}
+  Declare variables as late as possible, usually right before using them the first time and whenever possible not before you can initialize them.
+\end{guideline}
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Fundamental Types\label{sec:fundamental-type}}
+We have seen already some types in the examples above, like integer types and floating-point types. There are more fundamental data-types available in C++. A summary can be found at \url{http://en.cppreference.com/w/cpp/language/types}.
+
+Basic types in C++ are categorized into three groups: integral types, floating-point types, and \cpp{void}. Integral types represent integer numbers, while floating-point types might represent fractions.
+
+The type \cpp{void} represents the empty set of values. No variable can be declared of type \cpp{void}. Thus, \cpp{void} is an \emph{incomplete type}. It is used as the return type for functions that do not return a value. Any expression can be explicitly converted to type \cpp{void}.
+
+\subsubsection{Integral numbers}
+The group of integral types contains
+\begin{itemize}
+  \item The boolean type \cpp{bool} with values \cpp{true} and \cpp{false} (both are boolean literals). The size of that type is implementation defined and typically 1 Byte.
+
+  \item Character types \cpp{char}, \cpp{signed char}, and \cpp{unsigned char} to represent a single character. These are distinct types and either a signed or unsigned integer type of size 1 Byte. There are also larger character types like \cpp{wchar_t}, \cpp{char16_t}, or \cpp{char32_t} to represent larger character sets.
+
+  \item Standard (signed/unsigned) integer types include \cpp{short int, int, long int, long long int} possibly qualified with the type prefix \cpp{signed, unsigned}. No signed-ness qualification means signed integers. The postfix \cpp{int} may be omitted (except for \cpp{int} itself).
+
+  The range of representable values for a signed integer type is $-2^{N-1}$ to $2^{N-1} - 1$ (inclusive), where $N$ is called the width of the type. An unsigned integer type has the same width $N$ as the corresponding signed integer type. The range of representable values for the unsigned type is $0$ to $2^{N-1}$ (inclusive).
+
+  Arithmetic for the unsigned type is performed modulo $2^N$. \emph{Note:} Unsigned arithmetic does not overflow. Overflow for signed arithmetic yields \textbf{undefined behavior} (what this means is explained later).
+\end{itemize}
+
+In the C++ standard the sizes (widths) of the integer types are not specified explicitly, but a minimal size is given. Thus, one finds the relations
+%
+\cppline{  sizeof(short) <= sizeof(int) <= sizeof(long) <= sizeof(long long)}
+%
+where \cpp{sizeof} is a C++-operator returning the width of a data-type (or an expression) in Byte. On 32-Bit systems, typically the sizes 2, 4, 4, 8 Byte are used, on 64 Bit systems \cpp{long} is often of size 8 Bytes.
+
+The\marginpar{[\cxx{11}]} type \cpp{long long} was introduced in \cxx{11} and was available as compiler specific extensions before.
+
+\begin{rem}
+  As\marginpar{[\cxx{11}]} for \cpp{char} there are integer type with prescribed width, defined in the header file \cpp{<cstdint>}. Those are named \cpp{std::int16_t, std::uint32_t, ...}.
+\end{rem}
+
+\begin{rem}
+  In the standard library a \textbf{type-alias} is introduced for an integer type often used for vector indices and vector sizes, named \cpp{std::size_t}. It is typically an \cpp{unsigned long int} type, but on some compilers it may be different. The type referenced by \cpp{std::size_t} can store the maximum size of a theoretically possible object of any type (including array).
+\end{rem}
+
+There are special \emph{literals}, suffixes appended to numbers, to indicate explicitly a type: \texttt{U, u, L, l, LL, ll}, where there is no difference between lower and upper case suffixes. \texttt{u} means \cpp{unsigned}, \texttt{l} means \cpp{long}, and \texttt{ll} means \cpp{long long}. Additionally, a prefix can be put in front of the number to indicate a base for the number systems used: \texttt{0} (Null), \texttt{0x}, or \texttt{0b}. Those represent octal, hexadecimal, or binary numbers, respectively.
+
+\begin{rem}
+  The type of the integer literal is the first type $\geq$ in which the value can fit and with the right signed-ness.
+\end{rem}
+
+Example:
+\cppline{  1234L, 9565ul, 012 == 10, 0x2a == 42}
+
+\begin{standard}{\S 5.13.2 (1)}
+  An integer literal is a sequence of digits that has no period or exponent part, with optional separating single quotes that are ignored when determining its value. An integer literal may have a prefix that specifies its base and a suffix that specifies its type.
+\end{standard}
+
+
+\subsubsection{Floating-point types}
+Standard types for floating-point numbers are
+%
+\cppline{  float, double, long double}
+%
+The range of possible values is defined in \cpp{<limits>} and the sizes may be compiler dependent, typically 4, 8, 10 Byte. The relation
+%
+\cppline{  sizeof(float) <= sizeof(double) <= sizeof(long double)}
+%
+holds for the floating-point types.
+
+Literals, to indicate how to interpret a number, are \texttt{F,f,L,l} for \cpp{float} and \cpp{long double}.
+
+\begin{rem}
+  In GCC an extension is implemented to allow quad-precision arithmetics with the data-type \cpp{__float128}. The size is 16 Byte. Typically, this is implemented as a software library, \eg by concatenating two \cpp{double} types. Only rarely there is hardware support for quad precision
+  numbers (\eg IBM POWER9 CPU). The arithmetic is defined in the standard document \href{https://doi.org/10.1109%2FIEEESTD.2008.4610935}{IEEE 754-2008}.
+\end{rem}
+
+\begin{rem}
+  To do arithmetic with arbitrary precision, there are multiple libraries available. Examples include \href{https://gmplib.org/}{GNU GMP} (Gnu MultiPrecision Arithmetic Library) and \href{https://www.boost.org/doc/libs/1_71_0/libs/multiprecision/doc/html/index.html}{Boost.Multiprecision} library.
+
+  An example of high precision calculation of the enclosed area of a circle with boost multiprecision is given below. Note, it uses templates to implement the actual algorithm.
+\end{rem}
+\begin{minted}[frame=lines,label={multiprecision.cc}]{c++}
+#include <iostream>
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#include <boost/math/constants/constants.hpp>
+
+// Type-alias for floating-point numbers with 50 decimal digits precision and int32_t to represent the exponent
+using float_50 = boost::multiprecision::cpp_dec_float_50;
+
+template <class T>
+T area_of_a_circle(T r)
+{
+   using boost::math::constants::pi;
+   return pi<T>() * r * r;
+}
+
+template <class T>
+int digits() { return std::numeric_limits<T>::digits10; }
+
+int main()
+{
+  float r_f = float(123) / 100;
+  float a_f = area_of_a_circle(r_f);
+
+  double r_d = double(123) / 100;
+  double a_d = area_of_a_circle(r_d);
+
+  float_50 r_mp = float_50(123) / 100;
+  float_50 a_mp = area_of_a_circle(r_mp);
+
+  // 4.75292
+  std::cout << std::setprecision(digits<float>()) << a_f << std::endl;
+  // 4.752915525616
+  std::cout << std::setprecision(digits<double>()) << a_d << std::endl;
+  // 4.7529155256159981904701331745635599135018975843146
+  std::cout << std::setprecision(digits<float_50>()) << a_mp << std::endl;
+}
+\end{minted}
+
+
+\begin{rem}
+  Arithmetic with floating-point numbers is not the same as arithmetic with real $\mathbb{R}$ numbers. There are effects of rounding, finite representation, cancellation, non-associativity, $\ldots$. Details can be found in the standard document \href{https://standards.ieee.org/content/ieee-standards/en/standard/754-2019.html}{IEEE 754} and are explained in the lecture
+  \emph{Computer Arithmetics} by Prof. W. Walter.
+\end{rem}
+
+
+
+\subsection{Number conversion}
+Whenever you initialize a variable with an expression, the value of that expression must be converted to the type of the variable.
+
+Example:
+\begin{minted}{c++}
+  int l = 1234567890123; // number will be narrowed to fit into integer int
+\end{minted}
+
+\begin{defn}
+We call an initialization of a value to a smaller type that cannot represent this value a \emph{narrowing initialization} or \emph{narrowing conversion}.
+\end{defn}
+
+In the example above, the compiler will not give any error and compiles fine, although the value might be wrong. Maybe the compiler prints a warning, but not on all warning levels and this is not guaranteed.
+
+\begin{guideline}{Principle}
+  Enable all warnings and stick to the C++ standard, \ie use the compiler flags \texttt{-Wall -Wextra -pedantic}, optionally you may even set the flag \texttt{-Werror} to assert an error instead of warnings.
+\end{guideline}
+
+With\marginpar{[\cxx{11}]} \cxx{11} the compiler added the \emph{uniform initialization} using curly brackets, in order to raise an error instead of silently accepting the code, in case of narrowing conversion. This means, almost always use
+\begin{minted}{c++}
+  long l1{1234567890123}; // or
+  long l2 = {1234567890123};
+\end{minted}
+
+Some examples of narrowing conversions:
+\begin{minted}{c++}
+  int i1 = 3.14;    // initializes to 3, no error
+  int i2 = {3.14};  // Narrowing ERROR: fractional part lost
+
+  unsigned u1 = -3; // initializes to largest possible unsigned number
+  unsigned u2{-3};  // Narrowing ERROR: no negative values
+
+  float f1 = {3.14} // ok. initializes to float number closest to 3.14
+
+  double d = 3.14;
+  float f2 = {d};   // Narrowing ERROR. Possible lost of accuracy
+
+  unsigned u3 = {3};
+  int      i3 = {2};
+  unsigned u4 = {i3}; // Narrowing ERROR: no negative values
+  int      i4 = {u3}; // Narrowing ERROR: no all values
+\end{minted}
+
+\begin{rem}
+  The\marginpar{[\cxx{17}]} curly braces, \ie uniform initialization, also works with the automatic type deduction \cpp{auto}. But be careful! The meaning of the curly braces has changed in \cxx{17} and also before results sometimes in a type different from what you would expect.
+  \begin{minted}{c++}
+  auto x1 = {42}; // C++14 x1 is of type std::initializer_list<int>
+  auto x2 = {42}; // C++17 x2 is of type std::initializer_list<int>
+
+  auto x3{42};    // C++14: x3 is of type std::initializer_list<int>
+  auto x4{42};    // C++17: x4 is of type int
+  \end{minted}
+\end{rem}
+
+\begin{defn}
+  For floating point values we call a conversion to a smaller data type (\eg \cpp{double -> float}) a \emph{floating-point conversion} (with possibly loss of precision) and otherwise a \emph{floating-point promotion} (represent the value exactly with the larger type).
+\end{defn}
+
+\begin{rem}
+  Note, in floating-point conversion, if a value of \cpp{T1 > T2} is between two floating point number of \cpp{T2}, the rounding to a one of the both values is \emph{implementation defined} and might be controlled with some intrinsic functions. If the value is out of range of \cpp{T2} the behavior is \emph{undefined}.
+\end{rem}
+
+\subsection{Constants\label{sec:const}}
+An important aspect of programming languages is to control the access to data. A data-type with the property \cpp{const} is called a \emph{constant} and is immutable. The syntax to declare a constant is
+
+\cppline{TYPE const VARNAME = VALUE;}
+
+The \cpp{const} could also be on the left of the \texttt{TYPE}, but as a rule of thumb put the qualifier \cpp{const} on the right of what should be constant. The compiler will assert an error if you try to modify a constant object.
+
+Example:
+\begin{minted}{c++}
+  int n1 = 0;           // non-const object
+  int const n2 = 0;     // const object
+  const int n3 = 0;     // const object (same as n2)
+
+  n1 = 1;  // OK: mutable object
+  n2 = 2;  // ERROR: non-mutable object
+\end{minted}
+
+Constants can be defined using automatic type deduction. Therefore, the keyword \cpp{const} simply qualifies the placeholder \cpp{auto}:
+%
+\begin{minted}{c++}
+  auto i1 = 7;          // mutable variable
+  auto const i2 = 8;    // const integer variable initialized with 8
+  const auto d1 = 2.0;  // const double variable initialized with 2.0
+\end{minted}
+
+\subsubsection{constexpr specifier}
+There is another qualifier that is stronger than \cpp{const}: The \cpp{constexpr} specifier declares that it is possible to evaluate the value of the variable at compile time. Such variables can then be used where only compile time constant expressions are allowed. A \cpp{constexpr} specifier used in an object declaration implies \cpp{const}.
+
+A \cpp{constexpr} variable must satisfy the following requirements:
+\begin{itemize}
+  \item its type must be a \emph{LiteralType}.
+  \item it must be immediately initialized
+  \item the full-expression of its initialization, including all implicit conversions, constructors calls, etc, must be a constant expression
+\end{itemize}
+
+The category \emph{LiteralType} cannot yet be fully explained, but especially the fundamental types discussed above are \emph{LiteralTypes}.
+
+\begin{rem}
+  \cpp{constexpr} variables, expressions and functions are a powerful tool within C++, available since \cxx{11} and extended in \cxx{14} and \cxx{17}. In the chapter \emph{Meta programming}, we will see how to use \cpp{constexpr} (functions) as a language within C++ to force the compiler to do computations for us.
+\end{rem}
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Scopes}
+Each name that appears in a C++ program is only valid in some possibly discontinuous portion of the source code called its scope. Thus, scopes determine the lifetime and visibility of (non-static) variables and constants. There are different types of scopes, global scope, function scope, class scope, block scope, function parameter scope, namespace scope, \dots. Typically, scopes are blocks of code surrounded by curly braces, except for the global scope that lives outside of functions and classes.
+
+A local variable is declared within a block of a function. Its visibility and accessability is limited to within the \texttt{\{ - \}}-enclosed block of its declaration. More precisely, the scope of the variable begins at the point of declaration and ends at the end of the block.
+\begin{minted}{c++}
+  int main()
+  {                     // begin of the function block
+    double pi = 3.14;   // begin of the variable scope
+    std::cout << pi;
+  }                     // end of variable scope and function block
+\end{minted}
+
+There might be nested blocks within other blocks that can limit the visibility of names declared inside this block:
+\begin{minted}{c++}
+  int main()
+  {                     // begin of the function block
+    {                   // begin of an inner block scope
+      double pi = 3.14; // begin of the variable scope
+    }                   // end of variable and block scope
+    std::cout << pi;    // ERROR: pi is out of scope
+  }                     // end of variable scope and function block
+\end{minted}
+
+\begin{guideline}{Principle}
+  Do not put variables in the global scope, i.e., do not use global variables!
+\end{guideline}
+
+\subsubsection{Hiding}
+In each scope a name can be defined only once (one-definition rule), but in another scope (even nested) the same name can be used to declare a new variable hiding the outer one with lifetime only in that nested scope.
+
+\begin{minted}[frame=lines,label={scope.cc}]{c++}
+  int x = 11;  // (0) global variable x
+
+  void f() {   // function scope
+    int x;     // (1) local x hiding global x
+    x = 1;     // assignment to local x (1)
+    {
+      int x;   // (2) hides local x (1)
+      x = 2;   // assignment to local x (2)
+    }
+    x = 3;     // assignment to local x (1)
+  }
+
+  void f2() {  // function scope
+    int y = x; // use global x
+    int x = 1; // (3) hides the global x
+    ::x = 2;   // assignment to global x
+    y = x;     // use local x (3)
+    x = 2;     // assignment to local x (3)
+  }
+\end{minted}
+
+
+% =================================================================================================
+\section{Library types}
+With the fundamental types and some language constructs we will learn later, you can already build powerful C++ programs. But it is possible to define your own (lass-)types for more complex data-structures, like vectors, tuples, lists, associative maps and sets, and so on. The standard library already defines some of these types thus allows to easily write more advanced programs.
+
+Here, I just give an overview about some useful data-structures, later we will look more deeply into the standard library.
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Strings}
+Character sequences were already mentioned at the beginning, when discussing the arguments of the function \cpp{main(int, char**)}. This functions accepts a low-level form of arrays of strings its as second argument. But these low-level strings are hard to use correctly. Thus, the standard library defines the type \cpp{std::string} instead:
+\begin{minted}{c++}
+  #include <iostream> // for std::cout, std::endl
+  #include <string>
+  int main()
+  {
+    std::string text = "This is a long text";
+    std::cout << "length = " << text.size() << std::endl;
+  }
+\end{minted}
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Container}
+\subsubsection{Sequence Container}
+In the header \cpp{<vector>} the standard library provides a contiguous resizable vector container with flexible element types:
+\begin{minted}{c++}
+  #include <cassert>
+  #include <vector>
+  int main()
+  {
+    // vector of 3 doubles
+    std::vector<double> x(3);
+    x[0] = 0.0; x[1] = 1.0; x[2] = 2.0;
+
+    // direct initialization with values
+    std::vector<double> y = {1.0, 2.0, 3.0};
+    std::vector y2 = {1.0, 2.0, 3.0}; // since c++17
+
+    // add a new entry at the end of the vector
+    x.push_back(3.0);
+
+    // resize the vector to the specified size
+    y.resize(4);
+
+    assert(x.size() == y.size());
+  }
+\end{minted}
+
+The storage of the vector is handled automatically, being expanded and contracted as needed. Vectors usually occupy more space than static arrays (see below), because more memory is allocated to handle future growth. This way a vector does not need to reallocate each time an element is inserted, but only when the additional memory is exhausted. The total amount of allocated memory can be queried using \cpp{capacity()} function.
+
+\begin{rem}
+  The \cpp{main()} function needs two argument to represent an array of strings, the size and the address. Instead, one could store this in a vector of strings:
+  \begin{minted}{c++}
+  int main(int argc, char** argv) {
+    std::vector<std::string> args(argv, argv + argc);
+    // nr of arguments = args.size()
+    // i-th argument = args[i]
+  }
+  \end{minted}
+  There is even a proposal for a future c++ standard to add a signature of the main function providing (something like) strings.
+\end{rem}
+
+\subsubsection{Associative Container}
+Apart from the \emph{sequence container} \cpp{std::vector}, there is also the associative container \cpp{std::map<key_type, value_type>}, associating a value to a key:
+\begin{minted}{c++}
+  #include <map>
+  int main()
+  {
+    std::map<int, double> m; // mapping int -> double
+    m[17] = 42.0             // new association is created on access
+
+    // test whether the key 42 is found
+    assert(m.count(42) == 1);
+  }
+\end{minted}
+
+This can be combined with vector and string:
+\begin{minted}{c++}
+  #include <map>
+  #include <string>
+  #include <vector>
+  int main()
+  {
+    std::map<std::string, std::vector<int>> m; // mapping string -> vector<int>
+    m["Hello"] = {1,2,3,4,5};
+  }
+\end{minted}
+
+\begin{rem}
+  Note that maps need more memory and the access is much slower than for a vector. So, if you have an integer key and know the min and max index, prefer a vector over a map, or just use the map as intermediate container to build up the container.
+\end{rem}
+
+\subsection{Iterating over container}
+All standard containers can be traversed using \emph{range-based for loops}
+\begin{minted}{c++}
+  #include <map>
+  #include <string>
+  #include <vector>
+  int main()
+  {
+    std::map<int, double> m; // fill up the map
+    std::vector<double> v; // fill up the vector
+
+    for (auto i : m)
+      std::cout << i.first << ", " << i.second << std::endl; // (key, value) pair, see below
+
+    for (double d : v)
+      std::cout << d << std::endl;
+  }
+\end{minted}
+If you don't know the type of the elements in traversal or it is complicated to write (like for \cpp{std::map}), use (qualified) \cpp{auto} instead.
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Tuples}
+A vector represents a tuple of values of the same type. If the type should be different for each element, one could use a \cpp{std::tuple} instead. There, the types of all elements must be given
+explicitly:
+%
+\begin{minted}{c++}
+  std::tuple<int,double,float> t = {1, 2.0, 3.0f};
+  std::tuple t2 = {1, 2.0, 3.0f}; // c++17
+\end{minted}
+%
+To access an entry in a tuple, one cannot use the classical bracket operator \texttt{[]} as for vectors, but has to call a function instead:
+%
+\begin{minted}{c++}
+  double t1 = std::get<1>(t);
+\end{minted}
+
+A special tuple is a pair. It consists of just two elements:
+%
+\begin{minted}{c++}
+  std::pair<int,double> p = {1, 2.0};
+  std::pair p2 = {1, 2.0}; // c++17
+\end{minted}
+%
+Here, the elements can be accessed again using \cpp{std::get}, but have also an explicit name:
+%
+\begin{minted}{c++}
+  int p0 = p.first;
+  double p1 = p.second;
+\end{minted}
+
+Tuples can be used to return multiple values from a function (see below) and to assign multiple values to a set of
+variables:
+%
+\begin{minted}{c++}
+  // create a tuple from values
+  auto t = std::tuple{0, 1.0, 2.0f};
+
+  // assign the tuple entries to variables
+  int t0;
+  double t1;
+  float t2; // not used
+  std::tie(t0,t1,std::ignore) = t;
+\end{minted}
+%
+where \cpp{std::ignore} is an object of unspecified type such that any value can be assigned to it with no effect, and \cpp{std::tie} is a function that takes references to variables and assigns the value of a tuple to it.
+
+
+\subsubsection{Structured Binding}
+We have seen the effect of \cpp{std::tie} in the last section. There, we had to declare the variables before we can assign values to it and we have to know the types explicitly. With\marginpar{[\cxx{17}]} \cxx{17} this can be combined with \cpp{auto} to create new variables with types deduced from the tuple elements. This is called \Index{structured binding}:
+%
+\begin{minted}{c++}
+  auto [t0,t1,t2] = t;
+\end{minted}
+%
+Again, as for classical \cpp{auto} type deduction, the variable declaration can be extended by the const qualifiers:
+%
+\begin{minted}{c++}
+  auto const [t0,t1,t2] = t;
+\end{minted}
+
+
+This structured binding does not only work for tuple-like structures, but also for structs:
+%
+\begin{minted}{c++}
+  std::pair<int, std::string> p {1, "pair"};
+  auto [first,second] = p;
+  assert(first == p.first && second == p.second);
+
+  Point point {0.0, 4.0};
+  auto [x,y] = point;
+  assert(x == point.x && y == point.y);
+\end{minted}
+
+\subsection{Iterating over associative containers}
+Recapitulate the iteration example:
+\begin{minted}{c++}
+  #include <map>
+  #include <string>
+  int main()
+  {
+    std::map<int, double> m; // fill up the map
+
+    for (auto i : m)
+      std::cout << i.first << ", " << i.second << std::endl; // (key, value) pair
+  }
+\end{minted}
+In the iteration we get a pair \texttt{(key, value)}. This can be split up automatically using structured binding:
+\begin{minted}{c++}
+  for (auto [key,value] i : m)
+    std::cout << key << ", " << value << std::endl;
+\end{minted}
+
+\subsection{Iterating over tuples}
+Tuples (and pairs) cannot be traversed like other containers. The reason is that each element in a tuple has a different type and in a loop the elements must have the same type in each iteration. Currently the standard committee discusses and extended version of a loop, like \cpp{for...(auto t : tuple)} or \cpp{for constexpr(auto t : tuple)}. But this is not yet decided. We will see later in the chapter about meta-programming how to write a loop over tuples yourself. Then you get something like
+\begin{minted}{c++}
+  forEach(tuple, [](auto t) {
+    std::cout << t << std::endl;
+  });
+\end{minted}
+that looks quite similar to a regular loop but works with tuples and pairs and many more.
+
+In \cxx{17} some utility functions for tuples are introduced. An example is \cpp{std::apply} to apply an function to each entry of a tuple. This can be used to emulate a \texttt{forEach} loop:
+\begin{minted}{c++}
+  std::apply([](auto... t) {
+    ((std::cout << t << std::endl), ...);
+  }, tuple);
+\end{minted}
+This uses advanced feature like lambda expressions, variadic templates and fold expressions.

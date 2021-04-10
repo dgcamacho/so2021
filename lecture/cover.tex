@@ -1,0 +1,25 @@
+\begin{tikzpicture}[
+  background rectangle/.style={fill=red!80!black}, show background rectangle,
+  xshift=-2cm,
+  overlay,remember picture]
+  \node at (current page.center)
+  {\includegraphics[width=\paperwidth,height=\paperheight]{images/cover}};
+  % \path[fill=white!50!black] ([yshift=-3cm]current page.west) --
+  % ([yshift=-10cm]current page.east) --
+  % (current page.south east) --
+  % (current page.south west);
+  % \node[fill=white!80!yellow,fill opacity=0.5,text opacity=1,font=\bfseries\sffamily,align=left,inner sep=8mm,anchor=north] at
+  % ([yshift=-2cm]current page.north)
+  \node[xscale=1.8,yscale=2,text opacity=.8,font=\sffamily\normalsize,color=white,anchor=north west,align=left]
+  (author) at ([yshift=-2.5cm,xshift=2cm]current page.north west)
+  {Christian Engwer, Simon Praetorius};
+  \node[xscale=1.8,yscale=2,font=\bfseries\sffamily\LARGE,color=white,anchor=north west,align=left]
+  (title)
+  at ([yshift=-1cm]author.south west) {Scientific Programming\\{\Large Advanced Concepts}};
+\end{tikzpicture}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "oop-sc"
+%%% TeX-command-extra-options: "-shell-escape"
+%%% End:

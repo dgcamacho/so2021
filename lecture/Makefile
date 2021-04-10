@@ -22,7 +22,7 @@ all: lecture.pdf
 
 # MAIN LATEXMK RULE
 
-lecture.pdf: lecture.tex declarations.tex $(CHAPTER_TEX)
+lecture.pdf: lecture.tex declarations.tex cover.tex $(CHAPTER_TEX)
 	latexmk -pdf -latexoption="--shell-escape" -use-make $<
 
 clean:

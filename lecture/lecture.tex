@@ -1,44 +1,82 @@
-\documentclass[10pt,a4paper]{report}
-\usepackage[left=1.5cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\documentclass[10pt,a4paper,
+  english,
+  titlepage=firstiscover,
+  titlepage=true,
+  %chapterprefix=true,
+  BCOR=2cm,
+  DIV=12]{scrbook}
+%\usepackage[left=1.5cm,right=2cm,top=2cm,bottom=2cm]{geometry}
 \input{declarations}
 
-\author{Dr. Simon Praetorius}
+\author{Christian Engwer, Simon Praetorius}
 \title{Scientific Programming with C++}
+\subtitle{Advanced Concepts}
+
+\addtokomafont{title}{\raggedleft}
+\addtokomafont{author}{\setlength{\tabcolsep}{0pt}\raggedleft\sffamily}
+\addtokomafont{date}{\raggedleft\sffamily}
+%\addtokomafont{publisher}{\raggedleft\sffamily}
+\addtokomafont{subject}{\raggedleft\sffamily\color{black!50!white}}
 
 \begin{document}
 
+\extratitle{\input{cover}}
+
+\subject{\textcolor{gray!50}{\rule{12cm}{2mm}}}
+\date{\rule{0pt}{13cm}Summer term 2021}
+\uppertitleback{
+  Prof. Dr. Christian Engwer\\
+  Westfälische Wilhelms-Universität Münster\\
+  Orleansring 10\\
+  48149 Münster
+  \\[2ex]
+  Dr. Simon Praetorius\\
+  Technische Universität Dresden\\
+  Willersbau B219\\
+  Zellescher Weg 12--14\\
+  01069 Dresden
+}
+\lowertitleback{
+  These lecture notes are based on lectures held at TU Dresden and WWU
+  Münster.\\[1ex]
+  It is continuously developed since the initial
+  lecture in So2014. This is \textit{work in progress} and may contain
+  typos and errors that need to be corrected in future releases of the
+  notes.\\[1ex]
+  You are welcome to submit any correction.}
+
 \maketitle
-\begin{abstract}
-The focus of this module lies on aspects of software development like programming on high-performance computers,
-object-oriented software design, generic (template-based) programming, and the efficient implementation of
-numerical algorithms. Additionally experience in analysis, application and extension of software and software
-libraries is developed. This module in the winter term especially focuses on software development with the
-programming language C++.
+
+\section*{Preface}
+
+The focus of this module lies on aspects of software development like programming on high-performance computers, object-oriented software design, generic (template-based) programming, and the efficient implementation of numerical algorithms. Additionally experience in analysis, application and extension of software and software libraries is developed. This module in the summer term especially focuses on software development with the programming language C++.
 
 Three main learning goals can be formulated:
+
 \begin{enumerate}
-  \item You know how to program with modern C++, using generic programming and advanced techniques, like meta
-  programming, expression templates, and concepts.
-  \item You know how to use programming tools and you can apply these tools to debug, benchmark, and manage your
-  code. The list of tools include compilers, build systems, version control, debuggers, and profilers.
-  \item You can read, understand, and utilize (scientific) software libraries, like BLAS (Basic Linear Algebra
-  Subroutines), LAPACK (Linear Algebra Package), STL (Standard template library), Dune (framework for the
-  discretization of partial differential equations), MTL4 (Matrix Template Library), Boost (portable C++ library).
+  \item You know how to program with modern C++, using generic programming and advanced techniques, like meta programming, expression templates, and concepts.
+  \item You know how to use programming tools and you can apply these tools to debug, benchmark, and manage your code. The list of tools include compilers, build systems, version control, debuggers, and profilers.
+  \item You can read, understand, and utilize (scientific) software libraries, like BLAS (Basic Linear Algebra Subroutines), LAPACK (Linear Algebra Package), STL (Standard template library), Dune (framework for the discretization of partial differential equations), MTL4 (Matrix Template Library), Boost (portable C++ library).
 \end{enumerate}
 
-There are exercises every week to practice the C++ programming. During the semester programming projects in groups
-are assigned.
+There are exercises every week to practice the C++ programming. During the semester programming projects in groups are assigned. Important parts of the exercises are reviews of C++ code. You will get reviews for your own written code and have to perform reviews of the code of others in the course.
 
-These lecture notes are partially based on a bool manuscript by Peter Gottschling \cite{gottschling2016}, The book
-``C++ kurz \& gut'' \cite{loudon2013}, and ``Die C++-Programmiersprache'' \cite{stroustrup2000}. It is continuously
-developed since the initial lecture in So2014. This is \textit{work in progress} and may contain typos and errors
-that need to be corrected in future releases of the notes. You are welcome to submit any correction.
-\end{abstract}
+\begin{description}
+  \item[Prerequisites]
+    Basic experience with at least one programming language (e.g. Fortran, python, C, Java, ...), No prior knowledge about C++ is required.
+    Basics knowledge of numerical mathematics.
+  \item[Target group]
+    This course is for master and PhD students of Mathematics, Technomathematics, and Mathematics in Business and Economics as well as for students in the masters programs ``Computational Modeling and Simulation'' (CMS) especially for the specialization in Computational Mathematics.
+  \item[Language]
+    The course will be taught in English.
+  \item[Teaching concept]
+    The lecture will be taught remotely via BigBlueButton, in the (a)synchronous format 2+2 (2h lectures + 2h tutorial). Lectures are recorded, while the tutorials are more interactive and not recorded. There will be weekly exercises. Some of those are marked as homework projects that get reviewed, others are group projects to be worked on during the tutorials. A third type of exercises is peer-review of the code submissions (this will be explained in the tutorial).
+\end{description}
 
 \tableofcontents
 
 \input{01_introduction}
-%\input{02_basics}
+\input{02_basics}
 %\input{03_operators}
 %\input{04_functions}
 %\input{05_references}
