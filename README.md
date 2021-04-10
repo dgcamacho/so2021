@@ -9,15 +9,6 @@
 [lecture.pdf]: https://gitlab.mn.tu-dresden.de/teaching/scprog/so2021/-/jobs/artifacts/master/raw/lecture/lecture.pdf?job=build
 
 
-## Exercise sheets
-
-| Week | Topic                                  | Link            |
-|------|----------------------------------------|-----------------|
-| 01   | Overview and Motivation for the Course | [sheet1.md][]   |
-
-[sheet1.md]: exercises/sheet1.md
-
-
 ### Submission of solutions
 
 You may submit solutions to exercises to the corresponding tutorial repository
