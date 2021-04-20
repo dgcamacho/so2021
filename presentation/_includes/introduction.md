@@ -104,6 +104,7 @@ on matrix.
 - Lecture is based on C++ lecture by Peter Gottschling, and
   * *Discovering Modern C++: An Intensive Course for Scientists, Engineers, and Programmers*, Peter Gottschling (2016)
     [english](https://katalog.slub-dresden.de/id/0-168021375X), [german](https://katalog.slub-dresden.de/id/0-1664569537)
+- Presentation is based on "C++ for Scientific Computing" by Ronald Kriemann
 - Short and compact introduction to the C++ basics:
   * *C++ - kurz & gut* (german), Kyle Loudon and Rainer Grimm (2018) [slub](https://katalog.slub-dresden.de/id/0-1680134132)
   * *C++ Primer*, Stanley Lippman, Josee Lajoie, and Barbara E. Moo (2013) [slub](https://katalog.slub-dresden.de/id/0-1680337130)

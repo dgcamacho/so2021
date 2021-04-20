@@ -40,9 +40,12 @@ class: tud-light, typo
 {% include introduction.md %}
 {% include variables-and-datatypes.md %}
 {% include arithmetic-operators.md %}
+{% include blocks-and-scopes.md %}
+{% include functions.md %}
 
     </textarea>
     <div id="slideshow"></div>
+    <div id="cursor"></div>
     <script src="js/remark.min.js"></script>
     <script src="js/vue.js"></script>
     <!-- <script src="js/quasar.umd.min.js"></script> -->
@@ -70,6 +73,13 @@ class: tud-light, typo
 
       window.addEventListener("resize", () => {
           document.body.style["background-color"] = "#d7d8d2";
+      });
+    </script>
+    <script>
+      var cursor = document.getElementById("cursor");
+      window.addEventListener("mousemove", function(e) {
+        cursor.style["top"] = e.pageY + 'px'
+        cursor.style["left"] = e.pageX + 'px'
       });
     </script>
   </body>

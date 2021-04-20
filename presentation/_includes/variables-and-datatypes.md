@@ -193,7 +193,8 @@ is known as the **machine precision**:
 # Variables and Datatypes
 ## Floating Point Datatypes: High precision
 Some compilers and libraries provide extended floating point precision:
-- `__float128` for quad-precision with GCC (and Intel) compilers.
+- `__float128` or `_Quad` for quad-precision with GCC (and Intel) compilers.
+- `half` for 16 bit floating point precision (with application in machine learning)
 - Arithmetic is also defined in [IEEE 754-2008](https://irem.univ-reunion.fr/IMG/pdf/ieee-754-2008.pdf)
 standard.
 - Only very few hardware directly supports this type. Typically emulated in software.<br><br>
@@ -204,6 +205,7 @@ Other libraries even provide multi-precision floating point and large integer ty
 - [GNU GMP](https://gmplib.org/) (The GNU Multiple Precision Arithmetic Library),
 - [MPFR](https://www.mpfr.org/) (C++), or
 - [Boost.Multiprecision](https://www.boost.org/doc/libs/1_75_0/libs/multiprecision/doc/html/index.html)
+- [Half](http://half.sourceforge.net/) (Half-precision floating-point library)
 
 ---
 
@@ -330,8 +332,12 @@ double const  _2_plus_pi  = 2.0 + pi;    // Ok: "pi" is defined
 ### Type/Variable Qualifiers
 Each type can be modified with the following **qualifiers**, one from each group:
 
--   **Constness qualifiers:** `const`: the value of the variable cannot be changed, or `volatile`
--   **Storage class specifiers:** `static`: the variable is declared only once in the whole program, or `extern`, `thread_local`
+-   **Constness qualifiers:** e.g. `const` (the value of the variable cannot be changed), or `volatile`
+-   **Storage class specifiers:** e.g. `static` (only one instance of the object exists in the whole program), `extern`, or `thread_local`
+
+???
+volatile is a hint to the implementation to avoid aggressive optimization involving the object because
+the value of the object might be changed by means undetectable by an implementation.
 
 ---
 
@@ -357,7 +363,7 @@ static double const max         = 1.8e308;
 # Variables and Datatypes
 ### Type/Variable Qualifiers
 
-The type qualifiers `const` (and `volatile`) act on the type to its left
+The type qualifiers `const` (and `volatile`) act on the type (Guideline: place to in the right of what should be constant)
 ```c++
 unsigned int const n1 = 0; n1 = 1; // ERROR
 const unsigned int n2 = 2; // alternative notation
@@ -516,7 +522,7 @@ r = s;            // r still points to n and n == m (== 0)
 # Variables and Datatypes
 ## Pointers and References: Duality
 
-*Reference* and *Pointers* are actually dual in th sense that **derreferencing** a pointer gives a **reference**
+*Reference* and *Pointers* are actually dual in the sense that **derreferencing** a pointer gives a **reference**
 and taking the **address of** a reference gives a **pointer**. This is mirrored in the notation:
 ```c++
 int variable = 1;       // allocates memory on the stack
@@ -554,7 +560,7 @@ int          n   = 0;
 int const    m   = 1;
 int*        pn1 = &m; // Error: cannot initialize 'int*' with 'int const*'
 int  const* pn2 = &n; // Ok: conversion from 'int*' to 'int const*'
-int* const  pn3 = &n; // Ok
+int* const  pn3 = &n; // Ok: initializing a constant
 pn3 = &m;             // Error: cannot assign to 'pn3', variable 'pn3' declared const
 ```
 

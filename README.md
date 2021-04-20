@@ -4,7 +4,7 @@
 
 | Topic                                  | Download                 | Updated       |
 |----------------------------------------|--------------------------|---------------|
-| Scientific Programming with C++        | [lecture.pdf][]          | 2021/04/10    |
+| Scientific Programming with C++        | [lecture.pdf][]          | 2021/04/20    |
 
 [lecture.pdf]: https://gitlab.mn.tu-dresden.de/teaching/scprog/so2021/-/jobs/artifacts/master/raw/lecture/lecture.pdf?job=build
 
@@ -18,6 +18,17 @@ account in this local GitLab platform with your ZIH username. When created, you
 will receive an invitation email to set your password. Then you will get access
 to the tutorial project. The submission procedure is described there. Please read the
 instructions carefully. Ask the tutor (@spraetor) if you have any further questions.
+
+
+### Cloning
+
+We manage certain large files, like PDFs or images that are needed in
+order to build the lecture, with [git-lfs].  Before cloning this
+repository, make sure that `git-lfs` is installed and configured
+properly.  Enabling it globally is as easy as `git-lfs install`; see
+git-lfs' [homepage][git-lfs] for more information.
+
+[git-lfs]: https://git-lfs.github.com/
 
 
 ## More reading
