@@ -548,7 +548,8 @@ int*               pn1;  // non-const pointer to non-const var.
 int  const*        pn2;  // non-const pointer to const var.
 int* const         pn3;  // const pointer to non-const var.
 int  const* const  pn4;  // const pointer to const var.
-int  const& const  pn5;  // ERROR
+int  const&        re1 = <var>;  // reference to const var
+int  const& const  re2 = <var>;  // ERROR: ref cannot be const
 ```
 
 If the pointer is constant, the address it is directing to cannot be
@@ -567,6 +568,31 @@ pn3 = &m;             // Error: cannot assign to 'pn3', variable 'pn3' declared 
 ---
 
 # Variables and Datatypes
+## Differences between Pointer and Reference
+- You can change the location where the pointer points to (except if the pointer is `const`)
+- A pointer variable is itself an object with an identity (like an integer variable). Thus, stored in memory and can be addressed. You can take a reference/pointer to it.
+
+```c++
+int      i = 42;
+int*     p = &i;
+int**   pp = &p;
+int*** ppp = &pp; // ...
+int*&   rp = p;   // reference to pointer
+```
+
+- References bind to a fixed object/data. This cannot be changed.
+- A reference is not an object itself. It cannot be referenced.
+
+```c++
+int       i = 42;
+int&     ri = i;
+int&&   rri = ri;   // Error: cannot bind [...] ‘int&&’ to [...] ‘int’
+int&*   pri = &ri;  // Error: cannot declare pointer to ‘int&’
+```
+
+---
+
+# Variables and Datatypes
 ## Placeholder Type
 For variables, `auto` specifies that the type of the variable that is being declared will be
 automatically deduced from its initializer.
@@ -579,6 +605,7 @@ decltype(auto) <variable name> = <expression>;  // (2.)
   type of `<expression>` \(\rightarrow\) "raw type"
 2. type `decltype(<expression>)`, possibly including modifiers and qualifiers
 
+<br>
 The placeholder `auto` may be accompanied by modifiers, such as `const` or `&`, which will participate in the type deduction.
 
 ---

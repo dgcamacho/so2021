@@ -8,8 +8,7 @@ class: center, middle
 The declaration of a function in C++ follows
 
 ```c++
-<return_type> <function_name> (<argument_list>...);           // C-style
-// or
+<return_type> <function_name> (<argument_list>...);           // C-style, or
 auto <function_name> (<argument_list>...) -> <return_type>;   // Since [C++11]
 ```
 
@@ -31,11 +30,38 @@ auto square2 (double const x) -> double
 ---
 
 # Functions
+## Function Declaration/Definition
+The declaration of a function in C++ follows
+
+```c++
+<return_type> <function_name> (<argument_list>...);           // C-style, or
+auto <function_name> (<argument_list>...) -> <return_type>;   // Since [C++11], or
+auto <function_name> (<argument_list>...);                    // Since [C++14]
+```
+
+- When a function does not return a result, then the return type is `void`.
+- To return a value from a function, C++ provides the keyword `return`.
+
+```c++
+double square (double const x)
+{
+  return x*x;
+}
+// or
+auto square2 (double const x)
+{
+  return x*x; // -> double
+}
+```
+
+---
+
+# Functions
 ## Function Call
 A function is called by
 
 ```c++
-<function_ name>(<argument1>, <argument2>...);
+<function_name>(<argument1>, <argument2>...);
 ```
 
 ### Example:
@@ -227,7 +253,7 @@ returning a `std::tuple`
 auto min_max (int const n1, int const n2)
 {
   if (n1 < n2)
-    return std::tuple{n1,n2};
+    return std::tuple{n1,n2};     // [C++17]
   else
     return std::tuple{n2,n1};
 }

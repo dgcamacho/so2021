@@ -186,8 +186,6 @@ b = (x == 2 || y == 3 || z == 4);
 b = (x != 0 && y / x > 1);
 ```
 
-> .h3[Principle:] Never rely on a function call in logical expressions!
-
 ---
 
 # Relational and Logical Operators
@@ -309,6 +307,8 @@ int  n3, n4 , n5;
 # Precedence and Associativity of Operators
 ## Summary
 
+https://en.cppreference.com/w/cpp/language/operator_precedence
+
 | **Priority** |  **Associativity** |  **Operators** |
 |--------------|--------------------|----------------|
 |  highest     | left               | `++`, `--` (postfix) |
@@ -320,4 +320,3 @@ int  n3, n4 , n5;
 |              | left               | `&&`           |
 |              | left               | \(\vert\vert\) |
 |   lowest     | right              | `=`, `+=`, `-=`, `*=`, `/=`, `%=` |
-
