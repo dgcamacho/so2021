@@ -186,6 +186,8 @@ b = (x == 2 || y == 3 || z == 4);
 b = (x != 0 && y / x > 1);
 ```
 
+See https://en.cppreference.com/w/cpp/language/eval_order for details.
+
 ---
 
 # Relational and Logical Operators
@@ -232,6 +234,8 @@ bool b = std::abs(x-y) <= eps * std::abs(x+y) * ulp || std::abs(x-y) < min;
 
 > .h3[Remark:] Mathematical functions often have an accuracy of a few ULPs, see
 > [Errors-in-Math-Functions](https://www.gnu.org/software/libc/manual/html_node/Errors-in-Math-Functions.html)
+
+See [boost/math_toolkit/float_comparison](https://www.boost.org/doc/libs/1_76_0/libs/math/doc/html/math_toolkit/float_comparison.html) for details.
 
 ---
 

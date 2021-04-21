@@ -9,6 +9,26 @@ The declaration of a function in C++ follows
 
 ```c++
 <return_type> <function_name> (<argument_list>...);           // C-style, or
+```
+
+- When a function does not return a result, then the return type is `void`.
+- To return a value from a function, C++ provides the keyword `return`.
+
+```c++
+double square (double const x)              void print ()
+{                                           {
+  return x*x;                                 std::cout << "Hello World" << std::endl;
+}                                           }
+```
+
+---
+
+# Functions
+## Function Declaration/Definition
+The declaration of a function in C++ follows
+
+```c++
+<return_type> <function_name> (<argument_list>...);           // C-style, or
 auto <function_name> (<argument_list>...) -> <return_type>;   // Since [C++11]
 ```
 
@@ -16,15 +36,15 @@ auto <function_name> (<argument_list>...) -> <return_type>;   // Since [C++11]
 - To return a value from a function, C++ provides the keyword `return`.
 
 ```c++
-double square (double const x)
-{
-  return x*x;
-}
+double square (double const x)              void print ()
+{                                           {
+  return x*x;                                 std::cout << "Hello World" << std::endl;
+}                                           }
 // or
-auto square2 (double const x) -> double
-{
-  return x*x;
-}
+auto square2 (double const x) -> double     auto print () -> void
+{                                           {
+  return x*x;                                 std::cout << "Hello World" << std::endl;
+}                                           }
 ```
 
 ---
@@ -43,15 +63,15 @@ auto <function_name> (<argument_list>...);                    // Since [C++14]
 - To return a value from a function, C++ provides the keyword `return`.
 
 ```c++
-double square (double const x)
-{
-  return x*x;
-}
+double square (double const x)              void print ()
+{                                           {
+  return x*x;                                 std::cout << "Hello World" << std::endl;
+}                                           }
 // or
-auto square2 (double const x)
-{
-  return x*x; // -> double
-}
+auto square2 (double const x)               auto print ()
+{                                           {
+  return x*x; /* -> double */                 std::cout << "Hello World" << std::endl;
+}                                           }
 ```
 
 ---
