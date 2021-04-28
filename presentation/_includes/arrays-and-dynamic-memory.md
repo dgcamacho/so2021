@@ -552,3 +552,385 @@ The problems with dynamic allocated memory: ownership is unclear. Who is respons
 }                                         // end of block 1: ptr1 is deleted: memory
                                           // is released
 ```
+
+---
+
+# Arrays and Dynamic Memory
+## Dynamic Matrices
+Representing a matrix of dynamic size is a bit more involved.
+
+### First Approach: Dynamic arrays
+```c++
+double* row1 = new double[4]{1.0, 2.0, 3.0, 4.0};
+double* row2 = new double[4]{2.0, 3.0, 4.0, 5.0};
+double* row3 = new double[4]{3.0, 4.0, 5.0, 6.0};
+double* row4 = new double[4]{4.0, 5.0, 6.0, 7.0};
+
+double** mat1 = new double*[4]{row1, row2, row3, row3};
+```
+
+<img src="images/ptr-ptr.png" style="position:absolute; right:50px; bottom:100px;">
+---
+
+# Arrays and Dynamic Memory
+## Dynamic Matrices
+Representing a matrix of dynamic size is a bit more involved.
+
+### First Approach: Dynamic arrays
+or more abstract
+```c++
+double** make_matrix (int const nrows, int const ncols)
+{
+  double** mat = new double*[nrows];
+  for (int i = 0; i < nrows; ++i)
+    mat[i] = new double[ncols];
+  return mat;
+}
+// ...
+double** mat2 = make_matrix(4,4);
+mat2[0][0] = 1.0;
+mat2[0][1] = 2.0;
+// ...
+```
+
+---
+
+# Arrays and Dynamic Memory
+## Dynamic Matrices
+Representing a matrix of dynamic size is a bit more involved.
+
+### First Approach: Dynamic arrays
+Problem: delete matrix?
+```c++
+void delete_matrix (double** mat, int const nrows)
+{
+  for (int i = 0; i < nrows; ++i)
+    delete[] mat[i];
+  delete[] mat;
+}
+// ...
+delete_matrix(mat2, 4);
+```
+
+---
+
+# Arrays and Dynamic Memory
+## Dynamic Matrices
+Representing a matrix of dynamic size is a bit more involved.
+
+### Second Approach: `std::vector`
+```c++
+auto mat3 = std::vector<std::vector<double>>(nrows, std::vector<double>(ncols, 0.0));
+mat3[0][0] = 1.0;
+mat3[0][1] = 2.0;
+
+// or: if you know the values
+std::vector<std::vector<double>> mat4{
+  {1.0, 2.0, 3.0, 4.0},
+  {2.0, 3.0, 4.0, 5.0},
+  {3.0, 4.0, 5.0, 6.0},
+  {4.0, 5.0, 6.0, 7.0}
+};
+```
+
+---
+
+# Arrays and Dynamic Memory
+## Dynamic Matrices
+### Third Approach: Multidimensional Arrays with Mappings
+Working with pointers to pointers is only one way to implement multidimensional arrays. You can also map
+the multiple dimensions to just one:
+
+.center[<img src="images/row-mat.png" width="70%">]
+
+```c++
+double* mat5 = new double[nrows*ncols];
+
+mat5[2 * ncols + 1] = 8;  // mat5[2][1]
+mat5[0 * ncols + 2] = 3;  // mat5[0][2]
+```
+
+---
+
+# Arrays and Dynamic Memory
+## Multidimensional Arrays with Mappings
+In theory, one could use any mapping. In practice, two different mappings are standard:
+
+.pure-g[.pure-u-2-3[
+-   **row-wise**: standard in C, C++ (for static arrays)
+-   **column-wise**: standard in Fortran, Matlab
+].pure-u-1-3[
+  <img src="images/row-wise-col-wise.png">
+]]
+
+For a two-dimensional array, e.g., a matrix, with dimensions `nrows x ncols`, the mappings are for index `(i,j)`:
+-  **row-wise:** `i * ncols + j`,
+-  **column-wise:** `j * nrows + i`.
+
+---
+
+# Arrays and Dynamic Memory
+## Multidimensional Arrays with Mappings
+### Example: row-wise ordering
+```c++
+double& access (double* mat, int const nrows, int const ncols,
+                int const i, int const j)
+{
+  return mat[i * ncols + j];
+}
+
+int main ()
+{
+  int      nrows = 10;
+  int      ncols = 20;
+  double*  mat = new double[ nrows * ncols ];
+
+  access(mat, nrows, ncols, 3, 1) = 3.1415;
+  access(mat, nrows, ncols, 2, 7) = 2.7182;
+}
+```
+
+---
+
+# Arrays and Dynamic Memory
+## Multidimensional Arrays with Mappings
+### Example: row-wise ordering using [`std::mdspan`](https://github.com/kokkos/mdspan)
+```c++
+#include <mdspan>  // NOTE: not yet in standard
+using DynamicMatrix
+  = std::mdspan<double, std::dynamic_extent, std::dynamic_extent>;
+
+double& access (DynamicMatrix mat, int const i, int const j) {
+  return mat.data()[i * mat.extent(1) + j];
+}
+
+int main () {
+  int      nrows = 10;
+  int      ncols = 20;
+  double*  data = new double[ nrows * ncols ];
+
+  auto mat = DynamicMatrix(data, nrows, ncols);
+  access(mat, 3, 1) = 3.1415;
+  access(mat, 2, 7) = 2.7182;
+}
+```
+
+---
+
+# Arrays and Dynamic Memory
+## Multidimensional Arrays with Mappings
+### Example: row-wise ordering using [`std::mdspan`](https://github.com/kokkos/mdspan)
+```c++
+#include <mdspan>  // NOTE: not yet in standard
+using DynamicMatrix
+  = std::mdspan<double, std::dynamic_extent, std::dynamic_extent>;
+
+int main () {
+  int      nrows = 10;
+  int      ncols = 20;
+  double*  data = new double[ nrows * ncols ];
+
+  auto mat = DynamicMatrix(data, nrows, ncols);
+  mat(3, 1) = 3.1415;
+  mat(2, 7) = 2.7182;
+}
+```
+
+---
+
+# Arrays and Dynamic Memory
+## Multidimensional Arrays
+### Final Recommendation
+- Implementing matrices (and tensors) with mappings instead of pointer of pointers is usually **faster**
+- Arithmetic index computation is faster than pointer indirections
+- Mappings can be flexible (not only row-wise/column-wise ordering is possible)
+- Pointers allow simple access by chained `[i][j]...`
+
+> .h3[Guideline:] Prefer contiguous memory layout instead of splitted-up segments. Use mappings for
+> element access.
+
+---
+
+# Arrays and Dynamic Memory
+## Application: Basic linear-algebra methods
+- Vectors are one-dimensional arrays
+- Matrices implemented in terms of mappings
+- Creation, access, and some linear algebra operations should be implemented.
+
+```c++
+double* make_vector (int const size)
+{
+  return new double[size];
+}
+
+double* make_matrix (int const nrows, int const ncols)
+{
+  return new double[nrows * ncols];
+}
+```
+
+---
+
+# Arrays and Dynamic Memory
+## Application: Basic linear-algebra methods
+- Use wrappers for storage of size information and access pattern
+
+```c++
+#include <span>     // [c++20]
+#include <mdspan>   // NOTE: not yet in standard
+
+using DynamicVector
+  = std::span<double, std::dynamic_extent>;
+
+using DynamicMatrix
+  = std::mdspan<double, std::dynamic_extent, std::dynamic_extent>;
+```
+
+---
+
+# Arrays and Dynamic Memory
+## Application: Basic linear-algebra methods
+- Some basic vector methods
+
+```c++
+// vec_i = value
+void fill (DynamicVector vec, double const value) {
+  for (int i = 0; i < vec.size(); ++i)
+    vec[i] = value;
+}
+// vec = factor * vec
+void scale (DynamicVector vec, double const factor) {
+  for (int i = 0; i < vec.size(); ++i)
+    vec[i] *= factor;
+}
+// y = alpha * x + y
+void axpy (double const alpha, DynamicVector x, DynamicVector y) {
+  assert(x.size() == y.size());
+  for (int i = 0; i < y.size(); ++i)
+    y[i] += alpha * x[i];
+}
+```
+
+---
+
+# Arrays and Dynamic Memory
+## Application: Basic linear-algebra methods
+- Some basic vector methods
+
+```c++
+// x^T * y
+double dot (DynamicVector x, DynamicVector y) {
+  assert(x.size() == y.size());
+  double d = 0.0;
+  for (int i = 0; i < y.size(); ++i)
+    d += x[i] * y[i];
+  return d;
+}
+// |vec|_2
+double two_norm (DynamicVector vec) {
+  return std::sqrt(dot(vec, vec));
+}
+```
+
+---
+
+# Arrays and Dynamic Memory
+## Application: Basic linear-algebra methods
+- Some basic matrix methods
+
+```c++
+// mat_ij = value
+void fill (DynamicMatrix mat, double const value) {
+  fill(mat.span(), value);  // use vector method
+}
+// mat = mat * factor
+void scale (DynamicMatrix mat, double const factor) { ... }
+// y = alpha * x + y
+void axpy (double const alpha, DynamicMatrix x, DynamicMatrix y) { ... }
+
+// Frobenius inner product
+double ddot (DynamicMatrix x, DynamicMatrix y) {
+  return dot(x.span(), y.span());
+}
+// Frobenius norm |mat|_F
+double frobenius_norm (DynamicMatrix mat) {
+  return two_norm(mat.span());
+}
+```
+
+---
+
+# Arrays and Dynamic Memory
+## Application: Basic linear-algebra methods
+- Matrix-Vector multiplication: \(y = \alpha A\cdot x + y\)
+
+```c++
+void mat_vec (double const alpha, DynamicMatrix A, DynamicVector x, DynamicVector y)
+{
+  assert(A.extent(0) == y.size());
+  assert(A.extent(1) == x.size());
+
+  for (int i = 0; i < A.extent(0); ++i)
+  {
+    double f = 0.0;
+    for (int j = 0; j < A.extent(1); ++j)
+      f += A(i,j) * x[j];
+
+    y[i] += alpha * f;
+  }
+}
+```
+
+---
+
+# Arrays and Dynamic Memory
+## Application: Basic linear-algebra methods
+- Matrix-Matrix multiplication: \(C = \alpha A\cdot B + C\)
+
+```c++
+void mat_mat (double const alpha, DynamicMatrix A, DynamicMatrix B, DynamicMatrix C)
+{
+  assert(A.extent(0) == C.extent(0));
+  assert(A.extent(1) == B.extent(0));
+  assert(B.extent(1) == C.extent(1));
+
+  for (int i = 0; i < C.extent(0); ++i) {
+    for (int j = 0; j < C.extent(1); ++j)
+    {
+      double f = 0.0;
+      for (int k = 0; k < A.extent(1); ++k)
+        f += A(i,k) * B(k,j);
+
+      C(i,j) += alpha * f;
+    }
+  }
+}
+```
+
+---
+
+# Arrays and Dynamic Memory
+## Application: Basic linear-algebra - `blas.cc`
+```c++
+int main () {
+  double* data_A = make_matrix(10, 10);
+  auto A = DynamicMatrix(data_A, 10, 10);
+
+  double* data_x = make_vector(10);
+  auto x = DynamicVector(data_x, 10);
+
+  double* data_y = make_vector(10);
+  auto y = DynamicVector(data_y, 10);
+
+  fill(A, 1.0);  fill(x, 1.0);  fill(y, 0.0);
+
+  // y += 0.5*x
+  axpy(0.5, x, y);
+  // y += 0.5*A*x
+  mat_vec(0.5, A, x, y);
+
+  std::cout << frobenius_norm(A) << std::endl;
+  std::cout << two_norm(y) << std::endl;
+}
+```
+
