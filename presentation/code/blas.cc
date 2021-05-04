@@ -126,13 +126,13 @@ void mat_mat (double const alpha, DynamicMatrix A, DynamicMatrix B, DynamicMatri
 
 int main ()
 {
-  double* data_A = make_matrix(10, 10);
+  auto data_A = make_matrix(10, 10);
   auto A = DynamicMatrix(data_A, 10, 10);
 
-  double* data_x = make_vector(10);
+  auto data_x = make_vector(10);
   auto x = DynamicVector(data_x, 10);
 
-  double* data_y = make_vector(10);
+  auto data_y = make_vector(10);
   auto y = DynamicVector(data_y, 10);
 
   fill(A, 1.0);  fill(x, 1.0);  fill(y, 0.0);

@@ -1,0 +1,18 @@
+
+
+html {
+  cursor: none;
+}
+
+
+#cursor {
+  width: 15px;
+  height: 15px;
+  background-color: var(--webdarkred);
+  opacity:0.6;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1001;
+}

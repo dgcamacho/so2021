@@ -430,13 +430,13 @@ There are high-level alternatives in the c++ standard library
 ---
 
 # Arrays and Dynamic Memory
-## `std::array<T,size>`
-
 The problems with *static* arrays are:
 - no size information
 - decays to pointer when passed as argument
 - no direct copy operation
 
+
+## Alternative: `std::array<T,size>`
 ```c++
 #include <array>
 
@@ -454,13 +454,12 @@ void f2 (std::array<int,3>& arg);     // pass-by-reference
 ---
 
 # Arrays and Dynamic Memory
-## `std::vector<T>`
-
 The problems with *dynamic* arrays are:
 - no size information
 - no copy operation
 - must be deleted manually
 
+## Alternative: `std::vector<T>`
 ```c++
 #include <cassert>  // for assert(...)
 #include <vector>
@@ -479,13 +478,12 @@ void f2 (std::vector<int>& arg);     // pass-by-reference
 ---
 
 # Arrays and Dynamic Memory
-## `std::span<T,Extend>`
-
 - Arrays do not carry any size information
 - `std::span` describes an object that can refer to a contiguous sequence of objects with the first
   element of the sequence at position zero.
 - Either *dynamic extend* (dynamic size information) or *static extend*
 
+## Alternative: `std::span<T,Extend>`
 ```c++
 #include <cassert>  // for assert(...)
 #include <span>
@@ -505,11 +503,10 @@ assert(b_span.size() == 3);
 ---
 
 # Arrays and Dynamic Memory
-## `std::shared_ptr<T>` and `std::unique_ptr<T>`
-
 The problems with dynamic allocated memory: ownership is unclear. Who is responsible for releasing the memory?
 
-(1) Shared ownership. Memory is released when the last share is deleted:
+## Alternative 1: `std::shared_ptr<T>`
+Shared ownership. Memory is released when the last share is deleted:
 
 ```c++
 #include <cassert>
@@ -531,11 +528,10 @@ The problems with dynamic allocated memory: ownership is unclear. Who is respons
 ---
 
 # Arrays and Dynamic Memory
-## `std::shared_ptr<T>` and `std::unique_ptr<T>`
-
 The problems with dynamic allocated memory: ownership is unclear. Who is responsible for releasing the memory?
 
-(2) Unique ownership. Pointer cannot be copied.
+## Alternative 2: `std::unique_ptr<T>`
+Unique ownership. Pointer cannot be copied.
 
 ```c++
 #include <cassert>
@@ -569,7 +565,7 @@ double* row4 = new double[4]{4.0, 5.0, 6.0, 7.0};
 double** mat1 = new double*[4]{row1, row2, row3, row3};
 ```
 
-<img src="images/ptr-ptr.png" style="position:absolute; right:50px; bottom:100px;">
+<img src="images/ptr-ptr.png" style="position:absolute; right:50px; bottom:150px;">
 ---
 
 # Arrays and Dynamic Memory
@@ -663,7 +659,7 @@ In theory, one could use any mapping. In practice, two different mappings are st
   <img src="images/row-wise-col-wise.png">
 ]]
 
-For a two-dimensional array, e.g., a matrix, with dimensions `nrows x ncols`, the mappings are for index `(i,j)`:
+For a two-dimensional array, e.g., a matrix, with dimensions `nrows x ncols`, the mappings for index `(i,j)` are:
 -  **row-wise:** `i * ncols + j`,
 -  **column-wise:** `j * nrows + i`.
 
@@ -793,15 +789,15 @@ using DynamicMatrix
 - Some basic vector methods
 
 ```c++
-// vec_i = value
-void fill (DynamicVector vec, double const value) {
+// vec_i = alpha
+void set (DynamicVector vec, double const alpha) {
   for (int i = 0; i < vec.size(); ++i)
-    vec[i] = value;
+    vec[i] = alpha;
 }
-// vec = factor * vec
-void scale (DynamicVector vec, double const factor) {
+// vec = vec * alpha
+void scale (DynamicVector vec, double const alpha) {
   for (int i = 0; i < vec.size(); ++i)
-    vec[i] *= factor;
+    vec[i] *= alpha;
 }
 // y = alpha * x + y
 void axpy (double const alpha, DynamicVector x, DynamicVector y) {
@@ -839,12 +835,12 @@ double two_norm (DynamicVector vec) {
 - Some basic matrix methods
 
 ```c++
-// mat_ij = value
-void fill (DynamicMatrix mat, double const value) {
-  fill(mat.span(), value);  // use vector method
+// mat_ij = alpha
+void set (DynamicMatrix mat, double const alpha) {
+  set(mat.span(), alpha);  // use vector method
 }
 // mat = mat * factor
-void scale (DynamicMatrix mat, double const factor) { ... }
+void scale (DynamicMatrix mat, double const alpha) { ... }
 // y = alpha * x + y
 void axpy (double const alpha, DynamicMatrix x, DynamicMatrix y) { ... }
 
@@ -913,13 +909,13 @@ void mat_mat (double const alpha, DynamicMatrix A, DynamicMatrix B, DynamicMatri
 ## Application: Basic linear-algebra - `blas.cc`
 ```c++
 int main () {
-  double* data_A = make_matrix(10, 10);
+  auto data_A = make_matrix(10, 10);
   auto A = DynamicMatrix(data_A, 10, 10);
 
-  double* data_x = make_vector(10);
+  auto data_x = make_vector(10);
   auto x = DynamicVector(data_x, 10);
 
-  double* data_y = make_vector(10);
+  auto data_y = make_vector(10);
   auto y = DynamicVector(data_y, 10);
 
   fill(A, 1.0);  fill(x, 1.0);  fill(y, 0.0);
@@ -934,3 +930,32 @@ int main () {
 }
 ```
 
+---
+
+# Arrays and Dynamic Memory
+## Application: Basic linear-algebra
+
+- The **BLAS** (Basic Linear Algebra Subprograms) are routines that provide standard building blocks for
+  performing basic vector and matrix operations.
+  * The Level 1 BLAS perform scalar, vector and vector-vector operations,
+  * the Level 2 BLAS perform matrix-vector operations, and
+  * the Level 3 BLAS perform matrix-matrix operations.
+
+See, e.g.,
+- http://www.netlib.org/blas/
+
+---
+
+# Arrays and Dynamic Memory
+## Application: Basic linear-algebra
+
+- The **BLAS** (Basic Linear Algebra Subprograms) are routines that provide standard building blocks for
+  performing basic vector and matrix operations.
+- **PETSc**, pronounced PET-see (the S is silent), is a suite of data structures and routines for
+  the scalable (parallel) solution of scientific applications modeled by partial differential equations.
+
+See, e.g.,
+- https://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/Vec/VecSet.html
+- https://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/Vec/VecScale.html
+- https://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/Vec/VecAXPY.html
+- https://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/Vec/VecDot.html
