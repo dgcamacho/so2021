@@ -10,8 +10,8 @@ Often you do not always want to care about the actual datatype used in your prog
 do this via `typedef`/`using`:
 
 ```c++
-typedef <type> <alias_name>;
-using <alias_name> = <type>;   //< suggested
+typedef <type> <alias_name>;   // or...
+using <alias_name> = <type>;   // (suggested)
 ```
 
 Afterwards, `<alias_name>` can be used like any other datatype:
@@ -137,7 +137,7 @@ The individual variables in a struct are accessed via `.` operator, i.e.:
 ```c++
 Vector  x;
 
-x.size   = 10;
+x.size = 10;
 x.data = new real_t[ x.size ];
 ```
 
@@ -229,9 +229,10 @@ Here, only a single pointer is supplied to the function instead of 200
 ---
 
 # Advanced Datatypes
-## Arrays of Struct
+## Array of Structs
 Like any other datatype, structs can also be allocated in the form of an array:
 
+.pure-g[.pure-u-2-5[.padding-5[
 ```c++
 struct Coord {
     real_t  x, y, z;
@@ -239,38 +240,91 @@ struct Coord {
 
 Coord coordinates[ 10 ];
 ```
-
-for fixed sized array or
-
-```c++
-Coord* coordinates = new Coord[ 10 ];
-```
-
-using dynamic memory management.
-
----
-
-# Advanced Datatypes
-## Arrays of Structs
-The access to struct members then comes after addressing the array entry:
-
+]].pure-u-3-5[.padding-5[
 ```c++
 #include <cmath>
 ...
 for (std::size_t i = 0; i < 10; ++i)
 {
-    coordinates[i].x = std::cos( real_t(i) * 36.0 * M_PI / 180.0 );
-    coordinates[i].y = std::sin( real_t(i) * 36.0 * M_PI / 180.0 );
-    coordinates[i].z = real_t(i) / 10.0;
+  coordinates[i].x = std::cos(i * 36*M_PI / 180.0);
+  coordinates[i].y = std::sin(i * 36*M_PI / 180.0);
+  coordinates[i].z = i / 10.0;
 }
 ```
+]]]
+
+for fixed sized array or...
+
+---
+
+# Advanced Datatypes
+## Array of Structs
+Like any other datatype, structs can also be allocated in the form of an array:
+
+.pure-g[.pure-u-2-5[.padding-5[
+```c++
+struct Coord {
+    real_t  x, y, z;
+};
+
+Coord* coordinates = new Coord[10];
+```
+]].pure-u-3-5[.padding-5[
+```c++
+#include <cmath>
+...
+for (std::size_t i = 0; i < 10; ++i)
+{
+  coordinates[i].x = std::cos(i * 36*M_PI / 180.0);
+  coordinates[i].y = std::sin(i * 36*M_PI / 180.0);
+  coordinates[i].z = i / 10.0;
+}
+```
+]]]
+
+... using dynamic memory management.
+
+---
+
+# Advanced Datatypes
+## Struct of Arrays
+The storage can also be inverted. Instead of an array of structures (AoS) one can store a structure
+of arrays (SoA):
+
+.pure-g[.pure-u-2-5[.padding-5[
+```c++
+struct Coordinates {
+    real_t x[ 10 ];
+    real_t y[ 10 ];
+    real_t z[ 10 ];
+};
+Coordinates coordinates;
+```
+]].pure-u-3-5[.padding-5[
+```c++
+#include <cmath>
+...
+for (std::size_t i = 0; i < 10; ++i)
+{
+  coordinates.x[i] = std::cos(i * 36*M_PI / 180.0);
+  coordinates.y[i] = std::sin(i * 36*M_PI / 180.0);
+  coordinates.z[i] = i / 10.0;
+}
+```
+]]]
+
+
+For different applications and usage/access pattern either the one or the other representation might be
+more efficient or convenient.
+
+See also https://en.wikipedia.org/wiki/AoS_and_SoA
 
 ---
 
 # Advanced Datatypes
 Structures can be nested, i.e., a struct can be a member of another struct:
 
-## Example: Sparse Matrix in Coordinate Format
+## Example1: Sparse Matrix in Coordinate Format
 ```c++
 struct Triple {
   std::size_t row;
@@ -293,30 +347,30 @@ struct SparseMatrix {
 ---
 
 # Advanced Datatypes
-## Example: Sparse Matrix in Coordinate Format
-Laplace 5-point stencil
+## Example1: Sparse Matrix in Coordinate Format
+1d Laplacian 3-point stencil
 \[
   A = \begin{pmatrix}
-     4 & -1 &        & & & \\
-    -1 &  4 & -1     & & & \\
+     2 & -1 &        & & & \\
+    -1 &  2 & -1     & & & \\
        & -1 & \ddots & & & \\
-       &    & -1     & 4 & -1 \\
-       &    &        &-1 & 4
+       &    & -1     & 2 & -1 \\
+       &    &        &-1 & 2
   \end{pmatrix}
 \]
 
 ---
 
 # Advanced Datatypes
-## Example: Sparse Matrix in Coordinate Format
+## Example1: Sparse Matrix in Coordinate Format
 The nested structures can be initialized directly using nested curly braces:
 ```c++
 SparseMatrix mat{10,10, {28, new Triple[28]}};
 
 std::size_t idx = 0;
-mat.nonzeros.data[idx++] = {0,0, 4.0};
+mat.nonzeros.data[idx++] = {0,0, 2.0};
 for (std::size_t i = 1; i < 10; ++i) {
-  mat.nonzeros.data[idx++] = {i,i, 4.0};
+  mat.nonzeros.data[idx++] = {i,i,    2.0};
   mat.nonzeros.data[idx++] = {i-1,i, -1.0};
   mat.nonzeros.data[idx++] = {i,i-1, -1.0};
 }
@@ -326,7 +380,7 @@ assert(idx == 28);
 ---
 
 # Advanced Datatypes
-## Example: Sparse Matrix in Coordinate Format
+## Example1: Sparse Matrix in Coordinate Format
 ### Matrix-Vector product
 ```c++
 void mat_vec(real_t const         alpha,
@@ -335,9 +389,9 @@ void mat_vec(real_t const         alpha,
              Vector&              y)
 {
   for (std::size_t i = 0; i < A.nonzeros.size; ++i) {
-    auto const& entry = A.nonzeros[i];
+    auto const& [row,col,value] = A.nonzeros[i];    // structured binding also for structs
 
-    y[entry.row] += alpha * entry.value * x[entry.col];
+    y[ row ] += alpha * value * x[ col ];
   }
 }
 ```
@@ -346,12 +400,12 @@ void mat_vec(real_t const         alpha,
 
 # Advanced Datatypes
 ## Example2: Sparse Matrix in Compressed Format
-We can store sparse matrices even more memory efficient, with more locality. Three arrays:
+We can store sparse matrices even with more locality, using three arrays:
 
 -   `indices`: stores column indices for all entries, sorted by row,
--   `values`: stores all coefficients in same order as in `colind` and
+-   `values`: stores all coefficients in same order as in `indices` and
 -   `offset`: stores at `offset[i]` the position of the first value corresponding to row `i` in the arrays
-    `indices` and `values`. The last field, contains the number of nonzeros.
+    `indices` and `values`. The last field contains the number of nonzeros.
 
 This format is known as the *compressed row storage* format.
 
@@ -363,6 +417,8 @@ struct CRSMatrix {
   real_t*        values;
 };
 ```
+
+See, e.g., Y. Saad: Iterative methods for sparse linear systems, Section 2.3 Storage Schemes
 
 ---
 
@@ -381,9 +437,9 @@ For the matrix
 the corresponding source code is:
 
 ```c++
-std::size_t  offset[]  = { 0, 2, 4, 7, 9 };  // accumulated nr of entries per row
-std::size_t  indices[] = { 0, 2,   1,  3,    0,  1, 2,   0, 3 };
-real_t       values[]  = { 1, 3,   2, -1,   -4, -1, 1,   1, 3 };
+std::size_t offset[]  = { 0, 2, 4, 7, 9 };  // accumulated num of entries per row
+std::size_t indices[] = { 0, 2,   1,  3,    0,  1, 2,   0, 3 };
+real_t      values[]  = { 1, 3,   2, -1,   -4, -1, 1,   1, 3 };
 
 CRSMatrix mat{4, 4, offset, indices, values};
 ```
@@ -401,7 +457,7 @@ void mat_vec(real_t const      alpha,
 {
   for (std::size_t i = 0; i < A.nrows; ++i)
   {
-    real_t         f  = 0.0;
+    real_t f  = 0.0;
     std::size_t const lb = A.offset[ i ];
     std::size_t const ub = A.offset[ i+1 ];
 
@@ -410,5 +466,122 @@ void mat_vec(real_t const      alpha,
 
     y[ i ] += alpha * f;
   }
+}
+```
+
+---
+
+# Advanced Datatypes
+## Enumerations
+A special datatype is available to define enumerations:
+
+```c++
+enum <enum_name> {
+  <name_1>, <name_2>, <name_3>,...
+};
+```
+
+### Example:
+
+```c++
+enum Symmetry { unsymmetric, symmetric, hermitian };
+
+Symmetry s;
+
+if (s == symmetric) { ... }
+```
+
+Enumerations are handled as integer datatypes by C++. By default, the
+members of an enumeration are numbered from `0` to `n-1`, e.g., `<name_1> = 0, <name_2> = 1`, etc..
+
+---
+
+# Advanced Datatypes
+## Enumerations
+One can also define the value of the enumeration members
+explicitly:
+
+```c++
+enum Symmetry { unsymmetric = 4, symmetric = 17, hermitian = 42 };
+```
+
+Since enumerations are equivalent to integer types, they can also be
+used in `switch` statements:
+
+```c++
+switch (s)
+{
+  case symmetric:   ...; break;
+  case hermitian:   ...; break;
+
+  case unsymmetric:
+  default:          ...;
+}
+```
+
+---
+
+# Advanced Datatypes
+## Enumerations
+Sometimes it is useful to specify the integer of enums explicitly
+
+```c++
+enum <enum_name> : <type> {
+  <name_1>, <name_2>, <name_3>,...
+};
+```
+
+### Example:
+
+```c++
+enum Symmetry : unsigned short { unsymmetric, symmetric, hermitian };
+```
+
+---
+
+# Advanced Datatypes
+## Enumerations
+
+By default, the enum values are introduced in the scope where the enum is defined. If there are
+other variables/functions/... with the same name it could clash. It is thus recommended to introduce
+a corresponding *named scope* for the enum values:
+```c++
+enum class <enum_name> [: <type>] {
+  <name_1>, <name_2>, ...
+}
+```
+### Example:
+
+```c++
+enum class Symmetry { unsymmetric, symmetric, hermitian };
+
+Symmetry s;
+switch (s) {
+  case Symmetry::unsymmetric:  ...;
+}
+```
+
+---
+
+# Advanced Datatypes
+## Enumerations
+
+By default, the enum values are introduced in the scope where the enum is defined. If there are
+other variables/functions/... with the same name it could clash. It is thus recommended to introduce
+a corresponding *named scope* for the enum values:
+```c++
+enum class <enum_name> [: <type>] {
+  <name_1>, <name_2>, ...
+}
+```
+### Example:
+
+```c++
+enum class Symmetry { unsymmetric, symmetric, hermitian };
+
+Symmetry s;
+switch (s) {
+  using enum Symmetry;    // [c++20]
+  case unsymmetric:  ...;
 }
 ```

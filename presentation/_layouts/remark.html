@@ -46,6 +46,7 @@ class: tud-light, typo
 {% include git.md %}
 {% include arrays-and-dynamic-memory.md %}
 {% include advanced-datatypes.md %}
+{% include modules-and-namespaces.md %}
 
     </textarea>
     <div id="slideshow"></div>
@@ -79,6 +80,7 @@ class: tud-light, typo
           document.body.style["background-color"] = "#d7d8d2";
       });
     </script>
+    {%- if site.mode == "online" -%}
     <script>
       var cursor = document.getElementById("cursor");
       window.addEventListener("mousemove", function(e) {
@@ -86,5 +88,6 @@ class: tud-light, typo
         cursor.style["left"] = e.pageX + 'px'
       });
     </script>
+    {%- endif -%}
   </body>
 </html>

@@ -1,0 +1,15 @@
+// file: linalg.ccm
+export module linalg;
+
+void mat_vec_impl(double const alpha, int const m, int const n,
+                  double const* A, double const* x, double* y)
+{
+  // implementation of the matrix-vector product with low-level data-structures
+}
+
+export
+template <class mdspan_t, class span_t>
+void mat_vec(mdspan_t A, span_t x, span_t y)
+{
+  mat_vec_impl(1.0, y.size(), x.size(), A.data(), x.data(), y.data());
+}

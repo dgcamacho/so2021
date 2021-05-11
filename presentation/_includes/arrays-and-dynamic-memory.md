@@ -268,6 +268,22 @@ starting at address `p`.
 ---
 
 # Arrays and Dynamic Memory
+## Pointer Arithmetic
+
+Pointers can be "moved" in memory, i.e., they can point to the "next" or "previous" memory region.
+Moving a pointer can be done by simple arithmetic operations with integers:
+
+Let `<type>* p` be a pointer addressing data of type `<type>` and `i` and integer, then
+
+- `p + i`, `i + p` points to the address `<p> + i*sizeof(<type>)`
+- `p - i` points to the address `<p> - i*sizeof(<type>)`
+- `p++`, `++p` is equivalent to `p = p+1`
+- `p[i]` is equivalent to `*(p + i)`
+
+
+---
+
+# Arrays and Dynamic Memory
 ## Dynamic Memory
 Since pointers and arrays are equivalent, one needs to initialize a pointer with the address of
 a memory block large enough to hold the wanted array. This is accomplished by **dynamic memory
