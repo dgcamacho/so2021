@@ -1,0 +1,354 @@
+\section{Arrays and Dynamic Memory}
+\subsection{Static Arrays}
+So far, we had only data-types with 1 entry per variable (except for the library types \texttt{vector}, \texttt{pair} and \texttt{tuple}).
+Arrays are compound data-types with a \underline{fixed} number of entries of the same type:
+%
+\cppline{TYPE variable[ SIZE ];}
+%
+where \texttt{SIZE} is an \emph{integral constant expression}.
+
+Examples:
+\begin{minted}{c++}
+  int n[5];
+  double f[ 10 ];
+  constexpr int len = 32;
+  char str[len];
+\end{minted}
+%
+Those arrays can then be accessed by square-brackets, similar to \cpp{std::vector}, \eg
+%
+\cppline{n[2] = 7;}
+%
+Arrays can be pre-initialized. In that case, the array size can be omitted, \ie is detected
+automatically by the compiler:
+\begin{minted}{c++}
+  int n1[5] = {1, 2, 3, 4, 5};
+  int n2[]  = {10, 9, 8}; // automatically size 3
+\end{minted}
+
+Multi-dimensional arrays are written with multiple square brackets:
+%
+\begin{minted}{c++}
+  int A[2][3]; // a 2 × 3 matrix
+  double B[5][4][3]; // an 5 × 4 × 3 tensor
+\end{minted}
+%
+and can be understood as arrays of arrays (a matrix is and arrays of rows).
+
+The initialization of multi-dimensional arrays is by lists of initializer-lists, \eg
+%
+\begin{minted}{c++}
+double A[2][3] =
+{
+  {1.0, 2.0, 3.0},
+  {4.0, 5.0, 6.0}
+};
+\end{minted}
+
+\begin{rem}
+  An array can be pre-initialized with less elements than the given size. In that case the remaining entries are default-initialized, \ie
+  number types are initialized to zero and class-types using the default-constructor.
+
+  Example:
+  \cppline{int foo[5] {1,2,3}; // [1,2,3,0,0]}
+  (The assignment operator ``\cpp{=}'' is here replaced by \textit{Universal Initialization}.)
+\end{rem}
+
+A multi-dimensional array can be written with a one-dimensional initializer-list. In that case, the initialization happens arrays-wise.
+%
+\cppline{int foo[][2] {1,2,3,4}; // [1,2; 3,4]}
+%
+For multi-dimensional arrays only one size entry can be omitted. The shape must be deducible by the number of entries.
+
+
+\subsubsection{Size of an array}
+While the syntax for arrays is simple and clean, it lacks the direct possibility to get the size after the declaration. In C, you typically
+use macros to deduce the size from the byte-size of the array, \ie
+%
+\cppline{#define SIZE(a) (sizeof(a) / sizeof((a)[0])) }
+%
+Note the usage of additional brackets, here.
+
+Example:
+\begin{minted}{c++}
+  int vec[5] {1,2,3};
+  static_assert(SIZE(vec) == 5);
+
+  int mat[][2] {1,2,3,4};
+  static_assert(SIZE(mat) == 4);
+\end{minted}
+
+
+\subsubsection{Arrays as function arguments}
+Arrays can be (implicitly) converted to a pointer, \ie to a pointer to the first element of the array:
+%
+\begin{minted}{c++}
+int a[3] = {1, 2, 3};
+int* p = a;  // pointer to the first element of the array
+\end{minted}
+%
+This allows to pass arrays to functions, accepting pointers as arguments, \ie
+%
+\begin{minted}{c++}
+  void f1(int* p) { /* sizeof(p) != sizeof(a) */ }
+  void f2(int p[]) { /* sizeof(p) != sizeof(a) */ }
+
+  int a[3] = {1, 2, 3};
+  f1(a); // OK: a is converted to a pointer
+  f2(a); // OK: equivalent to f1
+\end{minted}
+%
+But, then we loose any information about the array. It is just a pointer to the first element of that array.
+
+Nevertheless, pointers to array data allow direct element access, like for the regular arrays:
+%
+\cppline{int a1 = p[1];}
+
+The second form of passing arrays to functions is by array reference
+%
+\cppline{TYPE (&reference)[SIZE] = ARRAY;}
+%
+Example:
+\begin{minted}{c++}
+  void g(int (&b)[3]) { /* sizeof(b) == sizeof(a) */ }
+
+  int a[3] = {1, 2, 3};
+  g(a);
+\end{minted}
+The problem here, we have to give the size in the function argument declaration, since the size of the arguments must be known
+at compile-time and are fixed to exactly one size. It is not allowed to pass arrays of different size to that function.
+
+\begin{rem}
+\underline{Outlook:} Using \emph{templates}, we can write functions of arbitrary array size and can deduce that size automatically, \ie
+\begin{minted}{c++}
+  template <class T, int N>
+  int array_size(T (&)[N]) { return N; }
+
+  template <class T, int N1, int N2>
+  std::pair<int,int> mult_array_size(T (&)[N1][N2]) { return {N1, N2}; }
+\end{minted}
+\end{rem}
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Standard Arrays}
+The problem with the size of the arrays, the argument passing to functions (and some more restriction) motivates to introduce a library type
+that overcomes those problems. With \cxx{11}\marginpar{[\cxx{11}]} the type \cpp{std::array<T, Size>}\index{Array} was added to the standard
+library:
+\begin{minted}{c++}
+  #include <array>
+  // ...
+  std::array<int, 3> vec1 = { 1.0, 2.0, 3.0 };
+  std::array vec2 = {1, 2, 3}; // with C++17
+
+  std::cout << vec1[1];
+\end{minted}
+
+The difference to the other library type \cpp{std::vector} is, that an array must have a fixed size, and the data is allocated to the ``stack''
+and not dynamic memory allocated on the ``heap'' as in the vector implementation (see below).
+
+\begin{guideline}{Principle}
+  Prefer the library type \cpp{std::array} over classical arrays.
+\end{guideline}
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Dynamic memory allocation}
+We have seen that arrays can be implicitly converted to pointers and pointers can be used similar to arrays. Can we allocate an array directly as
+a pointer? Is it possible to have an array of dynamic size? One needs to initialize a pointer with the address of a memory block large enough to hold
+the wanted array. This is accomplished by \emph{dynamic memory management}: memory of arbitrary size can be allocated and deallocated at runtime!
+
+In C++ this is done with the operator \cpp{new} and \cpp{new[]} to allocate memory and construct objects in the newly allocated memory, and \cpp{delete} and \cpp{delete[]} to destruct the objects and deallocate memory.
+
+For a single element:
+\begin{minted}{c++}
+  TYPE * p = new TYPE;  // allocation of one element of type TYPE
+  delete p;             // deallocation of one element of type TYPE
+\end{minted}
+and for more than one element:
+\begin{minted}{c++}
+  TYPE * p = new TYPE[ SIZE ];
+  delete[] p;
+\end{minted}
+
+Note, the \texttt{SIZE} parameter to \cpp{new[]} does not need to be a constant expression!
+
+Examples:
+\begin{minted}{c++}
+  char* s = new char[100];    // dynamic array of 100 elements
+  int n = 1024;
+  double* v = new double[n];  // dynamic size
+  float* f = new float;       // single element
+
+  for (int i = 0; i < n; ++i)
+    v[i] = i*i;
+
+  *f = 1.41421356237;         // dereference the pointer to get a reference
+
+  delete[] v;   // new[] => delete[]
+  delete[] s;   // new[] => delete[]
+  delete f;     // new   => delete
+\end{minted}
+
+One problem with dynamic arrays is that there is no way to get the size of that array, and there is no way for the compiler
+to perform a boundary check. Access of a memory location outside of the allocated array size may lead to a \emph{segmentation fault} or
+may simply overwrite the data stored at the specific memory location $\rightarrow$ hard to find errors.
+
+\begin{guideline}{Rule}
+  \cpp{delete} (or \cpp{delete[]}) can be applied to pointers created by the corresponding operator \cpp{new} (or \cpp{new[]}). On other pointers
+  it may lead to undefined behavior (and often produces a runtime-error of the form ``invalid pointer''). Only call \cpp{delete} once on a pointer!
+\end{guideline}
+
+Another problem with dynamic arrays is that you cannot even see whether it is an allocated array, or just an uninitialized pointer variable. So,
+here again the general rule applies: initialize variables directly on declaration. If you do not yet have an address to initialize the pointer with,
+set it to zero, \ie
+%
+\cppline{TYPE * pointer = nullptr;}
+%
+where \cpp{nullptr} is a special object just for this case of initialization of pointers. After \cpp{delete}, reset the pointer to \cpp{nullptr} again.
+
+Example:
+\begin{minted}{c++}
+  int* p = nullptr;
+  p = new int[1234];
+  // ...
+  delete[] p;
+  p = nullptr;
+
+  if (p) {  // test for p != nullptr
+    /* work with p */
+  }
+\end{minted}
+
+Who owns the memory of a pointer, \ie who is responsible for deleting that pointer? It is the one that has created the array, so do not forget to delete!
+Otherwise you have a \emph{memory leak}. The aftermath of a pointer related bug, \eg array boundary violation or accessing deleted memory, may show up \underline{much later} than the actual position of the error.
+
+\begin{guideline}{Principle}
+  Pointers are \emph{dangerous} and require careful programming. So, prefer library types like \cpp{std::vector} or \cpp{std::array} instead of
+  (dynamic/static) arrays.
+\end{guideline}
+
+
+\subsubsection{Pointer arithmetics}
+Pointers used as addresses of arrays, \ie the address to the first element of the array, have their one arithmetic. Since addresses are like integers,
+they can be incremented and decremented, meaning a movement of the pointer in memory.
+
+Pointers are associated to a specific element type (underlying type of the data). Incrementing and decrementing thus moves the address by multiples of
+the size of the underlying data. This means that \cpp{pointer + 1} points to the next element in an array, where \texttt{pointer} points to.
+
+Examples:
+\begin{minted}{c++}
+int* vec = new int[10]; // vec points to the first element of the array
+vec = vec + 1;          // vec now contains the address (vec + sizeof(int)), that is:
+                        // vec points to the second element of the array
+vec++;                  // vec points to the third element of the array...
+delete[] vec;           // ERROR: Address of vec not allocated by a direct call to new[]
+\end{minted}
+
+Pointers can be incremented (\texttt{+, ++}), or decremented (\texttt{-, --}), pointers can be compared, comparing the underlying address.
+Pointers can be dereferenced, giving a reference to the data it points to. Additionally, pointers have the subscript-operator \cpp{[n]} that is
+equivalent to \cpp{*(pointer + n)}.
+
+Requirement for using pointer arithmetic is that the data has a defined size (complete types). The ``empty-set'' type \cpp{void} can be used as a pointer type,
+meaning just the address without any reference to the data-type of the stored data. Since \cpp{void} does not have a size, pointers to \cpp{void} cannot
+be used in pointer arithmetics.
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Storage duration}
+All objects in a program have one of the following storage durations:
+\begin{itemize}
+  \item \textbf{automatic} storage duration. The storage for the object is allocated at the beginning of the enclosing code block and deallocated at the end. All local objects have this storage duration, except those declared \cpp{static}, \cpp{extern} or \cpp{thread_local}.
+
+  \item \textbf{dynamic} storage duration. The storage for the object is allocated and deallocated per request by using dynamic memory allocation functions (\cpp{new} and \cpp{delete}).
+
+  \item \textbf{static} storage duration. The storage for the object is allocated when the program begins and deallocated when the program ends. Only one instance of the object exists. All objects declared at namespace scope (including global namespace) have this storage duration, plus those declared with \cpp{static} or \cpp{extern}.
+
+  \item \textbf{thread} storage duration. The storage for the object is allocated when the thread begins and deallocated when the thread ends. Each thread has its own instance of the object. Only objects declared \cpp{thread_local} have this storage duration.
+\end{itemize}
+
+The memory for \emph{dynamic arrays} is allocated ``on the heap'', meaning dynamic arrays have \emph{dynamic storage duration}. Dynamic arrays are not destroyed at
+the end of a function or block scope. They are destroyed only by a call to \cpp{delete} or \cpp{delete[]}.
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Smart pointers}
+We have (static) arrays and dynamic arrays. The difference is that static arrays have a constant size, but automatic storage duration, whereas dynamic arrays
+have a dynamic size but also dynamic storage duration. Both can be represented by pointers. What if we want to have a dynamic size, but an automatic
+storage duration?
+
+This is possible using the special pointer type \cpp{std::unique_ptr} or \cpp{std::shared_ptr}, sometimes referred to as ``smart pointers''. Both are library
+types defined in the header \cpp{<memory>}.
+
+Example:
+\begin{minted}{c++}
+  #include <memory>
+  //...
+  std::shared_ptr<int> ip{ new int };
+  std::unique_ptr<int[]> vec{ new int[10] };
+  // or
+  std::shared_ptr<int> ip2 = std::make_shared<int>();        // calls `new` internally
+  std::unique_ptr<int[]> vec2 = std::make_unique<int[]>(10);
+
+  std::cout << *ip << vec[5];
+\end{minted}
+%
+So, the definition and usage is very close to classical pointers. But you don't need to call \cpp{delete} to free the memory.
+
+The difference between both types is the criterion when to deallocate the memory:
+\begin{itemize}
+  \item \cpp{std::shared_ptr} is a smart pointer that retains shared ownership of an object through a pointer. Several \cpp{shared_ptr} objects may own the
+  same object. The object is destroyed and its memory deallocated when either of the following happens:
+  \begin{itemize}
+    \item the last remaining \cpp{shared_ptr} owning the object is destroyed;
+    \item the last remaining \cpp{shared_ptr} owning the object is assigned another pointer via \cpp{operator=} or \cpp{reset()}.
+  \end{itemize}
+
+  \item \cpp{std::unique_ptr} is a smart pointer that owns and manages another object through a pointer and disposes of that object when the
+  \cpp{unique_ptr} goes out of scope. The object is disposed of using the associated deleter when either of the following happens:
+  \begin{itemize}
+    \item the managing \cpp{unique_ptr} object is destroyed
+    \item the managing \cpp{unique_ptr} object is assigned another pointer via \cpp{operator=} or \cpp{reset()}.
+  \end{itemize}
+\end{itemize}
+
+You can have multiple pointers pointing to the same object, \ie to the same memory location. Since a pointer is a simple type, it can directly be copied
+to create a new pointer with the same address:
+%
+\begin{minted}{c++}
+int data = 7;
+
+int* p = &data;
+int* q = &data; // second pointer pointing to the same object
+
+int* p2 = p;    // copy of the first pointer creates a new pointer
+                // pointing to the same object
+\end{minted}
+%
+The same can be done with \cpp{shared_ptr}. They share the same resource, \ie can point to the same object. Whenever you copy a \cpp{shared_ptr}, an internal
+counter is increased that counts how many pointers are pointing to the same object. Only if this counter is zero, the \cpp{shared_ptr} is destroyed at the
+end of a scope:
+ %
+\begin{minted}{c++}
+{
+  std::shared_ptr<int> p{ new int(7) };
+  std::shared_ptr<int> q{ new int(7) }; // independent new pointer to another memory location
+
+  {
+    std::shared_ptr<int> p2 = p; // copy of the first pointer creates a new pointer
+                                 // pointing to the same object, the internal counter
+                                 // is increased
+
+  } // at the end of scope, the second pointer is released -> decrease of the internal
+    // counter
+
+  std::shared_ptr<int> p3 = p; // another copy of the first pointer, increases the counter
+
+} // at the end of scope, p and p3 are released, decreasing the counter by 2 -> 0. The
+  // memory is finally deallocated.
+\end{minted}
+
+\begin{guideline}{Guideline}
+  Don’t use explicit \cpp{new}, \cpp{delete}, and owning * pointers, except in rare cases encapsulated inside the implementation of a
+  low-level data structure. (Herb Sutter)
+\end{guideline}
