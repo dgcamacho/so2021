@@ -1,0 +1,705 @@
+\chapter{Classes\label{sec:class}}
+Object types or user-defined types are called \emph{classes} in C++ and are introduced with the keywords \cpp{class} or \cpp{struct} (or \cpp{union}).
+A class defines a new data type and is a collection of data (attributes, member variables), functions (member functions and class functions),
+and \textit{associated} types. The individual parts of a class are called \emph{members}. All members can be qualified with an access restriction
+(\cpp{public}, \cpp{protected}, or \cpp{private}).
+
+\begin{example}
+The following class generalizes the point/vector struct we have seen in the first lecture. It provides functions for the initialization and for
+the access and some data:
+\end{example}
+\begin{minted}{c++}
+  class MyPoint
+  {
+    using value_type = double;      // Associated type
+
+  public:
+    MyPoint() {};                   // Default-Constructor
+
+    MyPoint(double x, double y)     // Constructor
+      : x_(x), y_(y)                // Initializer-List
+    { }
+
+    void set(double x, double y);   // Member function
+    double norm() const;            // (constant) member function
+
+    static int dim() { return dim_; }  // Class-function, or static member function
+
+  private:
+    double x_ = 0.0, y_ = 0.0;      // Member variables (with default initialization)
+    static const int dim_ = 2;      // Static member variable
+  };
+\end{minted}
+
+
+% =================================================================================================
+\section{Objects\label{sec:class-object}}
+Objects are instances of classes, \ie concrete realizations of a class at runtime. Via an object one gets access to the individual (public) members
+(variables, functions) of a class. Each new object allocates new memory for all the class members and fill the initial values by using a constructor.
+So, after construction of a new instance of a class, the object is in a valid state.
+
+The following statements declare a new object \texttt{p} or \texttt{q} as an instance of the class \texttt{MyPoint}:
+%
+\begin{minted}{c++}
+  MyPoint p{1.0, 2.0}; // or
+  MyPoint q(1.0, 2.0);
+\end{minted}
+%
+This declaration is also a definition, since memory is allocated. The initialization (construction) of that object is done by the constructor of the class.
+In this example, the constructor gets two doubles, and sets the values of the member variables \texttt{\_x} and \texttt{\_y}.
+
+The definition as above creates an object with automatic storage duration (\ie the object is created on the ``stack''). An analogy to fundamental types,
+the object can also be allocated on the ``heap'':
+%
+\begin{minted}{c++}
+  MyPoint* p = new MyPoint{1.0, 2.0};
+  // ...
+  delete p;
+\end{minted}
+The operator \cpp{new} returns a pointer to the allocated memory. At first the memory is allocated for all member variables, then the constructor initializes
+the variables. Similar to all other dynamic memory allocation, the object must be deleted manually.
+
+Objects created with the \cpp{new}-operator have to be destroyed with the \cpp{delete}-operator to release the memory. At destruction, whether at the end of
+a scope for objects with automatic storage duration, or when calling \cpp{delete}, the \emph{destructor} of the class is called (see below). It is responsible
+for any cleanup to do.
+
+\begin{rem}
+  Similar to fundamental types and arrays you should not work with raw pointers. Instead, use \emph{smart-pointers} like \cpp{std::unique_ptr} or \cpp{std::shared_ptr}!
+\end{rem}
+
+\begin{rem}
+  When constructing an object using a constructor without arguments, one can either use empty curly braces, \ie
+  %
+  \cppline{MyPoint p{};}
+  %
+  or omit any braces, \ie
+  %
+  \cppline{MyPoint p;}
+  %
+
+  It is, unfortunately, not allowed to use round empty braces \cpp{MyPoint p()}. This would declare a function \texttt{p} returning a \texttt{MyPoint}, instead.
+\end{rem}
+
+
+% =================================================================================================
+\section{Access to class members}
+To access the data of a constructed class object, one can either use the \textit{dot}-access operator \texttt{a.b},
+or the \textit{pointer}-access operator \texttt{a->b} that is equivalent to \texttt{(*a).b}. The former can be used on expressions of \emph{class type} and the latter
+or \emph{pointer to class type}. Static members or properties of the class can be accessed using the name-resolution operator \texttt{A::B}.
+
+Examples:
+\begin{minted}{c++}
+  MyPoint  p1{1.0, 2.0};
+  MyPoint* p2 = new MyPoint(1.0, 2.0);
+  std::unique_ptr<MyPoint> p3 = std::make_unique<MyPoint>(1.0, 2.0);
+
+  double n = p1.norm();   // access on class type
+  p2->set(2.0, 1.0);      // access on pointer to class type
+  double n2 = p3->norm(); // access on pointer to class type
+
+  int dimension = MyPoint::dim(); // access of static members
+
+  delete p2;              // raw pointers must be deleted
+\end{minted}
+
+\begin{rem}
+  The access functions \cpp{.}, \cpp{->}, and \cpp{::} are operators in C++ and thus have a precedence and an associativity.
+\end{rem}
+
+% =================================================================================================
+\section{Class Data\label{sec:class-attributes}}
+Attributes of a class are declared in a class definition and include \emph{methods}, \emph{variables}, \emph{types}, and even sub-classes or \emph{types}.
+
+Each instance of a class gets its own copy of all member variables, except for static variables. Those exist exactly once for each class type and are bound
+to the type and not to the instance.
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Member variables}
+Variables, declared in a class, can be used to provide data that is distinct in each instance of a class. If a variable is qualified with \cpp{const} or \cpp{&},
+it must be initialized directly in each constructor, since const and reference require direct initialization.
+%
+\begin{minted}{c++}
+  class MyPoint
+  {
+  public:
+    MyPoint(...) : ..., dim(2) {}
+  //...
+    double x;
+    double y;
+    bool const valid = true;
+    int const dim;
+  };
+\end{minted}
+
+If member variables are supposed to be initialized with a default value in all constructors if not specified otherwise, the initial value can be
+prescribed directly on declaration, like \cpp{bool const value = true;}
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Methods}
+Methods or member functions of a class are functions defined in the scope of the class that have access to all member variables of the instance of that class.
+Member functions can be defined inline or outside of the class:
+%
+\begin{minted}{c++}
+  // in header file:
+  class MyPoint
+  {
+  //...
+    void set(double x, double y) // inline definition
+    {
+      x_ = x;
+      y_ = y;
+    }
+
+    double norm() const;  // just declaration
+  };
+
+  // in .cpp-file
+  double MyPoint::norm() const
+  {
+    return std::sqrt(x_*x_ + y_*y_);
+  }
+\end{minted}
+
+If you intend to include the header file with the class definition multiple times, you need to define all functions in a source file, \ie a separate
+translation unit. This prevents from multiple definitions of the same function. Functions defined directly in the class automatically are classified as
+\cpp{inline} functions and thus can exist multiple times.
+
+Within a class method, one gets direct access to all class members (functions, variables, types...). Additionally, there is a special pointer, \cpp{this},
+pointing to the current instance of that class in memory. This can be used to access the members as well (see pointer-access operator):
+%
+\begin{minted}{c++}
+  double MyPoint::norm() const
+  {
+    return std::sqrt(x_*x_ + y_*y_);
+  }
+  // or
+  double MyPoint::norm() const
+  {
+    return std::sqrt(this->x_*this->x_ + this->y_*this->y_);
+  }
+\end{minted}
+
+The keyword \cpp{const} in the member function declaration means, that 1. no member of the class is changed and 2. only other \cpp{const} functions are called
+in that function. If you have a \cpp{const} class object or a \cpp{const&} to a class object, only \cpp{const} member functions can be called:
+%
+\begin{minted}{c++}
+  MyPoint const& q = p;
+  q.set(3.0, 4.0);               // ERROR
+  std::cout << q.norm() << "\n"; // OK, norm is const-function
+\end{minted}
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Static Members}
+Static variables (class variables) or static function (class functions) are shared by all instances of that class and are introduced with the keyword \cpp{static}.
+Static variables must be defined outside of the class. Static members cannot be initialized in a constructor, since they are independent of any instance.
+%
+\begin{minted}{c++}
+  class MyPoint
+  {
+  public:
+    static int nPoints;
+  };
+  ...
+  int MyPoint::nPoints = 0;
+\end{minted}
+
+Since \cxx{17}\marginpar{[\cxx{17}]}, static variables can be marked \cpp{inline} that allows to initialize them inside the class, like regular member
+variables, \eg \cpp{inline static int nPoints = 42;}
+
+Static variables can have the qualifier \cpp{const} or \cpp{constexpr}. In this way one can define constant properties of a class. If the static
+constant is additionally an integral type it can always be defined in the class directly:
+%
+\begin{minted}{c++}
+  class MyPoint
+  {
+  public:
+    static const int dim_ = 2;
+  };
+\end{minted}
+
+Static members can be accessed by the class name and the name resolution operator \texttt{::}. Within any other class member function or static function in the
+class this can be omitted.
+
+\begin{rem}
+  The definition of a static class member variable must be put into a source file (not in a header file). Otherwise it would be defined multiple times.
+\end{rem}
+
+Also functions can have the \cpp{static} keyword, indicating that they are bound to the class type and not to any instance of the class. Within static
+function, only static member variables of the class can be accessed:
+%
+\begin{minted}{c++}
+  // in header file
+  class MyPoint
+  {
+  public:
+    static int dim() { return dim_; }
+    static int dim_;
+  };
+  ...
+  // in source file
+  int MyPoint::dim_ = 2;
+  ...
+  int main() {
+    std::cout << MyPoint::dim();
+  }
+\end{minted}
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Class member types / associated types}
+Within a class, local typedefs or type aliases can be introduced. This allows to have a central place in the class definition where to fix types used
+somewhere in the class. And it allows to give that information to the user of the class.
+
+We call those types \emph{associated types} since they are associated with the class type (and thus shared by all instances of that class). Types
+are introduced using the keyword \cpp{typedef} or \cpp{using}:
+%
+\begin{minted}{c++}
+  class MyPoint
+  {
+  public:
+    typedef int     size_type; // old syntax
+    using value_type = double; // C++11 syntax
+  };
+\end{minted}
+(where I would prefer the new syntax).
+
+In containers of the standard library (and of many other libraries) some generic type names are used:
+\begin{itemize}
+  \item \cpp{size_type} An integer type that can be used for the size of a container (and for indices)
+  \item \cpp{value_type} The type of the elements stored in a container
+  \item \cpp{reference}, \cpp{pointer}, \cpp{iterator}, \cpp{const_iterator} Types used to defined the return type of access methods and iteration methods.
+\end{itemize}
+%
+\begin{minted}{c++}
+  class MyPoint
+  {
+  public:
+    using size_type  = int;
+    using value_type = double;
+
+    value_type& operator[](size_type i) { return i == 0 ? x : y; }
+
+  private:
+    value_type x, y;
+  };
+\end{minted}
+
+Types can be accessed like other static properties, using the name resolution operator: \cpp{MyPoint::value_type}.
+
+
+% =================================================================================================
+\section{Constructors\label{sec:constructor}}
+Constructors are special member functions with their name equal to the class name and no return type. Constructors initialize an object of a class type
+and create the workspace for all other members. Each instantiation of a class (directly, or with \cpp{new}), with or without arguments, calls a constructor.
+If no constructor is defined at all, the compiler tries to generate one automatically with default behavior.
+
+\begin{example}
+  A constructor could open a file, where other member function tend to write into. At the end of the lifetime of the class this file must be closed.
+\end{example}
+
+It is allowed to declare multiple constructors, while following the rules of regular function overloading, \ie the constructors must have different signatures.
+
+The construction of a class happens in three stages: 1. memory for all member variables (and all base-classes) is allocated, 2. all members (and base-classes) are
+initialized by the constructor initializer-lists, 3. the constructor body is executed to finalize any initialization.
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Initializer Lists}
+Constructors are responsible for initializing all member variables. The initialization may invoke the corresponding constructors of those variables. Since all
+members should be initialized with their corresponding constructors, a special syntax is reserved for this initialization: constructor \emph{initializer lists}.
+
+Directly after the constructor argument list (after the closing round bracket), a colon \texttt{:} can introduce the initializer-list. It is a comma-separated
+list of initializer expressions (constructor calls) for each member variable, base-class, or a call to another constructor (\emph{constructor chaining}, or
+\emph{delegation}).
+
+After the initializer list, the regular constructor function body must be follow.
+
+Example:
+\begin{minted}{c++}
+class MyPoint
+{
+public:
+  MyPoint(double x, double y) : x_{x}, y_(y) { }  // variable initializers
+  MyPoint() : MyPoint(0.0, 0.0) { }               // delegating constructor
+  double x_,y_;
+};
+
+class MyPoint2
+{
+public:
+  MyPoint2(double x, double y) : point_{x,y} { }
+
+  MyPoint point_;
+}
+\end{minted}
+%
+In the first class \texttt{MyPoint}, two member variables \texttt{x\_} and \texttt{y\_} are initializes with the values of the constructor arguments. Thereby,
+one can use the initialization brackets similar to regular variables, i.\,e.\ curly or round brackets. The second constructor delegates the initialization to
+the first constructor, by calling the class-constructor with some fixed arguments. The second class \texttt{MyPoint2} has a variable of user-defined type
+that is also initialized by a constructor call passing two arguments.
+
+\textbf{Note}: The order of the initialization should follow the order of the declaration of the member variables in the class (and is independent of the order
+of the constructor arguments).
+
+\textbf{Note}: If some member variables have default initializers, like \cpp{int dim = 2;} those initializations are appended to \underline{all} constructor
+initializer lists if no other value for that variable is prescribed.
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Some special constructors}
+Some constructors are special, either because they could be generated automatically by the compiler, or because of the way those constructors are invoked. We
+will discuss here the default constructor, copy constructor, move constructor, and the destructor (that is not directly a constructor, but kind of the opposite).
+
+
+\subsubsection{Default constructor}
+A constructor that is defined with an empty parameter list is called the \emph{default constructor}. It is used to bring the class into a default valid state
+by (typically) initializing all member variables with its default values.
+
+To use the default constructor when instantiating a class there are two variants:
+%
+\begin{minted}{c++}
+// without any argumentlist
+MyPoint p1;
+MyPoint* q1 = new MyPoint;
+// with "universal" initialization
+MyPoint p2{};
+MyPoint* q2 = new MyPoint{};
+\end{minted}
+
+If there is no other constructor defined, the compiler tries to generate a default constructor with default behavior, \ie that calls the default constructor
+on each member variable (and base-class). If it is not generate, if it is not possible, this is no error. For integral and floating-point types the default initializer value is \texttt{0} if not specified otherwise by
+putting the value in the variable definition, \ie \cpp{int dim = 2;}.
+
+If there is any other constructor defined, one can force the compiler to generate the default constructor explicitly, by adding the keyword \cpp{= default} to
+the declaration of the constructor:
+%
+\begin{minted}{c++}
+class MyPoint
+{
+public:
+  MyPoint() = default; // initializes x,y with default values
+  MyPoint(double x_, double y_) { ... } // another user-defined constructor
+  double x,y;
+};
+\end{minted}
+
+
+\subsubsection{Copy constructor}
+A \emph{copy constructor} is used to create a new instance as a copy of another object. This constructors expects exactly one argument, a const lvalue-reference
+to the class-type itself:
+%
+\begin{minted}{c++}
+class MyPoint
+{
+public:
+  MyPoint(MyPoint const& that) // copy constructor
+    : x(that.x)
+    , y(that.y)
+  { }
+  double x,y;
+};
+\end{minted}
+%
+In this constructor, it is recommended to also use the constructor initializer lists.
+
+Copy constructors are used/invoked whenever:
+\begin{itemize}
+  \item An object is passed by value to a function:
+    \cppline{double norm(MyPoint p);}
+  \item An object is returned by value from a function:
+    \cppline{MyPoint generate_point();}
+    (Maybe return value optimization or copy-elision kicks in)
+  \item An object of class-type is passed as single argument to another constructor:
+    \begin{minted}{c++}
+  MyPoint p(1.0, 2.0);
+  MyPoint p2(p);
+  MyPoint p3 = p;
+    \end{minted}
+  \item In initializers lists:
+    \begin{minted}{c++}
+  class A {
+    A(MyPoint const& p_) : p(p_) {}
+    MyPoint p;
+  };
+    \end{minted}
+\end{itemize}
+
+The default behavior of a copy constructor is, that each member is copied (using its copy constructor). This default behavior is automatically generated
+by the compiler if the compiler can be sure that this is the expected behavior. This is not the case if
+\begin{itemize}
+  \item any member (or base-class) is non-copyable
+  \item a user-defined move-constructor is provided
+  \item a user-defined move assignment operator is provided
+\end{itemize}
+
+If the default behavior at least would be well defined (\ie all member can be copied), one can force the compiler to generate the default copy constructor
+by using the keyword \cpp{= default}, as above:
+%
+\begin{minted}{c++}
+  class MyPoint
+  {
+  public:
+    MyPoint(MyPoint const& that) = default;
+    double x,y;
+  };
+\end{minted}
+
+Also, one could explicitly mark the copy constructor as \emph{deleted} to enforce that a class cannot be copied. This can be accomplished by using the
+keyword \cpp{= delete}, similar to the default.
+
+\begin{guideline}{Attention}
+  While the arguments to the copy constructor might be given as const or non-const lvalue reference, it is not allowed to pass the argument by value, \eg
+  \cpp{MyPoint(MyPoint p)}. Why not?
+\end{guideline}
+
+The cousin of the copy-constructor is the \emph{copy assignment operator}. It is used to copy the content of an object to another already existing object.
+The argument to the assignment operator thereby is the same as for the copy constructor, but it has to return a reference to the class type:
+%
+\begin{minted}{c++}
+  class MyPoint
+  {
+  public:
+    MyPoint(MyPoint const& that) = default; // copy constructor
+
+    MyPoint& operator=(MyPoint const& that)
+    {
+      x = that.x;
+      y = that.y;
+      return *this;
+    }
+    double x,y;
+  };
+\end{minted}
+
+\textbf{Note}: You cannot use the initializer-lists anywhere outside of constructors, thus especially not in assignment operators. Therefore, the copy has to
+happen in the function body.
+
+\begin{guideline}{Principle}
+  If you define a copy-constructor you should also define a copy assignment operator.
+\end{guideline}
+
+
+\subsubsection{Move constructor}
+A \emph{move constructor}\marginpar{[\cxx{11}]} is used to create a new instance of an object, by ``stealing'' the data from another object,
+leaving it in an undetermined but valid state. This requires that the moved-from object is not used anymore. The concept of such a state is a temporary, or
+an rvalue. So, move constructors expect as single argument an \underline{rvalue-reference} to the class-type: \cpp{MyPoint(MyPoint&& that)}.
+
+Move constructors are introduced in \cxx{11} (together with rvalue reference) to allow the fast construction of copies of objects, that are destroyed anyway.
+Thus, one just use the data of the temporary object, without copying it. This can be motivated by a class storing a pointer to a large dynamic array
+that was allocated in some constructor and would be destroyed in a destructor. Instead of copying all the elements of that array, a move-constructor
+could just copy the pointer to the array and set it to \cpp{nullptr} inside the moved-from object to forbid the deallocation:
+%
+\begin{minted}{c++}
+class MyPoint
+{
+public:
+  MyPoint()                   // default constructor
+    : big_data(new double[1000000])
+  {}
+
+  ~MyPoint()                  // destructor (see below)
+  {
+    delete [] big_data;       // deallocate the data (if not nullptr)
+  }
+
+  MyPoint(MyPoint&& that)     // move constructor
+    : big_data(that.big_data) // copy just the pointer
+  {
+    that.big_data = nullptr;  // unset the point in `that`
+  }
+
+  double* big_data;
+};
+\end{minted}
+%
+In contrast to the copy constructor, the move constructor expects a mutable rvalue-reference, so that fields can be made invalid.
+
+Move constructors are used/invoked when:
+\begin{itemize}
+  \item initialization: \cpp{T a = std::move(b);} or \cpp{T a{std::move(b)};}, where \texttt{b} is of type \texttt{T};
+  \item function argument passing: \cpp{f(std::move(a));}, where \texttt{a} is of type \texttt{T} and \texttt{f} is \cpp{void f(T t)};
+  \item function return: \texttt{return a}; inside a function such as \cpp{T f()}, where \texttt{a} is of type \texttt{T} which has a move constructor. (This operation might be removed by the compiler due to return value optimization or copy elision)
+\end{itemize}
+
+The default behavior of a move-constructor is to move construct all its members from the members of the passed argument. This default move constructor
+can be generated by the compiler automatically. This does not always work, especially if you have data managed dynamically. Thus, a move constructor is
+implicitly declared only of
+\begin{itemize}
+  \item there are no user-declared copy constructors;
+  \item there are no user-declared copy assignment operators;
+  \item there are no user-declared move assignment operators;
+  \item there are no user-declared destructors;
+\end{itemize}
+
+and is implicitly deleted if some data members (or base-classes) cannnot be moved.
+
+In case the default behavior would make sense but another constructor or destructor of the list above is defined, one can force the compiler to generate
+the move-constructor automatically, using the keyword \cpp{= default}, as above.
+
+Also, one could explicitly mark the move constructor as \emph{deleted} to enforce that a class cannot be moved. This can be accomplished by using the
+keyword \cpp{= delete}, similar to the default.
+
+Similar to the copy constructor, there is a cousin of the move constructor, the move-assignment operator: This should be defined whenever a move constructor
+is provided:
+\cppline{MyPoint& operator=(MyPoint&& that)}
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Destructor\label{sec:destructor}}
+A destructor is kind of the opposite to a constructer. It is responsible for releasing all resources allocated in any other constructor of that class, \eg
+to free all memory or to close opened files. A destructor is called whenever the life-time of a class end, either at the end of a scope or explicitly via
+the \cpp{delete} operator.
+
+Destructors are indicated using a \textasciitilde\ in front of the class name. They have an empty parameter list and no return type:
+%
+\begin{minted}{c++}
+class MyPoint
+{
+public:
+  MyPoint(int num = 99999) : big_data(new double[num]) { }
+  ~MyPoint() { delete[] big_data; }   // destructor, frees the memory
+private:
+  double* big_data = nullptr;
+};
+\end{minted}
+At the end of a user-defined destructor, the destructors of all member variables are called automatically.
+
+The default destructor simply destroys all members using their destructors. This default behavior is automatically generated if
+no user-defined destructor is provided. If any member cannot be destructed, the implicitly generated destructor is deleted.
+
+% =================================================================================================
+\section{Rule of five / Rule of zero}
+
+Since the compiler sometimes generates constructors (and destructor) automatically and in some combinations not, there is a rule that is known as
+\emph{rule of five} stating that if you write any of copy constructor, copy assignment operator, move constructor, move assignment operator, or destructor,
+you have to implement them all.
+
+Especially for copy or move assignment operators, you have to be careful not to assign an object to yourself. Or you have to handle this case manually. The
+destructor needs to be aware of the move operations and you need to be careful when an error happens somewhere in the process of construction or destruction.
+
+This is often very complicated and thus a common guideline is, to write your class in such a way that the compiler always generates everything for you and you
+don't need to write any of the special constructors (including the default constructor). This pattern is called \emph{rule of zero} and means, especially,
+that you should not do dynamic memory management using \texttt{new} and \texttt{delete} inside of your classes (or just in one class that is responsible just for this), but use library types that
+are good replacements for your manual management, like \cpp{std::shared_ptr}, \cpp{std::unique_ptr}, \cpp{std::vector}, \cpp{std::array}, or \cpp{std::string}.
+
+\begin{guideline}{Rule of Zero}
+  Use Data-members that already have an own copy/move constructors and assignment operators and destructor for their data-management. So, you are not
+  responsible for the release of allocated memory and don't need to implement an own constructor and destructor yourself.
+\end{guideline}
+
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=.8\textwidth]{images/auto_constructors.png}
+\caption{Howard Hinnant: \emph{Everything You Ever Wanted To Know About Move Semantics (and then some)} (ACCU 2014)}
+\end{center}
+\end{figure}
+
+% =================================================================================================
+\section{Access restriction\label{sec:access-restriction}}
+In C++ it is possible to restrict in classes who can access the members of that class. There are two access groups:
+\begin{itemize}
+	\item \cpp{public}: Everyone can access the members.
+	\item \cpp{private}: Only other class members are allowed to access this attribute.
+\end{itemize}
+Additionally, there is the access restriction \cpp{protected} that we will see later.
+
+\begin{example}
+  For the illustration of access restrictions, consider the following example:
+  \begin{minted}{c++}
+  class Point {
+  public:
+    double x,y;
+    void foo() {
+      a = 2.0;  // OK: in a member function of the class we can access private data
+      bar();    // OK: in a member function of the class we can call private methods
+    }
+  private:
+    double a;
+    void bar();
+  };
+  // ...
+  Point p{1.0, 2.0}; // Initialization
+
+  p.x;   // OK: x is a public member variable
+  p.a:   // ERROR: a ist a private member and cannot be accessed from outside the class
+
+  p.foo(); // OK: foo is a public member function
+  p.bar(); // ERROR: bar is a private member function
+  \end{minted}
+\end{example}
+
+The keywords \cpp{public}, \cpp{private} (and \cpp{protected}) followed by a colon \texttt{:} introduces a block in which all following members
+have this access restriction.
+
+\begin{rem}
+  In classes introduced with \cpp{class}, the default access restriction is \cpp{private}, whereas in \cpp{struct}, the default access restriction is
+  \cpp{public}.
+\end{rem}
+
+\begin{rem}
+  Also constructors can be restricted. This allows to instantiate a class (or copy/move a class) in a specific way only. If there are no public
+  constructors available, the class cannot be instantiated directly and one has to provide a ``factory''-function instead, \ie a static public
+  member function that constructs and returns the instantiated class.
+\end{rem}
+
+
+% =================================================================================================
+\section{Inheritance\label{sec:inheritance}}
+(The chapter inheritance is touched here only slightly, see other lectures about object oriented design for more details)
+
+Classes characterize properties and methods of a specific space of objects. An example is a class representing a vector space. Instances of that
+class are vectors. But, there are other spaces, with more or less properties, like a normed vector space that additionally has a norm function, or
+a scalar-product space that additionally has a scalar-product. So, we can find a hierarchy of classes with a general class and more and more specialized
+classes. The more specialized ones can inherit properties / members of the more general class, like a normed vector space inherits all methods from a
+vector space. This principle is called inheritance in C++.
+
+In the head of a class definition, one can list other classes we want to inherit properties and members from. Thereby, we can specify how those inherited members
+are visible (can be accessed) (Either they are just properties we want to use internally: \cpp{private}, or all properties are made visible to the outside:
+\cpp{public}).
+
+\begin{minted}{c++}
+class VectorSpace {                     // Base class
+public:
+  VectorSpace();
+  VectorSpace operator+(VectorSpace const& rhs) const;
+  VectorSpace operator-(VectorSpace const& rhs) const;
+  // ...
+
+  int dimension_;                       // is public to the outside and derived classes
+
+protected:
+  double component(int i);              // is accessible from derived classes, but not public
+
+private:
+  std::vector<double> components_;      // is private to this class
+};
+
+class NormedVectorSpace : public VectorSpace
+{
+public:
+  double norm() const
+  {
+    double n = 0.0;
+    for (int i = 0; i < dimension_; ++i)  // we can access public members of base class
+      n += component(i)*component(i);     // we can access protected functions of base class
+    return std::sqrt(n);
+  }
+};
+// ...
+VectorSpace vec1;
+vec1.dimension_     // OK: public member
+vec1.component()    // ERROR: protected members not accessible
+vec1.components_    // ERROR: private members not accessible
+vec1.norm()         // ERROR: VectorSpace has no method norm()
+
+NormedVectorSpace vec2;
+vec2.dimension_     // OK: public derived member
+vec2.component()    // ERROR: protected member of VectorSpace
+vec2.norm()         // OK: public function
+\end{minted}
+
+The derived class can call protected and public members of the base class, and can even call its constructors.
+
+\begin{rem}
+  Again, the difference between \cpp{class} and \cpp{struct} is that for class the inheritance is \cpp{private} by default and for struct
+  it is \cpp{public} by default.
+\end{rem}
