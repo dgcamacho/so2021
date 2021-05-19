@@ -586,3 +586,187 @@ clang++ --std=c++2a -fprebuilt-module-path=. linalg_mod.o linalg.cc -o linalg
 > .h3[Remark:] While modules are part of the C++20 standard, they are not yet available in all
 > compilers. Also the standard library is not yet provided with module base. This will be part of
 > future c++ standards.
+
+---
+
+# Modules and Namespaces
+## Namespaces
+
+Larger projects may contain many names (functions, classes, etc.)
+- Should be organized into logical units
+- Multiple types with the same name? E.g. different `Matrix` implementations. \(\to\) might lead to name clashes
+- Using functions and types from other libraries may introduce the same names.
+
+**Solution 1**
+: rename all occurrences of your own types with a unique prefix. Example: `cblas_`
+
+**Solution 2**
+: put each type and function into a different **namespace**.
+
+---
+
+# Modules and Namespaces
+## Namespaces
+A `namespace` is a mechanism in C++ to group types, variables and
+functions, thereby defining the scope of these objects, similar to a
+block. Till now, all objects were in the *global* namespace.
+
+### Namespace definitions
+```c++
+namespace <identifier> {
+  <body>
+}
+```
+
+- `<identifier>` may be a previously unused identifier, or the name of an existing namespace
+- `<body>` may be a sequence of declarations
+- A name declared inside a namespace must be qualified when accessed from outside the namespace
+  using the *name-resolution operator* (`operator::`)
+
+---
+
+# Modules and Namespaces
+## Namespaces - Example
+Qualified name lookup:
+
+```c++
+namespace scprog
+{
+  // A data type
+  struct DenseMatrix { ... };
+  struct DenseVector { ... };         // (1)
+
+  // A function declaration/definition
+  double* make_vector (int n) {       // (2)
+    DenseVector v; ...                // directly refers to (1)
+  }
+}
+
+int main() {
+  scprog::DenseMatrix mat;            // qualified name lookup
+
+  auto vec = scprog::make_vector(10); // OK, calls (2)
+  auto vec2 = make_vector(10);        // ERROR: make_vector was not declaraed in this scope
+}
+```
+
+---
+
+# Modules and Namespaces
+## Nested Namespaces
+It is possible to have *namespaces* inside *namespaces*:
+
+```c++
+namespace scprog {
+  namespace linalg {
+    // A data type
+    struct DenseMatrix { ... };
+  }
+}
+
+// equivalent: [c++17]
+namespace scprog::linalg { ... }
+
+void foo();
+
+int main() {
+  scprog::linalg::DenseMatrix mat;
+
+  ::foo();    // qualified call to function from global namespace
+}
+```
+
+---
+
+# Modules and Namespaces
+## Namespace - Using Directives and Aliases
+
+- Always using fully qualified names makes code easier to read
+- Sometimes it is obvious from which namespace the names come from in
+  which case one prefers to use unqalified names
+- For this `using` and `using namespace` can be used
+  * `using namespace X` imports all names from *namespace* `X` into the current one
+  * `using X::foo` only imports the name `foo` from `X` into the current namespace
+- Restrict the usage of `using` to source files and avoid `using` directives in header files.
+- You may use *namespace* aliases:
+
+```c++
+namespace X = Complicated::Long::Namespace;
+
+Complicated::Long::Namespace::foo;
+X::foo;
+```
+
+---
+
+# Modules and Namespaces
+## Namespace - Example
+
+```c++
+namespace A { int x; }
+namespace B { int y; int z; }
+using namespace A;
+
+int main() {
+  using B::y;
+  x = 1; // Refers to A::x
+  y = 2; // Refers to B::y
+  z = 3; // ERROR: z was not declared in this scope
+  B::z = 3; // OK
+}
+```
+
+--
+
+> .h3[Remark:] Don't use (global) variables inside namesapces.
+
+
+---
+
+# Modules and Namespaces
+## The `std` Namespace
+All functions (and classes) of the C++ standard library, e.g. `sqrt` or
+`vector` are part of the `std` namespace.
+
+```c++
+const real_t  PI     = M_PI;              // constant defined in cmath header
+const real_t  sqrtPI = std::sqrt(PI);
+
+std::cout << sqrtPI << std::endl;
+```
+
+If `std` functions are used a lot, it can be helpful to include the namespace into a local scope:
+
+```c++
+using namespace std;
+
+const real_t  PI     = M_PI;
+const real_t  sqrtPI = sqrt(PI);
+
+cout << sqrtPI << endl;
+```
+
+---
+
+# Modules and Namespaces
+## The `std` Namespace
+All functions (and classes) of the C++ standard library, e.g. `sqrt` or
+`vector` are part of the `std` namespace.
+
+```c++
+const real_t  PI     = M_PI;              // constant defined in cmath header
+const real_t  sqrtPI = std::sqrt(PI);
+
+std::cout << sqrtPI << std::endl;
+```
+
+Since this imports **all** names from the `std` namespace, it is recommended to only import those
+names actually used.
+
+```c++
+using std::sqrt;
+const real_t  PI     = M_PI;
+const real_t  sqrtPI = sqrt(PI);
+
+std::cout << sqrtPI << std::endl;
+```
