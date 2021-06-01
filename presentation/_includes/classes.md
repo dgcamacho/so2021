@@ -664,7 +664,7 @@ This is known as the **copy-and-swap ideom**.
 
 - The initializer list specifies how member variables are initialized before the body of the constructor is executed
 - Members should be initialized in the order of their definition
-- Members are initialized to their default value if not specified in the list
+- Members are initialized to their default value/by their default constructor if not specified in the list
 - `const` member variables can only be initialized in the initializer list
 
 Example
@@ -753,7 +753,7 @@ struct Vector {
 double norm(Vector v);
 ...
 norm(10); // ERROR: Implicit conversion
-
+norm(Vector(10)); // OK, explicit constructor
 
 static_cast<Vector>(10); // OK
 ```
@@ -762,7 +762,7 @@ static_cast<Vector>(10); // OK
 ---
 
 # Classes
-## Application: BLAS (Version 3) Matrix type:
+## Application: A DenseMatrix type:
 
 ```c++
 class DenseMatrix {
@@ -791,7 +791,7 @@ public:
 ---
 
 # Classes
-## Application: BLAS (Version 3)
+## Application: A DenseMatrix type:
 
 ```c++
     void mv (real_t const alpha, Vector const& x, Vector& y) const;
@@ -813,4 +813,112 @@ int main() {
   std::cout << M.frobenius_norm() << std::endl;
   M.mv(-1.0, x, y); // y -= M*x
 }
+```
+
+---
+
+# Classes
+## Other components of a class
+### Associated Types
+- Types associated to a class type can be aliased inside the class definition
+- Can be used to collect common data types used in the class
+- Containers often specify its elements type as `value_type` and the type for
+  size and indices as `size_type`
+
+```c++
+struct <class_name> {
+  using <alias> = <type>;
+  typedef <type2> <aias2>;
+
+  <alias> variable;       // variable declaration with the type
+  void foo(<alias> arg);  // type in parameter list
+};
+
+using T = <class_name>::<alias>;  // extract the type from the class
+```
+
+---
+
+# Classes
+## Other components of a class
+### Static data members
+- Variables associated not with an instance of a class but with the class type
+- Stored in a special section of memory with *static lifetime*
+- Cannot be initialized by a constructor
+- Static data members (of integral/enum type) declared `const` can be initialized
+  inside the class
+
+```c++
+struct <class_name> {
+  static <type> var;                 // declaration (uses 'static')
+  static const <type2> var2 = value; // initialization inside class
+};
+
+<type> <class_name>::var = value2;  // definition (without 'static')
+```
+
+---
+
+# Classes
+## Other components of a class
+### Static member functions
+- Function declared `static` inside the class are associated to the class type
+- Can be accessed using the name resolution operator `::` (even from outside the class)
+- On an instance static members can be accessed using the member access operator `.`
+
+```c++
+struct <class_name> {
+  static <type> var;
+
+  static <return_type> <function_name> (<args>...)
+  {
+    <class_name>::var = value;    // access of static data members
+  }
+};
+
+<class_name>::<function_name>(<args>...);   // call a static function
+```
+
+---
+
+# Classes
+## Inheritance (simplified)
+- Classes can inherit the component of another class
+- Allows to split implementation into parts and compose a class by deriving from
+  other class(es)
+- Visibility restrictions by `public`, `protected`, and `private`
+
+```c++
+class A {
+public:
+  int var_a;
+  double fun_a ();
+};
+
+class B : public A {
+public:
+  int var_b;
+  double fun_b () { var_a = 7; return fun_a(); }
+};
+```
+
+---
+
+# Classes
+## Inheritance (simplified)
+- C++ allows multiple inheritance
+- Specify how inherited members are visible inside class
+- Can call constructors of inherited classes
+
+```c++
+class A {
+  int var_a;
+public:
+  A(int a) : var_a(a) {}
+};
+
+class B : private A {  // members of A are private within B
+public:
+  B() : A(42) {}       // call constructor of base class
+};
 ```
