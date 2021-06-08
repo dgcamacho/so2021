@@ -83,7 +83,7 @@ on matrix.
 - **Lecture** on Tuesdays, 16:40 - 18:10, **Tutorial** Wednesday, 13:00 - 14:30
 - Course on OPAL: [t1p.de/scprog-so2021-opal](https://t1p.de/scprog-so2021-opal)
 - Course in matrix: [#scprog-so2021:tu-dresden.de](https://matrix.tu-dresden.de/#/room/#scprog-so2021:tu-dresden.de)
-- **Requirement:** Sign up for this course in OPAL (and in Selma for the exam)
+- **Requirement:** Sign up for this course in Selma
 
 ### Exercises
 - Weekly, see [gitlab.mn.tu-dresden.de/teaching/scprog/so2021-tutorial](https://gitlab.mn.tu-dresden.de/teaching/scprog/so2021-tutorial)

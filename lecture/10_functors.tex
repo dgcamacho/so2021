@@ -1,0 +1,265 @@
+\chapter{Functors}
+A Functor is an abstraction of a classical function, but implemented as class type. It can be used (called) like a regular function, but has additional
+advantage to use all the flexibility of a class, like local member variables, or other member functions that can be called.
+
+The basic idea is, that a class that implements the \cpp{operator()} can be evaluated like a function. The call to that special member function has the same
+syntax as a regular function invocation.
+
+Example:
+\begin{minted}{c++}
+  struct Square {
+    // Implementation of the bracket operator
+    double operator()(double x) const {
+      return x*x;
+    }
+  };
+
+  int main() {
+    // Instantiation of the class
+    Square square{};
+
+    // Use the instance of the class, like a regular function
+    double y = square(3.0); // = 9
+  }
+\end{minted}
+
+\begin{guideline}{Guideline}
+  Implement functors as classes with an overloaded \cpp{operator()} as \cpp{public} and (often) \cpp{const} member-function.
+\end{guideline}
+
+% =================================================================================================
+\section{Functors as function parameters}
+Since functors are regular user-defined types, they can be passed to any other function as function parameter. This allows to write algorithms
+without specifying the concrete operation explicitly in code, but expecting this operation to be passed as argument. Examples for this type
+of algorithms are sorting algorithms, where your want to specify the comparison operator, \eg \cpp{std::less}, as argument so that you
+can easily switch between increasing and decreasing order of the elements.
+
+Another example is the function \cpp{for_each}, that applies to each element in a container a function (\eg to change the value of the element):
+\begin{minted}{c++}
+  void for_each(std::vector<double>& vec, Square const& f) {
+    for (auto& v_i : vec)
+      v_i = f(v_i);
+  }
+
+  int main() {
+    std::vector<double> v{1.0, 2.0, 3.0, 4.0, 5.0};
+
+    // Instantiation of the class
+    Square square{};
+
+    // Pass the functor to the function
+    for_each(v, square);
+
+    // -> {1.0, 4.0, 9.0, 16.0, 25.0}
+  }
+\end{minted}
+%
+We could even instantiate the functor directly in the call of the \cpp{for_each} function, \ie
+\cppline{for_each(v, Square{});}
+
+The problem with this approach is, that we might want to pass different functors to the same function / algorithm. This is a perfect example
+of a function template. Instead of explicitly specifying the type of the functor that we can pass, we specify a template parameter for the functor
+argument:
+\begin{minted}{c++}
+  template <class F>
+  void for_each(std::vector<double>& vec, F const& f) {
+    for (auto& v_i : vec)
+      v_i = f(v_i);
+  }
+\end{minted}
+
+This allows to call the function \cpp{for_each} the same way as before (thanks to ATD), but we can also pass another functor without reimplementing the
+algorithm.
+
+\begin{rem}
+  A more generic implementation of the \cpp{for_each} function uses a second template parameter for the container type, \ie
+  %
+  \begin{minted}{c++}
+  template <class Range, class F>
+  void for_each(Range& range, F const& f) {
+    for (auto& element : range)
+      element = f(element);
+  }
+  \end{minted}
+  %
+  This allows to use that function with \cpp{std::vector<...>} of any type supported by the functor, or \cpp{std::list}, \cpp{std::array}, or
+  any other type that can be iterated over using range-based for-loops.
+\end{rem}
+
+
+% ==============================================================================
+\section{Parametrized Functors}
+We can not only parametrize the functions that use the functor, but also the functor itself. The allows to specify the argument or return types
+of the \cpp{operator()} implemented inside the functor, or any other useful type that we need to implement the functor operation.
+
+\begin{example}
+  The square functor from above could be applied to any number type that supports multiplication. Thus, we could make the implementation more
+  generic by parametrizing the functor:
+
+  \begin{minted}{c++}
+  template <typename domain_type, typename range_type = domain_type>
+  struct Square
+  {
+    range_type operator()(domain_type x) const {
+      return x*x;
+    }
+  };
+  \end{minted}
+
+  In the instantiation of the class, we now have to instantiate the functor class template as well:
+  \cppline{for_each(v, Square<double>{});}
+\end{example}
+
+Often, the functor class itself needs no parametrization, but the member function \cpp{operator()} depends on template parameters. So,
+one could directly parametrize just the member function, instead of the whole class:
+
+Example:
+\begin{minted}{c++}
+  struct Square
+  {
+    template <typename domain_type>
+    auto operator()(domain_type x) const {
+      return x*x;
+    }
+  };
+\end{minted}
+%
+For simplicity, I have used the return type \cpp{auto} to let the compiler automatically deduce the return type from the expression in the
+function. The \cpp{auto} return type gets very useful when combined with input template parameters.
+
+The call to \cpp{for_each} is now as simple as before:
+\cppline{for_each(v, Square{});}
+and we do not need to know the type of the argument in advance.
+
+
+% =================================================================================================
+\section{Lambda expressions}
+In \marginpar{[\cxx{11}]}\cxx{11} the definition of functors was simplified a lot. Instead of writing a class or class template first, then instantiating that
+class and passing it to an algorithm, one can define an ``anonymous'' functor directly in the line of usage. The compiler then generates automatically
+a corresponding class with a unique names, instantiates that class and passes it to the function.
+
+Those anonymous functors are called \emph{lambda expressions} in C++ and can be declared as follows:
+%
+\begin{minted}{c++}
+  [captures...] (parameters...) -> ReturnType { function body };
+  /* or shorted in case of empty parameter list */
+  [captures...] { function body };
+\end{minted}
+%
+Without the \emph{capture} clause, it looks like a regular function definition.
+\begin{itemize}
+  \item The \emph{captures} is a list of zero or more variables or references that can be used inside the function.
+  \item \emph{parameters} is a list of function parameters including its types and qualifiers (like in regular function declarations)
+  \item \emph{ReturnType} is the (optional) (trailing) return type of the function, that can depend on the types of the function parameters
+        It can be omitted, resulting in the automatic return type deduction, like in functions returning \cpp{auto}.
+  \item The function body may contain any sequence of C++ statements and (optionally) a return statement.
+\end{itemize}
+
+\begin{example}
+  The following example illustrates the usage of lambda expressions, compared to classical functors:
+  \begin{minted}{c++}
+  // functor with internal member variable to store data.
+  struct Scale {
+    double factor_;
+
+    Scale(double factor = 1.0)
+      : factor_(factor)
+    {}
+
+    double operator()(double value) const
+    {
+      return value * factor_;
+    }
+  };
+
+  int main() {
+    std::vector<double> v = {1.0, 2.0, 3.0, 4.0, 5.0};
+
+    double factor = 3.0;
+
+    // Instantiate a regular functor with constructor argument
+    for_each(v, Scale{factor});
+
+    // Use a lambda expression
+    for_each(v, [factor](double value) { return factor * value; });
+  }
+  \end{minted}
+  %
+  The variable \texttt{factor} is captured, and can thus be used inside the lambda expression.
+\end{example}
+
+The capture list is very similar to a list of constructor argument of the functor. All variables in that list introduce a local
+member variable, that can be used inside the lambda expressions function body. Any other variable cannot be used there, since it
+generates an unnamed functor class with an \cpp{operator()} member function that is called on evaluation.
+
+Using the capture list, a connection to the surrounding scope can be established. The following values are possible in the capture list:
+\begin{minted}{c++}
+[]    // no capture
+[a]   // copies the variable a into a local member variable of the functor
+[&a]  // stores a reference to the variable a
+[=]   // copies all variables of the surrounding scope that are used inside the function body
+[&]   // references all variables of the surrounding scope ...
+\end{minted}
+
+
+\subsection{Generic lambdas}
+Like functions and classes, also lambda expressions can be made generic. In the example \texttt{Square} above, we have parametrized the
+inner member function \cpp{operator()} with the type of the arguments. A similar templated bracket operator for lambda expressions
+can be obtained, by using the placeholder \cpp{auto} inside the function parameter list:
+%
+\begin{minted}{c++}
+  for_each(v, [factor](auto value) { return factor * value; });
+\end{minted}
+%
+This introduces a member-function template with an unnamed template parameter, \ie it is similar to the functor definition
+%
+\begin{minted}{c++}
+  template <class T>
+  struct Scale {
+    T factor_;
+
+    Scale(T factor = T(1))
+      : factor_(factor)
+    {}
+
+    template <typename S>
+    auto operator()(S value) const
+    {
+      return value * factor_;
+    }
+  };
+\end{minted}
+%
+but, we do not have a name for the type of the parameter like \texttt{S} in the explicit functor definition.
+
+\begin{rem}
+  The type of the function parameters in generic lambdas can be obtained by using the \cpp{decltype} operator.
+\end{rem}
+
+Similar to classical templates and the \cpp{auto} placeholder in variable declarations, the function parameters in generic lambdas
+can be qualified with \cpp{const}, reference and pointer. But they cannot be used as placeholders in other templated types, \eg
+\cpp{std::vector<auto>} is not allowed as function parameter in generic lambdas.
+
+\begin{rem}
+  With \marginpar{[\cxx{20}]}\cxx{20} one can introduce named template parameters in generic lambdas. Therefore, one adds a declaration
+  of template parameters after the capture block in the lambda definition:
+  %
+  \begin{minted}{c++}
+  [...] <class P1, class P2, (...)> (P1 param1, P2 param2...) -> ReturnType { function body };
+  \end{minted}
+\end{rem}
+
+
+% =================================================================================================
+\section{Abbreviated function template}
+Since \marginpar{[\cxx{20}]}\cxx{20}, a similar syntax as used for generic lambda can be used for regular function. When placeholder types \cpp{auto} appear in the
+parameter list of a function declaration or of a function template declaration, the declaration declares a function template, and one
+invented template parameter for each placeholder is appended to the template parameter list.
+%
+\begin{minted}{c++}
+  void f1(auto arg); // same as template<class T> void f1(T arg)
+  void f2(auto const& arg); // same as template<class T> void f2(T const& arg)
+\end{minted}
+%
+This is especially useful if the actual type of the argument is irrelevant but the algorithm allows to generically pass arguments of different
+type.

@@ -484,13 +484,14 @@ template <class Mat, class Vec, class Iteration>
 int cg (Mat const& A, Vec& x, Vec const& b, Iteration& iter)
 {
   using Scalar = typename Vec::value_type;
-  using Real   = typename Iteration::real_type;
+
   Scalar rho{0}, rho_1{0}, alpha{0};
   Vec p{b}, q{b}, z{b};
-  Vec r{b - A*x};
+  Vec r{b};
+  A.mv(-1.0, x, r);                             // r = b - A*x
 
-  rho = r.unary_dot();
-  while (! iter.finished(std::sqrt(std::abs(rho)))) {  ++iter;
+  rho = r.dot(r);                               // rho = r^T * r
+  while (! iter.finished(std::sqrt(rho))) {  ++iter;
     if (iter.first())  p = r;
     else               p.aypx(rho / rho_1, r);  // p = r + (rho / rho_1) * p;
     A.mv(p, q);                                 // q = A * p
@@ -498,7 +499,7 @@ int cg (Mat const& A, Vec& x, Vec const& b, Iteration& iter)
     x.axpy(alpha, p);                           // x += alpha * p
     r.axpy(-alpha, q);                          // r -= alpha * q
     rho_1 = rho;                                // rho_1 = rho
-    rho = r.unary_dot();                        // rho = r^T * r
+    rho = r.dot(r);                             // rho = r^T * r
   }
   return iter;
 }
@@ -547,5 +548,26 @@ int main()
 
 ```c++
 template <class T, auto N>
+struct fixed_size_array;
+```
+
+---
+
+# Generic Programming
+## Non-Type Template Parameter
+
+- Not all types are allowed as non-type template parameters.
+- It must be possible to uniquely evaluate those types at compile-type. Therefore the C++
+  standard has restricted non-type template parameters to so-called *structural types*, e.g.,
+
+  * integral types, enums, characters, and pointer types.
+  * `std::nullptr_t`
+  * floating-point type [C++20]
+  * *literal* class type [C++20] (only `public` + `const` structural type members)
+
+- You can specify the `auto` placeholder if you do not want to be too specific:
+
+```c++
+template <class T, std::integral auto N> // or even with constraints
 struct fixed_size_array;
 ```
