@@ -1,11 +1,11 @@
 ---
 class: center, middle
-# The C++ standard Library
+# The C++ Standard Library
 
 .footnote[Slides partially extracted from "*Systems Programming in C++*" (T. Neumann, M. Freitag, M. Sichert)]
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 
 Provides a collection of useful C ++ classes and functions
 - Is itself implemented in C ++
@@ -21,7 +21,7 @@ Provides a collection of useful C ++ classes and functions
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 We will look into
 - Containers: e.g. `array`, `vector`, `unordered_map`, `map`
 - Iterators
@@ -37,7 +37,7 @@ We will look into
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 ## Containers - A Short Overview
 A container is an object that stores a collection of other objects
 - Manage the storage space for their elements
@@ -58,7 +58,7 @@ A container is an object that stores a collection of other objects
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 ## Containers - Common Interface
 - All container types share some common functionality
 - Requirements are formulated as written concepts \(\to\) [cppreference](https://en.cppreference.com/w/cpp/named_req/Container)
@@ -80,7 +80,7 @@ using size_type = <unsigned_integer>;     // large enough to represent all pos. 
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 ## Containers - Common Interface
 **Requirements:**
 `C` container type; `T` element type; `a`, `b` objects of type `C`
@@ -103,7 +103,7 @@ a.empty();    // Check whether no element is stored
 
 ---
 
-# The C++ standard Library - `std::vector`
+# The C++ Standard Library - `std::vector`
 Vectors are arrays that can dynamically grow in size. Defined in the header [`<vector>`](https://en.cppreference.com/w/cpp/container/vector)
 - Elements are still stored contiguously
 - Elements can be inserted and removed at any position \(\to\) `insert()`, `erase()`
@@ -118,7 +118,7 @@ Vectors are arrays that can dynamically grow in size. Defined in the header [`<v
 
 ---
 
-# The C++ standard Library - `std::vector`
+# The C++ Standard Library - `std::vector`
 ## Accessing Elements
 Vectors are constructed just like arrays:
 ```c++
@@ -141,7 +141,7 @@ existing ones.
 
 ---
 
-# The C++ standard Library - `std::vector`
+# The C++ Standard Library - `std::vector`
 ## Inserting and Removing Elements
 Insert or remove elements at the end in constant time:
 ```c++
@@ -166,7 +166,7 @@ fib.size();   // == 0
 
 ---
 
-# The C++ standard Library - `std::vector`
+# The C++ Standard Library - `std::vector`
 ## Reserving memory
 If the final size of a vector is already known, give the vector a hint to avoid
 unnecessary reallocations:
@@ -191,7 +191,7 @@ vec.shrink_to_fit();
 
 ---
 
-# The C++ standard Library - `std::unordered_map`
+# The C++ Standard Library - `std::unordered_map`
 Maps are associative containers consisting of key-value pairs
 - Defined in the header [`<unordered_map>`](https://en.cppreference.com/w/cpp/container/unordered_map)
 - Keys are required to be unique
@@ -205,7 +205,7 @@ Maps are associative containers consisting of key-value pairs
 
 ---
 
-# The C++ standard Library - `std::unordered_map`
+# The C++ Standard Library - `std::unordered_map`
 ## Accessing Elements
 Maps can be constructed pairwise:
 ```c++
@@ -230,7 +230,7 @@ if (search != name_to_grade.end()) {
 
 ---
 
-# The C++ standard Library - `std::unordered_map`
+# The C++ Standard Library - `std::unordered_map`
 ## Accessing Elements
 
 To check if a key exists, use `count()` that either returns 0 or 1:
@@ -255,7 +255,7 @@ name_to_grade.emplace("gruber", 1.7);       // construct the element in place
 
 ---
 
-# The C++ standard Library - `std::unordered_map`
+# The C++ Standard Library - `std::unordered_map`
 ## Insertion and Removal
 
 Erase elements with `erase()` or empty the container with `clear()`:
@@ -267,7 +267,7 @@ name_to_grade.clear();        // removes all elements of name_to_grade
 
 ---
 
-# The C++ standard Library - `std::map`
+# The C++ Standard Library - `std::map`
 In contrast to unordered maps, the keys of `std::map` are sorted
 - Defined in the header [`<map>`](https://en.cppreference.com/w/cpp/container/map)
 - Interface largely the same to `std::unordered_map`
@@ -279,7 +279,7 @@ In contrast to unordered maps, the keys of `std::map` are sorted
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 ## Other Container Classes
 Not described here are:
 - `std::multimap`: similar to `std::map` but allows different elements with same index,
@@ -292,7 +292,7 @@ Not described here are:
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 ## Iterators: A Short Overview
 Iterators are objects that can be thought of as pointer abstractions
 - **Problem:** Different element access methods for each container
@@ -305,7 +305,7 @@ Iterators are objects that can be thought of as pointer abstractions
 
 ---
 
-# The C++ standard Library - Iterator Example
+# The C++ Standard Library - Iterator Example
 All containers have a *begin* and an *end* iterator:
 ```c++
 std::vector<std::string> vec = {"one", "two", "three", "four"};
@@ -330,7 +330,7 @@ std::cout << *it; // prints "two"
 
 ---
 
-# The C++ standard Library - Iterator Example
+# The C++ Standard Library - Iterator Example
 Iterators can be checked for equality. Comparing to the *end* iterator is used to
 check whether iteration is done:
 ```c++
@@ -350,7 +350,7 @@ Such a loop requires the range expression (here: `vec`) to have a `begin()` and
 
 ---
 
-# The C++ standard Library - Iterator Example
+# The C++ Standard Library - Iterator Example
 Iterators can also simplify dynamic insertion and deletion:
 ```c++
 for (auto it = vec.begin(); it != vec.end(); ++it) {
@@ -374,7 +374,7 @@ for (auto it = vec.begin(); it != vec.end(); ++it) {
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 ## Range-based for-loops
 Iterating over a (standard) container follows a common pattern: iterate from begin to end by
 incrementing the iterator and dereference to get the element. This pattern got its own language syntax:
@@ -398,7 +398,7 @@ for (<range_declaration> : <range_expr>)
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 ## Range-based for-loops
 The generic implementation/translation:
 ```c++
@@ -417,7 +417,7 @@ with `<begin_expr>` (and `<end_expr>`) an evaluation of `begin(__range)` or `__r
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 ## Range-based for-loops - Example
 Take the element either by explicit type or `auto` placeholder type
 ```c++
@@ -438,7 +438,7 @@ for (auto const& elem : m) {
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 ## InputIterator and OutputIterator
 Input- and OutputIterator are the most basic iterators. They have the following
 features:
@@ -456,7 +456,7 @@ Used in single-pass algorithms such as `find()` (InputIterator) or `copy()`
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 ### InputIterator [`std::input_iterator`](https://en.cppreference.com/w/cpp/iterator/input_iterator)
 - `operator++ ()` : pre-increment
 - `operator++ (int)` : post-increment
@@ -471,7 +471,7 @@ Used in single-pass algorithms such as `find()` (InputIterator) or `copy()`
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 ## Iterator categories
 Iterators are categorized by its properties, either access (see *InputIterator* and *OutputIterator*),
 by its traversal directions (*ForwardIterator*, *BidirectionalIterator*, *RandomAccessIterator*) or other
@@ -488,7 +488,7 @@ A *BidirectionalIterator* is a *ForwardIterator* that additionally allows decrem
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 ### RandomAccessIterator  [`std::random_access_iterator`](https://en.cppreference.com/w/cpp/iterator/random_access_iterator)
 *RandomAccessIterator* generalizes *BidirectionalIterator*:
 - Additionally allows random access with `operator[]`
@@ -504,7 +504,7 @@ A *BidirectionalIterator* is a *ForwardIterator* that additionally allows decrem
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 ## Algorithms with Iterators
 
 Iterators can be used to have a general way to loop over containers. Algorithms can thus be implemented
@@ -527,7 +527,7 @@ whereas for algorithms based on iterators, one just needs
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 ## Algorithms with Iterators
 ### Example: Accumulate the values in a container
 
@@ -552,7 +552,7 @@ int sum_i = accumulate(l.begin(), l.end(), 7);
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 ## Algorithms with Iterators
 ### Example: Accumulate the values in a container
 
@@ -569,7 +569,7 @@ T accumulate (Iterator first, Iterator last, T init);
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 ## Algorithms with Iterators
 ### Example: Accumulate the values in a container
 
@@ -593,7 +593,7 @@ means an Iterator that can be compared to its template parameter.
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 ## Algorithms with Iterators
 ### Example: Copy from one into another container
 ```c++
@@ -605,6 +605,9 @@ OutputIt copy (InputIt first, InputIt last, OutputIt d_first)
   return d_first;
 }
 ```
+
+--
+
 or with constraint template parameters:
 ```c++
 template <std::input_iterator I, std::sentinel_for<I> S, typename O>
@@ -618,7 +621,34 @@ OutputIt copy (I first, S last, O d_first)
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
+## Algorithms with Iterators
+### Example: Copy from one into another container
+```c++
+template <typename InputIt, class OutputIt>
+OutputIt copy (InputIt first, InputIt last, OutputIt d_first)
+{
+  while (first != last)
+    *d_first++ = *first++;
+  return d_first;
+}
+```
+
+or with constraint template parameters (advanced), see [ranges/copy](https://en.cppreference.com/w/cpp/algorithm/ranges/copy):
+```c++
+template <std::input_iterator I, std::sentinel_for<I> S, std::weakly_incrementable O>
+  requires std::indirectly_copyable<I, O>
+OutputIt copy (I first, S last, O d_first)
+{
+  while (first != last)
+    *d_first++ = *first++;
+  return d_first;
+}
+```
+
+---
+
+# The C++ Standard Library
 ## Algorithms with Iterators
 ### Example: Copy from one into another container
 Copy the elements between arbitrary containers
@@ -639,7 +669,7 @@ dereferenced iterator gets something assigned:
 
 ---
 
-# The C++ standard Library
+# The C++ Standard Library
 ## Algorithms with Iterators
 ### Example: `std::lower_bound` and `std::upper_bound`
 
@@ -667,82 +697,36 @@ int main() {
 
 ---
 
-# Function Objects
-Some algorithms have an additional customization point to specify an operation to perform on the
-elements. E.g. in `std::accumulate` you can specify how to fold the elements, i.e., to use `operator+` or
-another binary function.
+# The C++ Standard Library
+## Algorithms with Iterators
+### Example: `std::fill`
 
---
-
-Regular functions are not objects in C++
-- Cannot be passed as parameters
-- Cannot have state
-
-C++ additionally defines the *FunctionObject* named requirement. For a type `T` to
-be a FunctionObject or **functor**
-- `T` has to be an object
-- `operator() (<args>...)` has to be defined for `T` for a suitable argument list `<args>...` which can be empty
-
----
-
-# Function Objects
-There are a number of valid function objects defined in C ++
-- Pointers to functions
-- Lambda expressions
-- Stateful function objects in form of classes
-
-Functions and function references are not function objects
-- Can still be used in the same way due to implicit *function-to-pointer* conversion
-
----
-
-# Function Pointers
-
-While functions are not objects they do have an address
-- Location in memory where the actual assembly code resides
-- Allows declaration of function pointers
-
-Function pointers to non-member functions
-- Declaration: `<return_type> (*function_name) (<args>...)`
-- Allows passing functions as parameters
-- E.g. passing a custom compare function to `std::sort` (see later)
-- E.g. passing a callback to a method
-- Can be invoked in the same way as a function
-
----
-
-# Function Pointers
-
-Example
+The algorithm `std::fill` sets all elements of a range to the same value:
 ```c++
-int callFunc (int (*func)(int, int), int const arg1, int const arg2) {
-  return (*func)(arg1, arg2);
-}
-double callFunc (double (*func)(double), double const argument) {
-  return func(argument); // Automatically dereferenced
-}
-
-//--------------------------------------------------------
-int add (int const arg1, int const arg2) { return arg1 + arg2; }
-double add4 (double const argument) { return argument + 4; }
-
-//--------------------------------------------------------
-int main () {
-  auto i = callFunc(add, 2, 4); // i = 6
-  auto j = callFunc(&add4, 4);  // j = 8, "&" can be omitted
+// #include <algorithm>
+template <class ForwardIt, class T>
+void fill (ForwardIt first, ForwardIt lst, T const& value)
+{
+  for (; for != last; ++first)
+    *first = value;
 }
 ```
 
 ---
 
-# Lambda Expressions
-Function pointers can be unwieldy
-- Function pointers cannot easily capture environment
-- Have to pass all variables that affect function by parameter
-- Cannot have "local" functions within other functions
+# The C++ Standard Library
+## Algorithms with Iterators
+### Example: `std::iota`
 
-C++ defines *lambda expressions* as a more flexible alternative
-- Lambda expressions construct a *closure*
-- Closures store a function together with an environment
-- Lambda expressions can capture variables from the scope where they are
-  defined
+The algorithm `std::iota` fills a sequence with increasing values, starting from an initial value:
+```c++
+// #include <numeric>
+template <class ForwardIt, class T>
+void iota (ForwardIt first, ForwardIt lst, T value)
+{
+  while (first != last) {
+    *first++ = value;
+    ++value;
+  }
+}
+```
