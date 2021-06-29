@@ -1,0 +1,401 @@
+\chapter{Template Specialization}
+An advantage of generic programming is that we can reuse the same code for multiple types/arguments/parameters. Although this gives us a lot of flexibility
+sometimes we want to be more specific, \ie some algorithms require special knowledge about the data types used to allow an efficient implementation. Some
+types have additional guarantees (\eg contiguous storage of its data elements) or allow more (efficient) operations (\eg containers with optimized sorting
+algorithm directly implemented and not by the generic \cpp{std::sort} function). In such cases is would be advantageous to provide a more specialized implementation
+of the same algorithm or data-structure without loosing the generic version for the other types.
+
+\begin{example}
+  Consider the function \texttt{distance()} returning the Euclidean distance of coordinate vectors.
+  %
+  \begin{minted}{c++}
+  template <typename Point>
+  double distance(Point const& a, Point const& b) { // primary template
+    double result = 0.0;
+    for (std::size_t i = 0; i < a.size(); ++i)
+      result += (a[i] - b[i]) * (a[i] - b[i]);
+    return std::sqrt(result);
+  }
+  \end{minted}
+  %
+  If we interpret scalar types also as 1-dimensional coordinate vectors, we might need to provide a specialization of that function
+  since the floating point types do not provide an \cpp{operator[]} and do not have a member function \cpp{size()}:
+  %
+  \begin{minted}{c++}
+  template <> // Specialization for floating-point type double
+  double distance<double>(double const& a, double const& b) {
+    return std::abs(a-b);
+  }
+  \end{minted}
+  %
+  Calling (instantiating) the function \texttt{distance} with arguments of type \cpp{double} then results in an instantiation of the more specialized
+  function and just returns the absolute difference. This might be more efficient to evaluate than the square-root of the squared value.
+\end{example}
+
+\begin{defn}
+  The first complete (non-specialized) template definition is called the \emph{primary template}. It has a special meaning in the context of overload resolution.
+\end{defn}
+
+Template specialization of function and class templates always start with the keyword \cpp{template <..>} and have the specialized type(s) in angular brackets
+directly after the function name or class name, \eg
+%
+\begin{minted}{c++}
+  template <>
+  ReturnType functionName<SpecializedType,...>(Arg1 arg1, Arg2 arg2...);
+
+  template <>
+  class ClassName<Type1, Type2,...>;
+\end{minted}
+%
+Thereby, all template parameters that are specialized are moved from the template parameter list in \cpp{template<...>} to the specialization parameter list
+\cpp{[function|class]Name<...>}. If no template parameters remain in the template parameter list, the specialization is called \emph{full specialization},
+otherwise \emph{partial specialization}.
+
+The \emph{primary template} specifies, that a function or class is a template. It is not specialized, but allows any template parameter. It is required to be
+declared (not necessarily defined) before any specialization.
+
+Some examples:
+\begin{minted}{c++}
+  // primary template
+  template <class T, class S>
+  class MyPoint; // Type T... element type, Type S... index type
+
+  // specialization for element type `double` and index type `int`
+  template <>
+  class MyPoint<double, int> { ... }; // (a)
+
+  // specialization for any element type but index type `long`
+  template <class T>
+  class MyPoint<T, long> { ... }; // (b)
+
+  // specialization for element type `MyPoint<T,int>' where `T` could be any type
+  // and fixed index type `int`
+  template <class T>
+  class MyPoint< MyPoint<T,int>, int > { ... }; // (c)
+\end{minted}
+(a) full specialization, (b) and (c) partial template specialization.
+
+
+% ==============================================================================
+\section{Partial Template Specialization}\label{seq:partial_template_specialization}
+If not all template parameters are fixed (specialized) and the template parameter list is not empty, the specialization is called
+\emph{partial template specialization}. This is allowed for class templates only! The specialization parameters can depend on some or all remaining
+template parameters in the template parameter list, \eg
+%
+\begin{minted}{c++}
+  template <class ValueType>
+  struct Rational { ... };
+
+  // specialization for all matrices of type Matrix<T> where T is a free parameter
+  template <class T>
+  struct Rational<Matrix<T>> { ... };
+\end{minted}
+
+Partial template specialization is not allowed for function templates, \eg the following produces an error:
+%
+\begin{minted}{c++}
+  // Declaration of the primary template
+  template <typename T, typename Index>
+  void foo();
+
+  template <typename T>
+  void foo<T, int>() { ... }; // ERROR: Partial template specialization of function templates
+\end{minted}
+
+\begin{rem}
+  Partial specialization of function templates can be emulated / worked around by using function overloading.
+  Therefore, either introduce a helper template, \eg \texttt{id}, and redirect to functions that are overloaded
+  on that wrapped type:
+  %
+  \begin{minted}{c++}
+  // helper class template without any members and any data
+  template <typename T> struct id {};
+
+  // dispatch function. Function parameter depending on the template parameters
+  template <typename T, typename Index>
+  void foo_aux(id<T>, id<Index>) { ... } // (1)
+
+  // dispatch function for fixed `index` parameter'
+  template <typename T>
+  void foo_aux(id<T>, id<int>) { ... } // (2)
+
+  // primary function template. Redirects to dispatch function
+  template <typename T, typename Index>
+  void foo() { foo_aux(id<T>{}, id<Index>{}); }
+  \end{minted}
+
+  The \emph{dispatch function} has the same number of template parameters as the original function, but has function parameters holding
+  these wrapped types in a template \cpp{id<...>}. Instantiating this templates does not cost anything and has no overhead. It is just
+  used to automatically deduce the template parameters.
+
+  By regular function overloading, one can ``specialize'' on the individual or both template parameters.
+
+  In the code above, the dispatch function (2) is more constrained / more special than the general dispatch function (1).
+
+  \textbf{Note:} Both dispatch functions are primary templates here. No template specialization, but overloading for different template
+  signatures.
+\end{rem}
+
+
+% =================================================================================================
+\section{Function overloading with Templates}
+Combining classical function overloading and template specialization raises the question: which function is more specialized, more constrained than the
+other one and thus, which function to call.
+
+Three examples should illustrate, that combining template specialization and overloading is a delicate and complicated situation and should be avoided:
+
+\begin{example}
+  Which function is called in the \cpp{main()}?
+  \begin{minted}{c++}
+  template <class T> void foo(T);  /* (a) */
+  template <class T> void foo(T*); /* (b) */
+  template <> void foo<int>(int*); /* (c) */
+
+  int main() { int *p; foo(p); }
+  \end{minted}
+  Here, (b) is an overload of (a) and (c) is a template specialization of (b).
+
+  General procedure:
+  \begin{enumerate}
+    \item Which of the \emph{primary templates} is the most specialized one? $\Rightarrow$ (a) and (b) are primary templates and (b) is more specialized.
+    \item If there are specializations of the selected primary template, choose the most specialized (but viable candidate) of all specialization of this
+          primary template. $\Rightarrow$ (c) is specialization of (b), thus choose (c).
+  \end{enumerate}
+\end{example}
+
+\begin{example}
+  Which function is called in the \cpp{main()}?
+  \begin{minted}{c++}
+  template <class T> void foo(T);  /* (a) */
+  template <class T> void foo(T*); /* (b) */
+  template <> void foo<int*>(int*);/* (c) */
+
+  int main() { int *p; foo(p); }
+  \end{minted}
+  The situation is similar to the last example but not exactly equal. Here, (c) is a specialization of (a).
+
+  \begin{enumerate}
+    \item (b) is the most specialized primary templates.
+    \item Since there is no template specialization of (b), (b) itself is chosen!
+  \end{enumerate}
+\end{example}
+
+Exact matching non-template functions are always preferred over function templates!
+
+\begin{example}
+  Which function is called in the \cpp{main()}?
+  \begin{minted}{c++}
+  template <class T> void foo(T);  /* (a) */
+  template <class T> void foo(T*); /* (b) */
+  void foo(int*);                  /* (c) */
+
+  int main() { int *p; foo(p); }
+  \end{minted}
+  There is a free function (non-template) (c). This is chosen first!
+\end{example}
+
+\begin{guideline}{Guideline}
+  Do not mix template specialization and function overloading. Prefer function overloading in general.
+\end{guideline}
+
+\begin{rem}
+  A nice overview and more detailed explanation of the interaction of function template specialization, overloading, argument type deduction and
+  argument dependent lookup can be found in the article\begin{itemize}
+	  \item \url{https://akrzemi1.wordpress.com/2015/11/19/overload-resolution}
+  \end{itemize}
+\end{rem}
+
+\subsection{Basic rules for overload resolution}
+\begin{enumerate}
+  \item All visible names are collected (involving \emph{argument dependent lookup} (ADL) in the namespaces of the arguments) (\emph{name lookup})
+  \item All non-viable functions are erased from that list\begin{itemize}
+    \item Number of parameters must match (involving default function parameters)
+    \item There must be a sequence of implicit conversions to transform the passed arguments into the function parameter types.
+    \item For function templates all template parameters must be deducible (\emph{argument type deduction} -- ATD)
+    \item If the replacement of a template parameter by the type derived from ATD would lead to a direct error, this raises a \emph{substitution failure}.
+          Candidates involving a substitution failure are simply ignored (a \emph{substitution failure is not an error} -- SFINAE)
+    \end{itemize}
+  \item A non-template function that is an exact match is the best fitting candidate.
+  \item For all primary template the most specialized one is selected (see below).
+  \item If there are template specializations of the best fitting primary template, the most specialized (matching) one is selected.
+\end{enumerate}
+
+What does it mean to be the \textit{most specialized} template? For two function templates that one is more specialized whose arguments can be inserted into the other function but not vice versa, \eg
+%
+\begin{minted}{c++}
+  template <class S> void foo(S);  // (1)
+  template <class T> void foo(T*); // (2)
+\end{minted}
+%
+Every pointer \cpp{T*} is also an arbitrary (non-constrained) type \cpp{S}, but not all types \cpp{S} are pointer types. Thus, (2) is more specialized than (1).
+
+\section{SFINAE}
+\label{sec:sfinae}
+
+We have learned that functions can be specialized for different
+parameters either be function overloading, or in certain cases by
+template specialization.
+
+\begin{example}
+  We consider again the case of a mathematical vector and the special
+  case of scalar functions.
+
+  While it was relatively easy to specialize \cpp{distance} for vector
+  types defined over \cpp{double} and for scalars, i.e. \cpp{double}.
+  Generalizing it to other scalar types is significantly more
+  complex. The declaration and the specialization would look like
+
+  \begin{minted}{c++}
+  template <typename Point>
+  auto distance(Point const& a, Point const& b);
+
+  template <typename Scalar>
+  auto distance<Scalar>(Scalar const& a, Scalar const& b);
+  \end{minted}
+  \emph{This example will not work!}
+
+  The first declaration is intended to work for any vector and the
+  return type depends on the type returned by \cpp{a[i]},
+  e.g. \cpp{double}, \cpp{float}, etc..
+
+  The specialization should work for scalars, but as we observe the
+  signature is the same in both cases, so we can't use specialization
+  here.
+\end{example}
+
+An alternative is based on function overloads, the SFINAE technique.
+
+SFINAE stands for \emph{Substitution Failure Is Not An Error}. Ill-formed
+signatures that results from substituting template parameters is not a
+hard compile error, it is only treated as a deduction failure.
+
+\subsection{The overload set}
+
+The compiler holds a list of different function overloads for a
+function name. If templated functions are available, the compiler first
+substitutes the templates and then adds the signature of this specific
+instatiation to the list of overloads.
+
+If this substitution is not well defined, SFINAE states that this is
+not a compile error, but the function is then simply not part of the
+overload set.
+
+\begin{example}
+  We now use the \cpp{distance} example and use SFINAE to manage the
+  overload set and make sure that the first version only works for
+  types with a bracket operator:
+  \begin{minted}{c++}
+  template <typename Point>
+  auto distance(Point const& a, Point const& b)
+    -> typename std::decay<decltype(a[0])>::type
+  {
+    using Field = typename std::decay<decltype(a[0])>::type;
+    Field result = 0.0;
+    for (int i = 0; i < a.size(); ++i)
+      result += (a[i] - b[i]) * (a[i] - b[i]);
+    return std::sqrt(result);
+  }
+  \end{minted}
+  \begin{itemize}
+  \item \cpp{decltype(a[0])} tries to deduce the return type of
+    \cpp{a[0]}
+  \item if the template parameter does not have a bracket operator,
+    the deduction failes and the function is removed from the overload
+    set.
+  \item if the bracket operator is available,
+    e.g. \cpp{std::vector<double>}, \cpp{decltype(a[0])} yields a
+    const reference to the scalar type, e.g. \cpp{const double&}. The
+    type trait (see section \ref{sec:type-traits}) \cpp{std::decay}
+    allows to retrieve the underlying type, i.e. the typedef
+    \cpp{std::decay<...>::type} is now \cpp{double}.
+  \end{itemize}
+
+  With this we have guarded the function definition for vectors. We
+  still have to do the same for the variant for scalar types:
+  \begin{minted}{c++}
+  template<typename Scalar>
+  auto distance(Scalar const& a, Scalar const& b)
+   -> typename std::enable_if<std::is_arithmetic<Scalar>::value, Scalar>::type
+  {
+    return std::abs(a-b);
+  }
+  \end{minted}
+  \begin{itemize}
+  \item the standard template library offers different type-traits to
+    check properties of types. Using \cpp{std::is_arithmetic} we can
+    heck whether a type is a number type.
+  \item For a scalar number type
+    \cpp{std::is_arithmetic<Scalar>::value} will be \cpp{true}, while
+    it will be \cpp{false} for a vector type.
+  \item \cpp{std::enable_if<bool, T>} will change its behaviour
+    depending on the boolean value. If and only if \cpp{bool} is \cpp{true} there
+    exists a typedef \cpp{type = T}.
+  \item If the template parameter is not an arithmetic value (i.e. a
+    scalar type), \cpp{std::is_arithemetic<...>::value} is
+    \cpp{false}. Thus the typedef \cpp{std::enable_if<...>::type} does
+    not exit, the experession is invalid and the function is removed
+    from the overload set.
+  \end{itemize}
+\end{example}
+
+\subsection{Idioms for SFINAE}
+
+We have learned about a particular version for implementing the SFINAE
+pattern, but there are a couple of version how to sneek a
+type deduction into the signature which can be used to make the
+expression unvalid and enforce removement from the overload set.
+
+\begin{description}
+\item[Via return type:] We already learned about the possibility to make the return
+  value a depended type, i.e. it depends on the template parameter.
+  Using techniques like \cpp{decltype} and helper \cpp{type-traits} it
+  is then possible to check for properties of template parameter and
+  then trigger a substitution failure if the type does not match the
+  requirements.
+\item[Via additional parameter:] We an add additional run-time
+  paramters to the function, which take a default value, so that users
+  don't have to specify them.
+  \begin{example}
+  \begin{minted}{c++}
+  template<typename Scalar>
+  Scalar distance(Scalar const& a, Scalar const& b,
+                  std::enable_if<std::is_arithmetic<Scalar>::value,
+int>::type dummy = 0)
+  {
+    return std::abs(a-b);
+  }
+\end{minted}
+    Again \cpp{enable_if} is used to have a conditional substitution
+    failure. If \cpp{Scalar} is a number type, the parameter
+    \cpp{dummy} is an \cpp{int} with default value \cpp{0}.
+  \end{example}
+\item[Via additional template parameter:] In a similar way we can use
+  an optional template parameter:
+  \begin{example}
+  \begin{minted}{c++}
+  template<typename Scalar,
+           typename std::enable_if<std::is_arithmetic<T>::value,
+int>::type = 0>
+  Scalar distance(Scalar const& a, Scalar const& b)
+  {
+    return std::abs(a-b);
+  }
+\end{minted}
+  \end{example}
+\item[Concepts] Since \cxx{20} many of these techniques an be
+  implemented in a significantly nicer syntax using \cxx{
+    Concepts}. Concepts allow to bundle different properties of a type
+  (i.e. different traits) into a \emph{concept} and explicitly state
+  that a type has to fulfil this concept. Imagine we have defined a
+  concept \cpp{Number} we could write
+  \begin{minted}{c++}
+  template<Number Scalar>
+  Scalar distance(Scalar const& a, Scalar const& b)
+  {
+    return std::abs(a-b);
+  }
+\end{minted}
+  and directly express our condition on the template
+  parameter. Discussing the details would go beyond the scope of this
+  lecture.
+\end{description}

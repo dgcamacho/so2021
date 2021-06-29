@@ -42,7 +42,7 @@ While functions are not objects they do have an address
 Function pointers to non-member functions
 - Declaration: `<return_type> (*function_name) (<args>...)`
 - Allows passing functions as parameters
-- E.g. passing a custom compare function to `std::sort` (see later)
+- E.g. passing a custom compare function to `std::sort`
 - E.g. passing a callback to a method
 - Can be invoked in the same way as a function
 
@@ -188,7 +188,7 @@ count(42);  // num == 2
 count(3);   // num == 3
 ```
 
-> .h3[Attention:] Passing stateful functors to functions requires the functor argument to reference
+> .h3[Attention:] Passing stateful functors to functions requires the functor argument to be a reference.
 > Otherwise, either the result is lost at the end of the call, or the non-`const` function cannot be called.
 
 ---
@@ -234,7 +234,7 @@ Functor classes are out-of-place
 
 --
 
-C++ defines *lambda expressions* as a more flexible alternative
+\(\to\) C++ defines *lambda expressions* as a more flexible alternative
 - Lambda expressions construct a *closure*
 - Closures store a function together with an environment
 - Lambda expressions can capture variables from the scope where they are
@@ -394,6 +394,18 @@ The binary functor gets as input two argument of the same type as the initial va
 ```c++
 template <class InputIt, class T>
 T accumulate (InputIt first, InputIt last, T init, std::function<T(T,T)> op); // overhead!
+```
+
+--
+
+5) Write your own constraint, e.g., `Function<R(I1,I2)>` with `R` the return type and `I1,I2` the input types:
+```c++
+template <class InputIt, class T, Function<T(T,T)> BinaryOp>
+T accumulate (InputIt first, InputIt last, T init, BinaryOp op);
+// or
+
+template <class InputIt, class T>
+T accumulate (InputIt first, InputIt last, T init, Function<T(T,T)> auto op);
 ```
 
 ---

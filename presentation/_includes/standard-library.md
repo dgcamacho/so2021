@@ -536,8 +536,8 @@ template <typename Iterator, typename T>
 T accumulate (Iterator first, Iterator last, T init)
 {
   T sum(init);
-  for (; first != last; ++it)
-    sum = sum + *it;
+  for (; first != last; ++first)
+    sum = sum + *first;
   return sum;
 }
 ```
@@ -597,7 +597,7 @@ means an Iterator that can be compared to its template parameter.
 ## Algorithms with Iterators
 ### Example: Copy from one into another container
 ```c++
-template <typename InputIt, class OutputIt>
+template <typename InputIt, typename OutputIt>
 OutputIt copy (InputIt first, InputIt last, OutputIt d_first)
 {
   while (first != last)
@@ -625,7 +625,7 @@ OutputIt copy (I first, S last, O d_first)
 ## Algorithms with Iterators
 ### Example: Copy from one into another container
 ```c++
-template <typename InputIt, class OutputIt>
+template <typename InputIt, typename OutputIt>
 OutputIt copy (InputIt first, InputIt last, OutputIt d_first)
 {
   while (first != last)
@@ -705,9 +705,9 @@ The algorithm `std::fill` sets all elements of a range to the same value:
 ```c++
 // #include <algorithm>
 template <class ForwardIt, class T>
-void fill (ForwardIt first, ForwardIt lst, T const& value)
+void fill (ForwardIt first, ForwardIt last, T const& value)
 {
-  for (; for != last; ++first)
+  for (; first != last; ++first)
     *first = value;
 }
 ```
@@ -722,7 +722,7 @@ The algorithm `std::iota` fills a sequence with increasing values, starting from
 ```c++
 // #include <numeric>
 template <class ForwardIt, class T>
-void iota (ForwardIt first, ForwardIt lst, T value)
+void iota (ForwardIt first, ForwardIt last, T value)
 {
   while (first != last) {
     *first++ = value;
