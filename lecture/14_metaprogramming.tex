@@ -148,6 +148,8 @@ The compiler output of \texttt{g++ -S factorial.cc} generates assembler code:
       subl    $1, %eax          //  } m := n-1
       movl    %eax, %edi        // /
       call    _Z3factoriali     // factorial(m)
+      imull   -4(%rbp), %eax    // n * factorial(m)
+      jmp     .L3
   //...
   .L2:
       movl    $1, %eax          // return_value = 1

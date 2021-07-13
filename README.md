@@ -4,7 +4,7 @@
 
 | Topic                                  | Download                 | Updated       |
 |----------------------------------------|--------------------------|---------------|
-| Scientific Programming with C++        | [lecture.pdf][]          | 2021/06/29    |
+| Scientific Programming with C++        | [lecture.pdf][]          | 2021/07/13    |
 
 [lecture.pdf]: https://gitlab.mn.tu-dresden.de/teaching/scprog/so2021/-/jobs/artifacts/master/raw/lecture/lecture.pdf?job=build
 
