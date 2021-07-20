@@ -24,7 +24,7 @@ template<> struct Prime_print<1> {
 #define LAST 18
 #endif
 
-main() {
+int main() {
  Prime_print<LAST> a;
  a.f();
 }
