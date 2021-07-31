@@ -1,0 +1,264 @@
+\chapter{Introduction}
+\begin{zitat}{Bjarne Stroustrup (1994) \cite{stroustrup1994design}}
+  ``It would be nice if every kind of numeric software could be written in C++ without loss of efficiency, but unless something can be found that achieves this without compromising the C++ type system it may be preferable to rely on Fortran, Assembler or architecture-specific extensions.''
+\end{zitat}
+
+Scientific programming is an old discipline in computer science. The first applications on computers were indeed computations.
+In the early decades, ALGOL was a relatively popular programming language, competing with FORTRAN. FORTRAN 77 became a standard
+in scientific programming because of its efficiency and portability. Other computer languages were developed in computer science
+but not frequently used in scientific computing: C, Ada, Java, C++. They were merely used in universities and labs for research
+purposes.
+
+C++ was not a reliable computer language in the 90s: code was not portable, object code not efficient and had a large size. This
+made C++ unpopular in scientific computing. This changed at the end of the nineties: the compilers produced more efficient code,
+and the standard was more and more supported by compilers. Especially the ability to inline small functions and the introduction
+of complex numbers in the C99 standard made C++ more attractive to scientific programmers.
+
+Together with the development of compilers, numerical libraries are being developed in C++ that offer great flexibility together
+with efficiency. This work is still ongoing and more and more software is being written in C++. Currently, other languages used
+for numerics are FORTRAN 77 (even new codes!), Fortran 95, and Matlab. More and more becoming popular is Python. The nice thing
+about Python is that it is relatively easy to link C++ functions and classes into Python scripts. Writing such interfaces is not
+a subject of this course, though.
+
+The quote of Bjarne Stroustrup, the developer of the C++ programming language, is from the mid 90s. Since then a lot has changed.
+\begin{zitat}{Todd L. Veldhuizen (2000) \cite{veldhuizen2000}}
+  ``C++ is now ready to compete with the performance of Fortran. Its performance problems have been solved by a combination of
+  better optimizing compilers and template techniques. It's possible that C++ will be faster than Fortran for some applications.''
+\end{zitat}
+
+The goal of this course is to introduce students to the exciting world of C++ programming for scientific applications. The course
+does not offer a deep study of the programming language itself, but rather focuses on those aspects that make C++ suitable for
+scientific programming. Language concepts are introduced and applied to numerical programming, together with the STL and Boost.
+
+It is not our goal to explain all C++ features in a well-balanced manner. We rather aim for an application-driven illustration of
+features that are valuable for writing \textbf{well-structured}, \textbf{readable}, \textbf{maintainable}, \textbf{extensible},
+\textbf{type-safe}, \textbf{reliable}, \textbf{portable}, and last but not least \textbf{highly performing} software. In order
+to achieve this goal we not only want to explain a programming language, but also discuss best practice in coding and project
+management of scientific software.
+
+\section{Motivating example}
+While in classical computer science courses the famous \emph{hello world} example is shown at the beginning, in the scientific
+programming lecture we switch to a more numerics oriented initial example: matrix-vector multiplication.
+
+Let $A\in\mathbb{R}^{n\times n}$ be a real (dense) matrix of size $n\times n$, with $n > 0$ a positive integer, and $\mathbf{x}\in\mathbb{R}^n$
+a corresponding real vector of size $n$. We do not assume any special properties of $A$, like symmetry, bandedness, or triangular
+shape. As will be explained later in the lecture and in some exercises, we have two classes, \cpp{DenseMatrix} and \cpp{DenseVector}
+that can represent our real-valued matrix $A$ and vector $\mathbf{x}$:
+%
+\begin{minted}{c++}
+  DenseMatrix A(100, 100);
+  // initialize A
+  DenseVector x(100);
+  // initialize x
+\end{minted}
+
+We want to solve the task $\mathbf{y} = \alpha A\mathbf{x} + \beta \mathbf{y}$ (accumulated matrix-vector multiplication) with $\mathbf{y}\in\mathbb{R}^n$ initialized to zero
+and $\alpha=\beta=1$ for simplicity.
+%
+\begin{minted}{c++}
+  DenseVector y(m, 0.0);
+\end{minted}
+
+First, we are using the library CBLAS:
+%
+\begin{minted}{c++}
+  int m = A.rows();         // number of rows of the matrix A
+  int n = A.cols();         // number of columns of the matrix A
+  int lda = std::max(1,m);  // Specifies the leading dimension of array storing the value of A
+  int incx = 1;             // Specifies the increment for the elements of x
+  int incy = 1;             // Specifies the increment for the elements of y
+  double alpha = 1.0, beta = 1.0;
+
+  cblas_dgemv(CblasRowMajor, CblasNoTrans, m, n, alpha, &A[0][0], lda,
+              &x[0], incx, beta, &y[0], incy);
+\end{minted}
+%
+Second, we solve the same task, using some techniques we will develop during this lecture:
+%
+\begin{minted}{c++}
+  y += A*x; // or more generally: y = alpha*A*x + beta*y;
+\end{minted}
+
+The C++ version more clearly states what it computes, has no arguments that you could mix up, and (this might be
+surprising) is not necessarily slower than the first version and even can call all variants of the \texttt{clas\_***mv} methods
+from CBLAS simply by analyzing the arguments passed to the multiplication operator \texttt{*}.
+
+\begin{rem}
+  If you test the initial exercise implementation, you will find that it is indeed slower than the CBLAS version. During the semester
+  we will learn some more advanced techniques and ways to come close the performance of an optimized blas. An example of a high-level
+  C++ implementation beating the BLAS call is MTL4 by Peter Gottschling.
+\end{rem}
+
+\begin{rem}
+  In BLAS there are multiple different versions of the \texttt{dgemv} function. The function name encodes different constellations, \ie
+  the first letter \texttt{d} means \cpp{double} precision, the letters \texttt{ge} means \emph{general}, \texttt{m} mean \emph{matrix}
+  and \texttt{v} means vector. So, it implements the matrix-vector product of a general matrix in double precision. Other precision
+  types are \{\texttt{s}: single precision, \texttt{d}: double precision, \texttt{c}: complex single precision, and \texttt{z}: complex
+  double precision\}, for the matrix type, we have \{\emph{general matrix}, \emph{general band matrix}, \emph{hermitian/symmetric matrix},
+  \emph{triangular matrix}, $\ldots$\}, and the matrix can be transposed, or conjugate transposed, and can be in different storage format.
+
+  Thus, BLAS provides many combinations of these different properties, but all functions have a different name, and different arguments. It
+  is not so easy to get it right and is hard to debug and to find errors. Even the documentation of just 3 different BLAS Level 2 functions
+  in all its variants is a 24 pages long document.
+
+  On the other hand, in C++ you can encode several of these properties in the data-type of the matrix. This allows to generate for the \textbf{same}
+  function call different specialized implementations by the compiler. So, there is no overhead of dispatching by the various matrix properties.
+  The MTL4 library implements this and we will also see in this lecture how to switch an algorithm by inspecting type properties.
+\end{rem}
+
+This lecture goes beyond the basics of the C++ programming language and tries to teach how to write, debug, and manage code, how to analyze
+performance and how to test and optimize your implementation. Classical design patterns of object-oriented programming is more the focus of
+the twin lecture SCPROG -- Fortgeschrittene Konzepte des Wissenschaftlichen Programmierens: OOP mit Java -- by Prof. W. Walter.
+
+
+\section{Structure of the lecture and tutorial}
+This module focuses on three learning goals:
+\begin{enumerate}[1)]
+  \item Programming with C++
+  \item Working with programming tools
+  \item Discovering scientific C++ software libraries
+\end{enumerate}
+
+There will be a tutorial every week with exercises. The corresponding exercise sheets can be found online in a Git repository at
+
+\url{https://gitlab.mn.tu-dresden.de/teaching/scprog/wi2019}
+
+On each exercise sheet there are a few exercises marked for submission. Approximately two weeks you have time to work on the tasks
+and are supposed to submit your solutions into the Git repository itself. Therefore, in the first tutorials you get an account and
+have to create a Git project on the TU-Dresden local GitLab server \url{https://gitlab.mn.tu-dresden.de}. The details about this are
+explained on the repository README page and are presented in the first tutorial. The advantage you have from submitting the exercises
+is 1. you get a personal review and feedback, 2. you learn how to work in a cooperative environment on scientific projects, and 3. you
+can get a bonus for the final oral exam (reaching 66\% of the possible exercise points gives a bonus of up to a grade of 0.3).
+
+\subsection{Course outline}
+\begin{itemize}
+  \item Best practice in scientific programming
+  \item C++ basics (data-types, operators, pointers, arrays, references, $\ldots$)
+  \item Scopes, Namespaces, Functions
+  \item Overloading, Specialization
+  \item Basics of object-oriented class design, inheritance, polymorphie
+  \item Generic Programming with templates
+  \item Generic Design patterns (Functors, Iterators, Type-Traits)
+  \item Algorithms and Data-Structures in the C++ standard library
+  \item Meta-Programming
+  \item Expression-Templates
+  \item (Compile-Time symbolic differentiation)
+\end{itemize}
+
+\section{Literature and material}
+There is a lot of good (and a lot of bad) literature on C++ programming. Some references with links to the Slub and to online sources
+are given on the website
+
+\url{https://math.tu-dresden.de/~spraetor}
+
+on the subpage \texttt{Teaching/Scientific Programming with C++}, or on the README page of the repository as above. The main source for reference of C++ is the nearly complete online standard at
+
+\url{https://en.cppreference.com}
+
+and the official standard
+
+\url{https://github.com/cplusplus/draft}, or \\
+\url{http://www.open-std.org/jtc1/sc22/wg21/}
+
+
+\section{Programming paradigms}
+\emph{Programming paradigms}\footnote{\url{https://en.wikipedia.org/wiki/Programming_paradigm}} are a way to classify programming languages
+based on their features. Languages can be classified into multiple paradigms. Some common programming paradigms include:
+\begin{enumerate}
+  \item \emph{imperative} in which the programmer instructs the machine how to change its state,
+    \begin{enumerate}
+      \item \emph{procedural} which groups instructions into procedures, (Fortran, C, Pascal)
+      \item \emph{object-oriented} which groups instructions together with the part of the state they operate on, (Java, C++)
+    \end{enumerate}
+  \item \emph{declarative} in which the programmer declares properties of the desired result, but not how to compute it
+    \begin{enumerate}
+      \item \emph{functional} in which the desired result is declared as the value of a series of function applications, (Haskell, Scheme)
+      \item \emph{logic} in which the desired result is declared as the answer to a question about a system of facts and rules. (ALF, Curry)
+    \end{enumerate}
+\end{enumerate}
+
+Some programming languages are referred to as multi-paradigm programming languages. A concise reference\footnote{\url{https://en.wikipedia.org/wiki/Comparison_of_multi-paradigm_programming_languages}} for the programming
+paradigms that are supported directly (or by a library implementation) of C++ include
+\begin{description}
+  \item[Concurrent programming] have language constructs for concurrency, these may involve multi-threading, support for distributed computing, message passing, shared resources (including shared memory), or futures
+  \item[Constraint programming] relations between variables are expressed as constraints (or constraint networks), directing allowable solutions (uses constraint satisfaction or simplex algorithm)
+  \item[Dataflow programming] forced recalculation of formulas when data values change (\eg spreadsheets)
+  \item[Declarative programming] describes what a computation should perform, without specifying detailed state changes c.f. imperative programming (functional and logic programming are major subgroups of declarative programing)
+  \item[Distributed programming] have support for multiple autonomous computers that communicate via computer networks
+  \item[Functional programming] uses evaluation of mathematical functions and avoids state and mutable data
+  \item[Generic programming] uses algorithms written in terms of to-be-specified-later types that are then instantiated as needed for specific types provided as parameters
+  \item[Imperative programming] explicit statements that change a program state
+  \item[Logic programming] uses explicit mathematical logic for programming
+  \item[Metaprogramming] writing programs that write or manipulate other programs (or themselves) as their data, or that do part of the work at compile time that would otherwise be done at runtime
+  \item[Object-oriented programming] uses data structures consisting of data fields and methods together with their interactions (objects) to design programs
+  \item[Pipeline programming] a simple syntax change to add syntax to nest function calls to language originally designed with none
+  \item[Rule-based programming] a network of rules of thumb that comprise a knowledge base and can be used for expert systems and problem deduction and resolution
+\end{description}
+
+Just a few other programming languages are listed on Wikipedia that have a similarly long list (Haskell, Julia, Mathematica).
+
+
+\section{History of C++}
+The programming language has a long history, that is described in the books by Bjarne Stroustrup: \emph{The Design and Evolution of C++, 1994},
+\url{http://www.stroustrup.com/hopl2.pdf} (\emph{A History of C++: 1979--1991}) and \url{http://www.stroustrup.com/hopl-almost-final.pdf}
+(\emph{Evolving a language in and for the real world: C++ 1991--2006}). A summary of this can be found at
+\url{http://en.cppreference.com/w/cpp/language/history}. The following story is mainly based on the book from 1994.
+
+\subsection{Early C++}
+The history of C++ goes back to the year \textbf{1979} where Bjarne Stroustrup worked in his doctoral thesis on topics about the
+programming language \emph{Simula}. This language is named on of the first object-oriented programming languages, developed in the
+1960s by Ole-Johan Dahl and Kristen Nygaard. Bjarne recognized the advantage of this programming technique in the area of software
+development, but also has seen the disadvantage of Simula, its very low performance for real-world projects.
+
+Thus, he decided to design a new language including ideas of Simula. The first development in this direction was done in the years
+\textbf{1979--1983}. He extended the language C by the concept of classes -- a combination of data and functions acting on this data
+$\rightarrow$ \textit{C with classes}. A first compiler based on a C compiler was build (\textit{Cfront}). The feature set of this new
+programming language can be summarized as: Classes, Derived class (no virtual functions), public/private access control,
+constructors/destructors, Call and return functions (later removed), friend classes, type checking and conversion of function arguments,
+inline functions, default arguments and assignment-operator overloading.
+
+When it came to more and more features, the concept C with classes was buried and designed from scratch. Also the compiler based on a C compiler
+was abandoned. In the year \textbf{1983} a new language with a new name was born: \textit{C++}, derived from the increment operator in C,
+where the \texttt{++} could be understood as \emph{next}, \emph{successor}, or \emph{increment} of the C language. New features, compared
+to \emph{C with classes} introduced in C++ are: virtual functions, function name and operator overloading, references, constants,
+user-controlled free-storage memory control, improved type checking. A long list a more feature was added in the Release 2.0 of the language
+around \textbf{1986-1987}.
+
+A first reference manual, \textit{The C++ programming language}, was written in the year \textbf{1985}, and later in \textbf{1990} the book
+\textit{The Annotated C++ Reference Manual}. The language was not yet standardized. So, the book are kind of the standard reference manuals.
+During these days other compiler vendors published a C++ compiler, like  the \textit{Borland C++ Compiler} and in \textbf{1987} C++ was added
+to the GNU Compiler Collection GCC.
+
+\subsection{Standard C++}
+The first ISO standard of C++ was published in the year \textbf{1998}, also called \cxx{98} standard. Fron that release on, the C++ versions are
+named after the publication year of the standard document. Around \textbf{1979} an accompanying library was developed, providing standard
+containers and algorithms. This library, known as the standard library, later became part of the C++ standard. During the year \textbf{1999}
+the collection \emph{Boost} was founded by some standard committee members, to push the development of standard library components.
+
+A first correction of the \cxx{98} standard was published in \textbf{2003}. It resolved several smaller or larger errors and problems in the
+1998 standard and was named again after the publication year, \cxx{03} standard. In \textbf{2005} extensions of the 2003 standard were collected
+and summarized in the technical report TR1. Those developments were the bases for a new standard that was intended to be published in the
+early 2000s. This can be seen on the working title of this standard \cxx{0x}. But it needed more time and couln't be finished within the same
+decade. Finally in 2011 the standard \cxx{11} was finalized and published. It contains a long list of new features (including lambda functions,
+constexpr, auto type deduction, decltype specifier, several library extensions like tuples, arrays, type-traits and a lot more) and was the
+biggest new release since the initial version from 1998.
+
+Since version 4.8.1. of GCC the \cxx{11} version is completely implemented. In Clang since version 3.3., in Intel ICC Compiler since version 15.0,
+and in Microsoft Visual Studio Compiler since version 19.0. See \url{https://en.cppreference.com/w/cpp/compiler_support} for an overview of
+the compiler support of C++ features.
+
+Although the \cxx{11} standard brought so many new features, some could not be complete in the standard, others needed minor fixes. This is the reason
+why in \textbf{2014} the next \emph{minor} revision of the standard, called \cxx{14}, was published. But it is more than a revision, it is a completion
+of the \cxx{11} standard. The working title of the standard was \cxx{1y} and the Compiler vendors finished their implementation of the standard
+with version 5 of GCC, version 3.4 of clang, version 17.0 if Intel ICC, and version 19.10 of MSVC. Due to some bugs in the implementation,
+the recommendation for GCC is version 6.1 for \cxx{14}, though.
+
+\cxx{14} is not the recent standard. Since the release of the \cxx{11} standard in 2011, it was decided to have a fixed release cycle of 3 years,
+where each new feature that is not completely ready until a some feature freeze date has to wait for the next release and not the release for the feature.
+The current published C++ release is \cxx{17} (working title \cxx{1z}) and the development for \cxx{20} (working title \cxx{2a}) is in its
+final standardizing phase. Both standards are only partially implemented by the compiler vendors, but at least the core language features
+of \cxx{17} are now finished. It needs approximately 3 years after a standard is published until all feature and library components are
+implemented by the compilers GCC, clang, ICC, and MSVC.
+
+Proposals for new features and some discussion of the future development of C++ can be found at the ISO-standard workinggroup 21 page
+\url{http://www.open-std.org/jtc1/sc22/wg21/}.

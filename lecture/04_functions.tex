@@ -1,0 +1,462 @@
+\section{Functions\label{sec:function}}
+A function declaration consists (in the simplest case) of a return type, the function name and comma separated list of argument types (zero or more):
+%
+\cppline{ReturnType function_name(Type1 arg1, Type2 arg2,...);}
+%
+A declaration (or prototype) introduces this name into the current scope and tells the compiler that you intend to define it. The
+implementation of the body of the function makes a declaration to a definition. Both can be combined or separated. You can even provide
+the definition in a separate source file, or even link it dynamically at runtime in your program.
+
+functions that do not return a value have the return type \cpp{void} --- a fundamental type representing the empty set of values.
+
+\begin{rem}
+  With \cxx{11}\marginpar{[\cxx{11}]} an alternate syntax for the function declaration is introduced, utilizing the \cpp{auto} keyword:
+  %
+  \cppline{auto function_name(Type1 arg1, Type2 arg2,...) -> ReturnType;}
+  %
+  It's call a function with trailing return type. Here the return type might directly depend on the arguments (argument types not values).
+
+  With \cxx{14}\marginpar{[\cxx{14}]} one can even omit the trailing type:
+  %
+  \cppline{auto function_name(Type1 arg1, Type2 arg2,...) { ... };}
+  %
+  Here, the declaration must be a definition, since the actual return type is deduced from the \cpp{return} expression of the function.
+\end{rem}
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Argument passing and return values\label{sec:function-arguments}}
+There are essentially two ways how to pass values/arguments to functions:
+\begin{description}
+  \item[pass-by-value] The passed values initialized a new local variable, that is destroyed at the end of the function body:
+  \begin{minted}{c++}
+  void foo(int i) {
+    i = 5; // the local variable i is changed
+  }
+
+  int main() {
+    int j = 4;
+    foo(j);     // j is not changed
+    return 0;
+  }
+  \end{minted}
+
+  \item[pass-by-reference] Arguments are references to the passed variables and build a local alias of that:
+  \begin{minted}{c++}
+  void foo(int& i) {
+    i = 5; // changes the alias i, thus changing the passed variable j
+  }
+  int main() {
+    int j = 4;
+    foo(j);     // j is changed by the function foo
+    return 0;
+  }
+  \end{minted}
+
+  \item[pass-by-const-reference] Similar to \emph{pass-by-reference}, but does not allow to change the value of the alias:
+  \begin{minted}{c++}
+  void foo(int const& i) {
+    /* i = 5; */ // a change of the local reference i is not allowed
+  }
+
+  // or
+  void foo2(const int& i) {...}
+
+  int main() {
+    int j = 4;
+    foo(j);     // j can not be changed by foo
+    return 0;
+  }
+  \end{minted}
+\end{description}
+
+\begin{rem}
+  For small types \cpp{T}, \eg \cpp{int}, \cpp{double}, ..., it is recommended to simple pass-by-value. Larger objects should be passed by
+  reference instead, to reduce the cost of copies:
+  \begin{enumerate}[1)]
+  \item If the function intends to change the argument as a side effect, take it \emph{by non-const reference}.
+  \item If the function doesn't modify its argument and the argument is of primitive type, take it \emph{by value}. (``Primitive'' basically means
+  small data types that are a few bytes long and aren't polymorphic (iterators, function objects, etc...) )
+  \item Otherwise take it \emph{by const reference}, except in the following case:\begin{itemize}
+        \item If the function would then need to make a copy of the const reference anyway, take it \emph{by value}.
+  \end{itemize}
+  \end{enumerate}
+\end{rem}
+
+\begin{example}
+  Assume, you have a type \cpp{A} that implements a \texttt{+=} operator. In order to implement the plus operator, one can use that. Two implementations
+  are possible:
+  \begin{minted}{c++}
+  // instead of
+  A operator+(A const& a, A const& b) {
+    A tmp = a; // create a copy of a
+    return tmp += b;
+  }
+
+  // write:
+  A operator+(A a, A const& b) {
+    return a += b;
+  }
+  \end{minted}
+  The plus operator can in most cases be implemented as \texttt{+=} and this should be the way to go! Don't repeat yourself.
+\end{example}
+
+\begin{guideline}{Principle}
+  Make all function arguments \cpp{const} by default, except when intending to change its value.
+\end{guideline}
+
+\subsubsection{Default values}
+Arguments can be given a default value, that is taken if the argument is not passed to the function. Since parameters are passed in order, default values
+must be set to arguments starting from the last one.
+\begin{example}
+  The following example defines a function with 3 arguments, where the last two are optional:
+  \begin{minted}{c++}
+  void foo(int a, double b = 2.0, char c = 'c') { /* ... */ }
+
+  int main()
+  {
+    foo(1); // OK
+    foo(1, 5.0); // OK
+    foo(1, 5.0, 'x'); // OK
+  }
+  \end{minted}
+\end{example}
+
+\begin{rem}
+  One can not directly set a default value for the first argument and no default value for the second argument. If a default is set, for argument $n$, all
+  following arguments also must have a default value.
+
+  An alternative to these default values, are \emph{optional} values. This is a library extension in \cxx{17}\marginpar{[\cxx{17}]}, where the actual default
+  value is set when you use it:
+  \begin{minted}{c++}
+  #include <optional>
+  void foo(std::optional<int> a_, double b, char c)
+  {
+    int a = a_.value_or(1);
+    /* ... */
+  }
+
+  int main()
+  {
+    foo(1, 5.0, 'x'); // OK
+    foo(1, 5.0); // ERROR, char c not passed to function
+    foo(std::nullopt, 5.0, 'x'); // OK, a = 1
+    foo({}, 5.0, 'x'); // OK, same as above
+  }
+  \end{minted}
+\end{rem}
+
+
+\subsubsection{Return values}
+If a function has a return type unequal to \cpp{void}, it needs a \cpp{return} statement. Void-functions can omit this statement, but are allowed to
+call an empty return:
+\begin{minted}{c++}
+int foo() {
+  return 42;
+}
+
+void bar() {
+  return;
+}
+\end{minted}
+
+It is allowed to have multiple return statements, but there is only one return type that is fixed by the function declaration. Thus all return statements
+must return the same type (or at least all return values are implicitly cast to the return type).
+
+\begin{guideline}{Principle}
+  Make sure, that a function has a call to \cpp{return} in every execution path.
+\end{guideline}
+
+For the return types it is similar to the argument passing. You can return by value, or return by reference (where for the latter case there
+are some pitfalls, see below). But, you can also return a value, by providing an additional \emph{output argument}, \eg
+%
+\cppline{void function_name(Type1 arg1, Type2 arg, ..., OutputType& output, ...) { ... }}
+%
+where the order of the function arguments does not matter, \ie you could also start with the output argument. The important aspect is that
+output arguments must be passed by (non-const) reference. The intend is that you create the output variable outside of the function and pass it by
+reference to the function where it is filled with values.
+
+\begin{rem}
+  There is no only-output parameter type in c++, you can always read from the output variable. This is a source of errors so that some people prefer
+  not to use output arguments, or use pointer arguments exclusively for this purpose, so that access to the value must be done explicitly.
+\end{rem}
+
+A common mistake is to return a reference to a local variable of the function:
+\begin{minted}{c++}
+std::vector<int>& foo(int input) {
+  std::vector<int> temp; // local variable
+  // ...
+  return temp; // PROBLEM!!!
+}
+\end{minted}
+At the end of the function scope, the local variable is destroyed and thus the reference is referring to some destroyed memory. This is also
+called a \emph{dangling reference} and results in an error that is very hard to detect. So, don't do that!
+
+If you return by reference, make sure the object you return outlives the lifetime of the function.
+
+Positive examples:
+\begin{minted}{c++}
+int& foo1(int& input) {
+  return input; // input references an existing object living outside of the function
+}
+int& foo2() {
+  static int i = 5; // a static variable is not destroyed at the end of the function scope
+  return i;
+}
+\end{minted}
+
+\begin{rem}
+  Using \cpp{auto} return type might lead to unexpected behavior, if combined with references. The type that is returned is the raw type
+  of the expression in the return statement, removing all top-level const and reference qualifiers:
+  \begin{minted}{c++}
+  auto           f0(int i) { return i; }  // -> int
+  auto           f1(int& i){ return i; }  // -> int
+  auto&          f2(int& i){ return i; }  // -> int&
+  \end{minted}
+
+  The new language keyword \cpp{decltype(auto)}\marginpar{[\cxx{14}]} is introduced, to overcome the problem that returning a reference does not return a reference:
+  \begin{minted}{c++}
+  decltype(auto) f3(int i) { return i; }  // -> int
+  decltype(auto) f4(int& i){ return i; }  // -> int&
+  \end{minted}
+  It is a placeholder type, as \cpp{auto}, but does not remove top-level const and references.
+\end{rem}
+
+
+\subsubsection{Guidelines}
+The CppCoreGuidelines provide a guideline how to pass parameters and how to return values, depending on the type of the arguments:
+
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=.8\linewidth]{images/param-passing-normal}
+\end{center}
+\caption{From \href{https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md}{CppCoreGuidelines} secion F.15}
+\end{figure}
+
+
+\subsubsection{Return value optimization / Copy elision}
+Returning a local value created inside the function by value means naively the same as in argument passing: when the returned value is assigned to a
+new variable, this is created as copy of that return value.
+
+This is not completely true. Instead of the procedure  1. create / allocate space for the local variable, 2. create the target variable,
+3. copy the function return from the local variable to the target variable, 4. destroy the local variable, the compiler is allowed to use the
+fact that the local variable is destroyed at the end of the function, so not used any more, and the target variable is created only to hold
+the returned function value. Instead of allocating two variables, it allocates only one and works in both cases with this variable.
+With \cxx{17}\marginpar{[\cxx{17}]} this behavior is guaranteed by the standard. Before 2017 standard, it was a compiler optimization.
+
+Example 1:
+\begin{minted}{c++}
+double f() { return 42.0; }
+int main()
+{
+  double x = f();
+  // translates to
+  double x = 42.0;
+}
+\end{minted}
+
+Example 2:
+\begin{minted}{c++}
+double f()
+{
+  double y = 42;
+  return y; // copy is not guaranteed to be elided, but a common optimization
+}
+
+int main()
+{
+  double x = f();
+  // may translate to (named return value optimization)
+  double x = 42.0;
+}
+\end{minted}
+
+Some people prefer the naming \emph{deferred temporary materialization}, \ie the materialization of the value 42 happens in the \cpp{main()} when
+assigned to the variable \cpp{x}.
+
+This optimization or guarantee is especially important, if you want to return large objects created inside of the function. It is thus
+guaranteed that no expensive copy operation must be performed. (not even a move operation). The created objects simply materializes outside of
+the function in the target variable.
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Signature\label{sec:function-signature}}
+The signature of the function is used to select a function to call. For simple functions, the signature is build of
+\begin{itemize}
+  \item function name,
+  \item parameter-type-list,
+  \item enclosing namespace (if any), and
+  \item trailing requires-clause (if any) [\cxx{20}]
+\end{itemize}
+where the \emph{parameter-type-list} specifies the number and type of each individual parameter. Also qualifiers like \cpp{const} and \texttt{\&}
+are important in the to distinguish types in that list. It is also allowed to have an \emph{ellipsis}, \ie \texttt{...} at the end of the parameter
+list, to indicate a \emph{variadic} function.
+
+The \emph{enclosing namespace} defines the named scope in which the function is defined in and the \emph{trailing requires-clause} is related
+to concepts that the parameter types and function must fulfill. (we will discuss this only briefly in a later chapter of the lecture).
+
+The signature + return type defines the type of the function.
+
+\begin{rem}
+  An empty parameter list is equivalent to a single parameter of type \cpp{void}. (This is typical in some C programs).
+\end{rem}
+
+
+%--------------------------------------------------------------------------------------------------
+\subsection{Function overloading\label{sec:function-overloading}}
+In C++ it is allowed to have multiple functions with the same name (in the same scope). At least if it is possible to distinguish those function by
+their function signatures! The introduction of the same name multiple times is called \emph{overloading}. Function overloading is used to implement
+the same algorithm for different argument types with the same function name.
+
+\begin{example}
+Let's consider an example from the beginning:
+%
+\begin{minted}{c++}
+  struct Point { double x, y; };
+
+  double distance(point const& a, point const& b)
+  {
+    double dx = a.x - b.x;
+    double dy = a.y - b.y;
+    return std::sqrt(dx * dx + dy * dy);
+  }
+\end{minted}
+%
+The function \cpp{distance} is defined for exactly one parameter-type-list, \ie two arguments of type \cpp{Point const&}. But the only requirement we need
+in order to calculate the distance with this algorithm is that there are two data member \texttt{.x} and \texttt{.y} that are of some number type.
+
+If you want to calculate the distance of some other point type, the algorithm looks pretty much the same, so it would be logical to use the same function
+name for that algorithm.
+%
+\begin{minted}{c++}
+  struct DPoint { double x, y; };
+  struct FPoint { float x, y; };
+
+  double distance(DPoint const& a, DPoint const& b)
+  {
+    double dx = a.x - b.x;
+    double dy = a.y - b.y;
+    return std::sqrt(dx * dx + dy * dy);
+  }
+
+  float distance(FPoint const& a, FPoint const& b)
+  {
+    float dx = a.x - b.x;
+    float dy = a.y - b.y;
+    return std::sqrt(dx * dx + dy * dy);
+  }
+
+  int main()
+  {
+    FPoint a, b;
+    distance(a,b);
+  }
+\end{minted}
+\end{example}
+
+\begin{rem}
+  In the example above there even is the whole body of the function very similar, except for the used value types. In the chapter \emph{Generic Programming}
+  we will look into this and instead of writing explicit functions, we will write a function template, parameterized with the value type.
+\end{rem}
+
+\begin{guideline}{Principle}
+  Functions implementing the same algorithm on different types should be named equal.
+\end{guideline}
+
+In order to resolve a function call, \ie to find the right function to evaluate, the compiler has to follow some common steps:
+\begin{enumerate}
+  \item Look for all functions with the given function name (\emph{name lookup}). All visible function (and names introduced by a \cpp{using}
+        declaration/directive) are considered. Thereby the function namespace is important. If the arguments are defined in some namespace also this
+        is considered a viable scope for lookup (\emph{Argument Dependent Lookup, ADL}).
+  \item If there is more than one viable function found in the name lookup, the compiler tries to resolve the function overload to select a
+        function to call (\emph{overload resolution}). Therefore it is considered which parameter-type-list matches best the passed arguments.
+  \item All non-matching functions are eliminated from the list of viable candidates (\eg wrong number of arguments or non-matching types). All
+        remaining functions are ordered by the property which one is a ``better'' match for the arguments. At first position in that list is the exact
+        match (if it exists).
+  \item Each pair of viable functions $F_1$ and $F_2$ is ranked by the implicit casts of its arguments, to decide the order. Thereby we have the rule:
+        $F_1$ is determined to be a better function than $F_2$ if implicit conversions for all arguments of $F_1$ are not worse than the implicit
+        conversions for all arguments of $F_2$, and there is at least one argument of $F_1$ whose implicit conversion is better than the corresponding
+        implicit conversion for that argument of $F_2$. Therefore we have the three conversion ranks
+        \begin{enumerate}
+          \item exact match: no conversion required, lvalue-to-rvalue conversion, qualification conversion (\eg add \cpp{const})
+          \item Type promotion: integral promotion, floating-point promotion
+          \item Type conversion: integral conversion, floating-point conversion, floating-integral conversion
+        \end{enumerate}
+\end{enumerate}
+
+\begin{example}
+  In the following example the function \texttt{foo()} is overloaded 4 times:
+  %
+  \begin{minted}{c++}
+  #include <iostream>
+  struct A { double x = 1.0; };
+
+  int foo(A a) { return 0; }               // (0)
+  int foo(A& a) { return 1; }              // (1)
+  int foo(A const& a) { return 2; }        // (2)
+  int foo(A const& a, int b) { return 3; } // (3)
+
+  int main() {
+    A a;
+    std::cout << foo(a) << "\n";
+  }
+  \end{minted}
+  %
+  This overload-set generates a compiler error, since (0) is equivalent to (1) or (2), \ie all three are exact matches. Removing (0) resolves this error.
+  Then (1) is called, since \texttt{a} is a mutable object and thus (1) represents an exact match and no const-qualification is needed.
+  (3) is ignored because of the wrong number of arguments.
+\end{example}
+
+\begin{example}
+  The following example illustrates what it means to be a better candidate:
+  %
+  \begin{minted}{c++}
+  void foo(int const&, short); // overload #1
+  void foo(int&, int);         // overload #2
+
+  int main() {
+    int i;
+    int cont ic = 0;
+    short s = 0;
+
+    foo(i, 1L);  // 1st argument: i -> int& is better than i -> int const&
+                 // 2nd argument: 1L -> short and 1L -> int are equivalent
+                 // calls foo(int&, int)
+
+    foo(i,'c');  // 1st argument: i -> int& is better than i -> int const&
+                 // 2nd argument: 'c' -> int is better than 'c' -> short
+                 // calls foo(int&, int)
+
+    foo(i, s);   // 1st argument: i -> int& is better than i -> int const&
+                 // 2nd argument: s -> short is better than s -> int
+                 // no winner, compilation error
+
+    foo(ic, 'c'); // 1st argument: ic -> int& not allowed, but ic -> int const& exact match
+                  // ---> #1 removed from list of viable functions
+                  // 2nd argument: 'c' -> short is allowed
+                  // calls foo(int const&, short);
+  }
+  \end{minted}
+\end{example}
+
+\begin{rem}
+  There are many more rules for the selection of the best matching function. A detailed explanation can be found on
+  \begin{itemize}
+	  \item \url{https://accu.org/index.php/journals/268}
+	  \item \url{http://en.cppreference.com/w/cpp/language/overload_resolution}
+  \end{itemize}
+\end{rem}
+
+
+\subsection{Inline Functions\label{sec:inline-function}}
+An \emph{inline}-function is a function qualified with the keyword \cpp{inline}. This has the following consequences:
+\begin{itemize}
+  \item It is allowed to have multiple definitions of the same (inline)-functions in the same translation unit, unless all definitions are identical.
+        (otherwise the behavior is undefined)
+  \item The definition must be visible in the translation unit (declaration without definition is not allowed)
+\end{itemize}
+Further reading: \url{http://en.cppreference.com/w/cpp/language/inline}
+
+Do not mix up the keyword \cpp{inline} with the compiler optimization \emph{inline expansion/replacement}. There, the code of the called function is
+expanded at the position of the call instead of performing a jump to the separately defined function. For this to work, the compiler must see the
+definition of the function. Advantage of function inlining is the higher locality and the lack of a jump (and jump back). But this also may result in
+larger output code. The compiler decides automatically which function to inline. The keyword \cpp{inline} has only very little effect on this decision.

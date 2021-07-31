@@ -1,0 +1,375 @@
+\chapter{Metaprogramming}
+\begin{zitat}{Wikipedia:Metaprogramming}
+  Metaprogramming is a programming technique in which computer programs have the ability to treat other programs as their data.
+  It means that a program can be designed to read, generate, analyze or transform other programs, and even modify itself while
+  running. In some cases, this allows programmers to minimize the number of lines of code to express a solution, in turn reducing
+  development time. It also allows programs greater flexibility to efficiently handle new situations without recompilation.
+\end{zitat}
+
+The idea was summarized in a programming guideline by Thomas Hunt in his famous book \emph{The Pragmatic Programmer}:
+\begin{zitat}{Hunt, Thomas in \cite{hunt1999}}
+  Tip 29: Write Code That Writes Code
+\end{zitat}
+
+This technique not only allows to reduce code duplication, but also minimizes the usage of so called ``magic number'', \ie values or number
+that are kind of fixed constants in the code but result from some pre-calculation (examples include: the number of edges / facets of a polyhedron)
+
+Metaprogramming in C++ can be used to do ``calculations'' with types, \eg determine the type of an compound expression, or the result type of
+a functor. It also allows to hide and to conditionally compile code, depending on some flags passed to the compiler or by some other conditions,
+like compiler versions.
+
+Often a metaprogramming language is itself a full (Turing complete) language. In C++ we at least 2 such languages (templates and constexpr functions)
+and additionally a macro language (preprocessor commands).
+
+
+% =================================================================================================
+\section{Template-Metaprogramming}
+Template metaprogramming techniques are purely based on templates, template specialization and static type information like static constants. Since
+templates are instantiated by the compiler at compile-time, the resulting non-template class or function must have all information resolved. So, the
+calling syntax for template metaprograms is just template instantiation. The template metaprogramming sub-language is Turing complete.
+
+\begin{example}
+  In 1994 the Developer Erwin Unruh from Siemens-Nixdorf presented his prime-number program to the C++ standard committee -- probably the most famous
+  C++ program that does not compile. The error-messages of this program contain the result of the computation: the first 30 prime numbers. This side-effect
+  of the compiling process has clearly shown that the compile can do computing:
+  \begin{verbatim}
+  error: no suitable constructor exists to convert from "int" to "D<17>"
+  error: no suitable constructor exists to convert from "int" to "D<13>"
+  error: no suitable constructor exists to convert from "int" to "D<11>"
+  error: no suitable constructor exists to convert from "int" to "D<7>"
+  error: no suitable constructor exists to convert from "int" to "D<5>"
+  error: no suitable constructor exists to convert from "int" to "D<3>"
+  error: no suitable constructor exists to convert from "int" to "D<2>"
+  \end{verbatim}
+\end{example}
+
+We distinguish two types of template metaprogramming
+\begin{enumerate}
+  \item Templates that calculate values (metafunctions)
+  \item Templates that define or transform types (type-traits)
+\end{enumerate}
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Metafunctions}
+Classical function get their inputs as values in the function parameters can return values wither in the return statement or in an output
+function parameter. In contrast, metafunctions get their input as template parameters and provide their results either as typedef (type alias)
+or as static constant. Thereby, metafunctions are typically class templates.
+
+Since class templates need to be instantiated, the evaluation of the metafunction happens at the template instantiation and thus at compile-time.
+We have seen two types of template parameters: type parameters and non-type parameters. In order to pass values we will first introduce a type
+that represents a value:
+%
+\begin{minted}{c++}
+  template <class T, T v>
+  struct integral_constant
+  {
+    using type = T;
+    static constexpr type value = v;
+  };
+\end{minted}
+%
+This is a type defined in the standard library in \cpp{<type_traits>}. So, the value that the type represents is first passed as template parameter
+and second it is stored in a static \cpp{constexpr} variable.
+
+\begin{guideline}{Guideline}
+  Classes representing a numeric value name the static constant ``value''. Classes representing another type, name the typedef (type alias) simply ``type''.
+\end{guideline}
+
+\begin{rem}
+Static \cpp{constexpr} constants are one way to define a value in a class. The other way is to use ``enums'':
+\cppline{  enum : T { value = v };}
+\end{rem}
+
+In order to access the value, we have to instantiate the template and use the name-resolution operator:
+\begin{minted}{c++}
+  using V = integral_constant<int, 42>;
+  std::cout << V::value << std::endl; // prints 42
+\end{minted}
+
+
+\subsubsection{Direct calculations with template parameters}
+An \cpp{integral_constant} just stores a value. But the same technique can be used to do simple calculations.
+
+Therefore, either you pass the values directly as non-type template parameters:
+\begin{minted}{c++}
+  template <int a, int b>
+  struct plus
+  {
+    static constexpr int value = a + b;
+  };
+
+  std::cout << plus<13, 29>::value << std::endl; // prints 42
+\end{minted}
+
+Or you pass the values as integral constants:
+\begin{minted}{c++}
+  template <class A, class B>
+  struct plus
+  {
+    using type = typename A::type;
+    static constexpr type value = A::value + B::value;
+    // or static constexpr auto value = A::value + B::value;
+  };
+
+  using A = integral_constant<int,13>;
+  using B = integral_constant<int,29>;
+  std::cout << plus<A, B>::value << std::endl; // prints 42
+\end{minted}
+
+
+\subsubsection{Recursive programming}
+C++ is a statically typed language, meaning: the type of a variable or an alias can not be changed once it is set. And everything must
+have a type. The prevents from implementing something like loops where you update a counter during iteration. This makes it more
+difficult to do programming with templates. Everything has to be implemented using recursion instead of iteration.
+
+In order to illustrate a recursive algorithm implemented using templates, we consider the factorial computation.
+\[
+  \operatorname{factorial}(n) := \left\{\begin{array}{ll} 1 & \text{if }n = 0 \\ n \cdot \operatorname{factorial}(n-1) & \text{otherwise} \end{array}\right.
+\]
+
+In a classical function, we would write
+\begin{minted}{c++}
+  int factorial(int n) {
+    return n <= 0 ? 1 : n * factorial(n - 1);
+  }
+  int main() {
+    int x = factorial(3); // = 3*2*1 = 6
+    int y = factorial(0);
+  }
+\end{minted}
+Compiling this program generates code that can be executed at runtime.
+The compiler output of \texttt{g++ -S factorial.cc} generates assembler code:
+\begin{verbatim}
+  _Z3factoriali:
+  .LFB0:
+  // ...
+      movl    %edi, -4(%rbp)    // n := m
+      cmpl    $0, -4(%rbp)
+      je  .L2                   // n == 0 ? jump to .L2 : continue
+      movl    -4(%rbp), %eax    // \
+      subl    $1, %eax          //  } m := n-1
+      movl    %eax, %edi        // /
+      call    _Z3factoriali     // factorial(m)
+  //...
+  .L2:
+      movl    $1, %eax          // return_value = 1
+  .L3:
+      leave                     // return
+  // ...
+  main:
+  .LFB1:
+  //...
+      movl    $3, %edi          // m := 3
+      call    _Z3factoriali     // factorial(m)
+  // ...
+\end{verbatim}
+
+Now, the same program implemented using templates, static constants, recursive instantiation and template specialization for the break condition
+looks as follows:
+\begin{minted}{c++}
+  template <int N>
+  struct factorial_meta // recursion
+  {
+    static constexpr int value = N * factorial_meta<N-1>::value;
+  };
+
+  template <>
+  struct factorial_meta<0> // break condition
+  {
+    static constexpr int value = 1;
+  };
+
+  int main() {
+    int x = factorial_meta<3>::value;
+    int y = factorial_meta<0>::value;
+  }
+\end{minted}
+and the corresponding assembler code:
+
+\begin{verbatim}
+  main:
+  .LFB0:
+  // ...
+      movl    $6, -8(%rbp)   // explicit value
+      movl    $1, -4(%rbp)
+  // ...
+\end{verbatim}
+
+\begin{rem}
+  When writing an expression involving template instantiations, like
+  \cppline{  N <= 0 ? 1 : factorial_meta<N-1>::value;}
+  All templates first get instantiated, second the arithmetic expression is evaluated. Meaning, even for the case \cpp{N == 0} the
+  \cpp{factorial_meta<N-1>} gets instantiated, thus \cpp{factorial<-1>}. So we would get an infinite recursion and template instantiation.
+  This can only be overcome by providing another specialization of the template that kicks in instead of the recursive call.
+\end{rem}
+
+
+\subsubsection{Value aliases}
+Instead of accessing the result of a computation in a template metafunction by the \cpp{value} member, it is common standard to
+introduce a variable template for this purpose that simplifies the calles and makes it look very similar to regular function calls:
+%
+\begin{minted}{c++}
+  template <int N>
+  constexpr int factorial_v = factorial_meta<N>::value;
+\end{minted}
+%
+With this, you can simply evaluate \cpp{factoral_v<7>} in your code without the \cpp{::value} access. The postfix \cpp{_v} is commonly used
+and is also introduced for several metafunctions in the standard library with \cxx{17}.
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Constexpr Metafunctions}
+Another form of metafunctions that is not based on class templates can be implemented using \cpp{constexpr} functions. The keyword
+\cpp{constexpr} indicates that this must be something that can be evaluated at compile-time. It is introduced with \cxx{11} and limitations
+of constexpr functions are reduced with each standard \cxx{14}, \cxx{17}, and \cxx{20}.
+
+The example above can be implemented just as the runtime-implementation by just adding the keyword \cpp{constexpr}:
+\begin{minted}{c++}
+  constexpr int factorial(int n) {
+    return n <= 0 ? 1 : n * factorial(n - 1);
+  }
+  int main() {
+    // runtime computation
+    int x = factorial(3); // = 3*2*1 = 6
+    int y = factorial(0);
+
+    // function as template argument
+    std::array<int, factorial(5) + 1> arr;
+  }
+\end{minted}
+
+The keyword \cpp{constexpr} does not force the compiler to evaluate this function in compile-time, but allows to use that function in
+compile-time / static only contexts, like the size of an array. In order to force the evaluation at compile-time, the constexpr function
+must be used in a constexpr context:
+\begin{minted}{c++}
+  constexpr int z = factorial(7);
+\end{minted}
+
+
+\subsubsection{Restrictions with C++11}
+When introducing this new language feature in \cxx{11}, the standard committee had to make sure, that all evaluations can really be performed
+by a compiler. Thus at the beginning it was very restrictive:
+\begin{itemize}
+  \item The function must not contain anything except 1 return statement
+  \item No loops are allowed
+  \item No branching (if-then-else) or (switch-case) is allowed (but ternary operator \cpp{?:})
+  \item No dynamic memory allocation
+  \item No exceptions
+  \item $\ldots$
+\end{itemize}
+
+So, slightly more complicated function had to be written with recursion and the ternary operator:
+%
+\begin{minted}{c++}
+  // runtime version
+  double sqrt(double a, double xn, unsigned int n)
+  {
+    return n == 0 ? xn : (      // break condition
+      xn = sqrt(a, xn, n-1),    // recursive call
+      xn - f(a, xn) / df(a, xn) // Newton step
+    );
+  }
+  // compile-time version
+  constexpr double sqrt_c(double a, double xn, unsigned int n)
+  {
+    return n == 0 ? xn :      // break condition
+      sqrt(a, xn, n-1) - f(a, sqrt(a, xn, n-1)) / df(a, sqrt(a, xn, n-1)); // Newton step
+  }
+  int main() {
+    constexpr int x = sqrt_c(25.0, 3.0, 50); // sqrt(25) at compile-time
+  }
+\end{minted}
+%
+with assembler output
+\begin{verbatim}
+  movl  $5,  -4(%rbp)
+\end{verbatim}
+
+This restriction is removed in \cxx{14} and you can write loops, use if-then-else, introduce local variables and much more. But, you can not do
+all that is possible with classical functions. Especially, your arguments and return types must be \emph{LiteralType}s like scalar types or
+trivial classes.
+
+
+% -------------------------------------------------------------------------------------------------
+\subsection{Type-Traits}
+Instead of returning values in a call to template metafunctions, we could return types in the corresponding type-alias. Those class templates are
+sometimes called \emph{typefunctions} or \emph{traits-classes}. One example we have seen before: the \cpp{iterator_traits} providing types related
+to a passed iterator type. Combining typefunctions with template specialization allows to do some transformation with types.
+
+We start with an example representing the identity typefunction:
+%
+\begin{minted}{c++}
+  template <typename T>
+  struct identity
+  {
+    using type = T;
+  };
+\end{minted}
+%
+The output is represented by the type alias \texttt{type} in the class and the input again by template parameters. Since access to dependent types
+requires the additional keyword \cpp{typename}, it is common standard to provide additionally a template type alias:
+%
+\begin{minted}{c++}
+  template <typename T>
+  using identity_t = typename identity<T>::type;
+\end{minted}
+%
+where the postfix \cpp{_t} is commonly used in the standard library.
+
+Type-Traits are not just typefunction parametrized by types, but all combinations are possible: (types...) $\mapsto$ type, (values...) $\mapsto$ type,
+(types...) $\mapsto$ value
+
+Here, we list just examples of some Type-Traits:
+
+
+\subsubsection{Type Transformation}
+Transforming types into another type can be implemented by typefunctions. Therefore the template parameters are type parameters and the result is
+also a type alias.
+
+Example: Remove the constness of a type:
+\begin{minted}{c++}
+  template <typename T>
+  struct remove_const { // primary template
+    using type = T;
+  };
+
+  template <typename T>
+  struct remove_const<T const> { // specialization for type qualified with const
+    using type = T;
+  };
+\end{minted}
+
+
+\subsubsection{Relation between types}
+Are two types the same, is one larger than the other one, can a type be used in a vector expressions... All these are properties of types that
+can be tested for using typefunctions, that return a \cpp{bool} constant.
+
+Example: Are two types exactly the same:
+\begin{minted}{c++}
+  template <typename T1, typename T2>
+  struct is_same {  // primary template
+    static constexpr bool value = false;
+  };
+
+  template <typename T>
+  struct is_same<T,T> { // specialization for same types
+    static constexpr bool value = true;
+  };
+\end{minted}
+
+
+\subsubsection{Branching on types}
+Conditionals like if-then-else can also be implemented as typefunctions, where the condition is passed as non-type \cpp{bool} parameter
+and the types are selected by using template specialization:
+\begin{minted}{c++}
+  template <bool condition, typename T1, typename T2>
+  struct conditional {
+    using type = T1;                  // default: condition==true
+  };
+
+  template <typename T1, typename T2>
+  struct conditional<false, T1, T2> {
+    using type = T2;                  // specialization for condition==false
+  };
+\end{minted}

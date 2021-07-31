@@ -7,17 +7,17 @@ int main(int argc, char** argv)
   std::size_t n = 50;
 
   // right-hand side vector b
-  dense_vector b(n*n, 1.0);
+  DenseVector b(n*n, 1.0);
 
   // system matrix
-  dense_matrix A;
+  DenseMatrix A;
   laplacian_setup(A,n,n);
 
   // solution vector
-  dense_vector x(n*n);
+  DenseVector x(n*n);
 
   // iteration object with max_iter and rtol
-  iteration iter(b, 1000, 1.e-6, 0, 10);
+  BasicIteration iter(b, 1000, 1.e-6, 0, 10);
 
   // solve the linear system using a conjugate-gradient algorithm
   int err = cg(A, x, b, iter);
